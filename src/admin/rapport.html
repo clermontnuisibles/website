@@ -1,0 +1,411 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Rapport d'intervention – Clermont Nuisibles</title>
+  <meta name="robots" content="noindex, nofollow">
+  <link rel="icon" type="image/svg+xml" href="../images/logo-icon.svg">
+  <link rel="stylesheet" href="../fonts/inter.css">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+      background: #f0f2ef;
+      min-height: 100dvh;
+      padding: 2rem 1rem 3rem;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+
+    .back {
+      font-size: 0.82rem; color: #2d6a4f; text-decoration: none;
+      margin-bottom: 1.5rem; align-self: flex-start; max-width: 760px; width: 100%;
+    }
+    .back:hover { text-decoration: underline; }
+
+    .actions {
+      display: flex; gap: 0.75rem; justify-content: flex-end;
+      max-width: 760px; width: 100%; margin-bottom: 1.25rem;
+    }
+    .btn {
+      display: inline-flex; align-items: center; gap: 0.45rem;
+      font-family: inherit; font-size: 0.9rem; font-weight: 600;
+      padding: 0.65rem 1.25rem; border-radius: 50px; cursor: pointer;
+      text-decoration: none; border: none; transition: opacity 0.15s, transform 0.15s;
+    }
+    .btn:hover { opacity: 0.88; transform: translateY(-1px); }
+    .btn-primary { background: #ea6c1e; color: #fff; }
+    .btn-outline { background: #fff; color: #2d6a4f; border: 1.5px solid #2d6a4f; }
+    .btn-ghost   { background: #f3f4f6; color: #555; }
+
+    /* ── Fiche ── */
+    .fiche {
+      background: #fff;
+      border-radius: 20px;
+      box-shadow: 0 8px 40px rgba(0,0,0,0.09);
+      max-width: 760px;
+      width: 100%;
+      padding: 2.5rem 2.25rem;
+    }
+
+    /* En-tête */
+    .fiche-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      gap: 1rem;
+      margin-bottom: 2rem;
+      padding-bottom: 1.5rem;
+      border-bottom: 2px solid #2d6a4f;
+    }
+    .fiche-brand { display: flex; align-items: center; gap: 0.85rem; }
+    .fiche-brand img { width: 48px; height: 48px; }
+    .fiche-brand-text strong { display: block; font-size: 1.1rem; color: #1a2e1a; }
+    .fiche-brand-text span   { font-size: 0.78rem; color: #666; }
+    .fiche-title { text-align: right; }
+    .fiche-title h1 { font-size: 1.2rem; font-weight: 800; color: #2d6a4f; letter-spacing: -0.02em; }
+    .fiche-title .num { font-size: 0.8rem; color: #999; margin-top: 0.2rem; }
+
+    /* Sections */
+    .section { margin-bottom: 1.75rem; }
+    .section-title {
+      font-size: 0.72rem; font-weight: 700; text-transform: uppercase;
+      letter-spacing: .09em; color: #2d6a4f;
+      background: #f0fdf4; border-left: 3px solid #2d6a4f;
+      padding: 0.35rem 0.75rem; border-radius: 0 6px 6px 0;
+      margin-bottom: 1rem;
+    }
+
+    .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 0.85rem; }
+    .grid-3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 0.85rem; }
+
+    .field { display: flex; flex-direction: column; gap: 0.3rem; }
+    .field label { font-size: 0.75rem; font-weight: 600; color: #555; }
+    .field input, .field textarea, .field select {
+      font-family: inherit; font-size: 0.88rem; color: #1a2e1a;
+      border: 1.5px solid #e5e7eb; border-radius: 8px;
+      padding: 0.55rem 0.75rem; background: #fafafa;
+      transition: border-color 0.15s;
+      resize: vertical;
+    }
+    .field input:focus, .field textarea:focus, .field select:focus {
+      outline: none; border-color: #2d6a4f; background: #fff;
+    }
+    .field.full { grid-column: 1 / -1; }
+
+    /* Tableau produits */
+    .table-wrap { overflow-x: auto; margin-top: 0.5rem; }
+    table {
+      width: 100%; border-collapse: collapse; font-size: 0.83rem;
+    }
+    th {
+      background: #f0fdf4; color: #2d6a4f; font-weight: 700;
+      padding: 0.55rem 0.7rem; text-align: left; border: 1.5px solid #e5e7eb;
+      white-space: nowrap;
+    }
+    td {
+      border: 1.5px solid #e5e7eb; padding: 0.35rem 0.4rem;
+    }
+    td input {
+      width: 100%; font-family: inherit; font-size: 0.83rem; color: #1a2e1a;
+      border: none; background: transparent; padding: 0.2rem 0.3rem;
+    }
+    td input:focus { outline: none; background: #f0fdf4; border-radius: 4px; }
+    .btn-add-row {
+      margin-top: 0.6rem; font-size: 0.8rem; font-weight: 600;
+      background: #f0fdf4; color: #2d6a4f; border: 1.5px dashed #2d6a4f;
+      border-radius: 8px; padding: 0.4rem 0.9rem; cursor: pointer;
+      font-family: inherit; transition: background 0.15s;
+    }
+    .btn-add-row:hover { background: #dcfce7; }
+
+    /* Checkboxes zones traitées */
+    .zones { display: flex; flex-wrap: wrap; gap: 0.6rem; }
+    .zone-chip {
+      display: flex; align-items: center; gap: 0.4rem;
+      font-size: 0.82rem; background: #f3f4f6; border-radius: 20px;
+      padding: 0.35rem 0.85rem; cursor: pointer; user-select: none;
+      border: 1.5px solid #e5e7eb; transition: background 0.15s, border-color 0.15s;
+    }
+    .zone-chip input[type="checkbox"] { accent-color: #2d6a4f; width: 14px; height: 14px; }
+    .zone-chip:has(input:checked) { background: #dcfce7; border-color: #2d6a4f; color: #166534; font-weight: 600; }
+
+    /* Signatures */
+    .sig-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem; }
+    .sig-box {
+      border: 1.5px solid #e5e7eb; border-radius: 12px;
+      padding: 1rem;
+    }
+    .sig-box label { font-size: 0.75rem; font-weight: 600; color: #555; display: block; margin-bottom: 0.5rem; }
+    .sig-zone {
+      width: 100%; height: 90px; border: 1.5px dashed #d1d5db;
+      border-radius: 8px; background: #fafafa;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 0.8rem; color: #bbb;
+    }
+    .sig-date { margin-top: 0.6rem; }
+    .sig-date input {
+      font-family: inherit; font-size: 0.84rem; border: 1.5px solid #e5e7eb;
+      border-radius: 8px; padding: 0.45rem 0.7rem; width: 100%; background: #fafafa;
+    }
+
+    .note-footer {
+      font-size: 0.72rem; color: #aaa; text-align: center;
+      margin-top: 1.5rem; padding-top: 1.25rem; border-top: 1px solid #f0f0f0;
+    }
+
+    /* ── Impression ── */
+    @media print {
+      body { background: #fff; padding: 0; }
+      .back, .actions { display: none; }
+      .fiche { box-shadow: none; border-radius: 0; padding: 1.5rem; max-width: 100%; }
+      .field input, .field textarea, .field select, td input {
+        border-color: #ccc; background: #fff;
+      }
+      .btn-add-row { display: none; }
+      @page { margin: 1.5cm; }
+    }
+
+    @media (max-width: 560px) {
+      .grid-2, .grid-3, .sig-grid { grid-template-columns: 1fr; }
+      .fiche-header { flex-direction: column; }
+      .fiche-title { text-align: left; }
+    }
+  </style>
+</head>
+<body>
+
+<a class="back" href="index.html">← Retour à l'administration</a>
+
+<div class="actions">
+  <button class="btn btn-ghost" onclick="resetForm()">🗑 Effacer</button>
+  <button class="btn btn-outline" onclick="window.print()">🖨 Imprimer / PDF</button>
+</div>
+
+<div class="fiche" id="fiche">
+
+  <!-- En-tête -->
+  <div class="fiche-header">
+    <div class="fiche-brand">
+      <img src="../images/logo-icon.svg" alt="Logo Clermont Nuisibles">
+      <div class="fiche-brand-text" id="brand-text">
+        <strong>Clermont Nuisibles</strong>
+        <span id="brand-details">Chargement…</span>
+      </div>
+    </div>
+    <div class="fiche-title">
+      <h1>Rapport d'intervention</h1>
+      <div class="num" id="rapport-num">N° <span id="num-val">—</span></div>
+    </div>
+  </div>
+
+  <!-- 1. Informations client -->
+  <div class="section">
+    <div class="section-title">1. Client / Établissement</div>
+    <div class="grid-2">
+      <div class="field"><label>Raison sociale / Nom</label><input type="text" id="client-nom" placeholder="Ex. : SAS Dupont, M. Martin…"></div>
+      <div class="field"><label>Contact sur place</label><input type="text" id="client-contact" placeholder="Prénom NOM, poste…"></div>
+      <div class="field full"><label>Adresse du site</label><input type="text" id="client-adresse" placeholder="N° rue, code postal, ville"></div>
+      <div class="field"><label>Téléphone</label><input type="tel" id="client-tel" placeholder="06 XX XX XX XX"></div>
+      <div class="field"><label>E-mail</label><input type="email" id="client-email" placeholder="contact@entreprise.fr"></div>
+    </div>
+  </div>
+
+  <!-- 2. Détails de l'intervention -->
+  <div class="section">
+    <div class="section-title">2. Détails de l'intervention</div>
+    <div class="grid-3">
+      <div class="field"><label>Date</label><input type="date" id="date-intervention"></div>
+      <div class="field"><label>Heure début</label><input type="time" id="heure-debut"></div>
+      <div class="field"><label>Heure fin</label><input type="time" id="heure-fin"></div>
+      <div class="field">
+        <label>Type d'intervention</label>
+        <select id="type-intervention">
+          <option value="">— Sélectionner —</option>
+          <option>Dératisation</option>
+          <option>Désinsectisation</option>
+          <option>Désinfection</option>
+          <option>Traitement punaises de lit</option>
+          <option>Traitement cafards / blattes</option>
+          <option>Traitement fourmis</option>
+          <option>Traitement guêpes / frelons</option>
+          <option>Traitement moustiques</option>
+          <option>Autre</option>
+        </select>
+      </div>
+      <div class="field">
+        <label>Nature du nuisible</label>
+        <input type="text" id="nuisible" placeholder="Rats, souris, cafards…">
+      </div>
+      <div class="field">
+        <label>Niveau d'infestation</label>
+        <select id="niveau">
+          <option value="">— Sélectionner —</option>
+          <option>Faible</option>
+          <option>Moyen</option>
+          <option>Élevé</option>
+          <option>Critique</option>
+        </select>
+      </div>
+    </div>
+  </div>
+
+  <!-- 3. Zones traitées -->
+  <div class="section">
+    <div class="section-title">3. Zones traitées</div>
+    <div class="zones">
+      <label class="zone-chip"><input type="checkbox"> Locaux techniques</label>
+      <label class="zone-chip"><input type="checkbox"> Cuisine / Restauration</label>
+      <label class="zone-chip"><input type="checkbox"> Cave / Sous-sol</label>
+      <label class="zone-chip"><input type="checkbox"> Combles / Toiture</label>
+      <label class="zone-chip"><input type="checkbox"> Extérieur / Cour</label>
+      <label class="zone-chip"><input type="checkbox"> Réseau d'égouts</label>
+      <label class="zone-chip"><input type="checkbox"> Bureaux</label>
+      <label class="zone-chip"><input type="checkbox"> Entrepôt / Stockage</label>
+      <label class="zone-chip"><input type="checkbox"> Sanitaires</label>
+      <label class="zone-chip"><input type="checkbox"> Chambres</label>
+    </div>
+    <div class="field" style="margin-top:0.85rem;">
+      <label>Précisions / autres zones</label>
+      <textarea id="zones-detail" rows="2" placeholder="Détail des zones traitées, points d'appâtage…"></textarea>
+    </div>
+  </div>
+
+  <!-- 4. Produits utilisés -->
+  <div class="section">
+    <div class="section-title">4. Produits biocides utilisés</div>
+    <div class="table-wrap">
+      <table id="table-produits">
+        <thead>
+          <tr>
+            <th>Nom commercial</th>
+            <th>N° AMM</th>
+            <th>Substance active</th>
+            <th>Dosage / Dilution</th>
+            <th>Quantité utilisée</th>
+          </tr>
+        </thead>
+        <tbody id="tbody-produits">
+          <tr>
+            <td><input type="text" placeholder="Ex. : Racumin Gel"></td>
+            <td><input type="text" placeholder="Ex. : FR-2021-0001"></td>
+            <td><input type="text" placeholder="Ex. : Coumatétralyl"></td>
+            <td><input type="text" placeholder="Ex. : Prêt à l'emploi"></td>
+            <td><input type="text" placeholder="Ex. : 200 g"></td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+    <button class="btn-add-row" onclick="addRow()">+ Ajouter un produit</button>
+  </div>
+
+  <!-- 5. Observations & recommandations -->
+  <div class="section">
+    <div class="section-title">5. Observations & recommandations</div>
+    <div style="display:grid; gap:0.85rem;">
+      <div class="field">
+        <label>Observations (état des lieux, causes identifiées)</label>
+        <textarea id="observations" rows="3" placeholder="Ex. : Présence de terriers actifs en façade nord, déchets alimentaires accessibles…"></textarea>
+      </div>
+      <div class="field">
+        <label>Recommandations au client</label>
+        <textarea id="recommandations" rows="3" placeholder="Ex. : Colmater les orifices de passage, supprimer les points d'eau stagnante, nettoyer les bacs…"></textarea>
+      </div>
+      <div class="grid-2">
+        <div class="field">
+          <label>Résultat de l'intervention</label>
+          <select id="resultat">
+            <option value="">— Sélectionner —</option>
+            <option>Traitement effectué — suivi nécessaire</option>
+            <option>Traitement effectué — situation maîtrisée</option>
+            <option>Intervention partielle — retour prévu</option>
+            <option>Diagnostic uniquement</option>
+          </select>
+        </div>
+        <div class="field">
+          <label>Date de retour / contrôle prévue</label>
+          <input type="date" id="date-retour">
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 6. Signatures -->
+  <div class="section">
+    <div class="section-title">6. Signatures</div>
+    <div class="sig-grid">
+      <div class="sig-box">
+        <label>Technicien (Clermont Nuisibles)</label>
+        <div class="sig-zone">Signature</div>
+        <div class="sig-date field"><input type="text" placeholder="Nom du technicien" style="margin-top:0.5rem;"></div>
+      </div>
+      <div class="sig-box">
+        <label>Client / Représentant</label>
+        <div class="sig-zone">Signature</div>
+        <div class="sig-date field"><input type="text" placeholder="Nom & qualité du signataire" style="margin-top:0.5rem;"></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="note-footer">
+    Document établi conformément à la réglementation sur l'utilisation des produits biocides (Règlement UE 528/2012) et au décret n°2017-1480 relatif à la lutte contre les nuisibles.<br>
+    Conserver ce document <strong>5 ans</strong>. <span id="footer-contact"></span>
+  </div>
+
+</div>
+
+<script src="../js/config.js"></script>
+<script>
+(function () {
+  var cfg = window.SiteConfig || {};
+
+  // Infos prestataire dans l'en-tête
+  var details = [];
+  if (cfg.siret)        details.push('SIRET : ' + cfg.siret);
+  if (cfg.phone)        details.push(cfg.phone);
+  if (cfg.email)        details.push(cfg.email);
+  document.getElementById('brand-details').textContent = details.join(' · ');
+
+  if (cfg.email) {
+    document.getElementById('footer-contact').textContent = 'Contact : ' + cfg.email;
+  }
+
+  // Numéro de rapport automatique (date + heure)
+  var now = new Date();
+  var pad = function(n){ return String(n).padStart(2,'0'); };
+  var num = now.getFullYear()
+    + pad(now.getMonth()+1)
+    + pad(now.getDate())
+    + '-' + pad(now.getHours()) + pad(now.getMinutes());
+  document.getElementById('num-val').textContent = num;
+
+  // Date du jour par défaut
+  var today = now.toISOString().split('T')[0];
+  document.getElementById('date-intervention').value = today;
+})();
+
+function addRow() {
+  var tbody = document.getElementById('tbody-produits');
+  var tr = document.createElement('tr');
+  tr.innerHTML = '<td><input type="text"></td>'
+    + '<td><input type="text"></td>'
+    + '<td><input type="text"></td>'
+    + '<td><input type="text"></td>'
+    + '<td><input type="text"></td>';
+  tbody.appendChild(tr);
+}
+
+function resetForm() {
+  if (!confirm('Effacer tous les champs ?')) return;
+  document.querySelectorAll('input[type=text], input[type=tel], input[type=email], input[type=time], textarea, select')
+    .forEach(function(el) { el.value = ''; });
+  document.querySelectorAll('input[type=checkbox]').forEach(function(cb) { cb.checked = false; });
+  // Remet la date du jour
+  document.getElementById('date-intervention').value = new Date().toISOString().split('T')[0];
+}
+</script>
+</body>
+</html>

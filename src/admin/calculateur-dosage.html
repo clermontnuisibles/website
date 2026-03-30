@@ -1,0 +1,370 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Calculateur de dosage – Clermont Nuisibles</title>
+  <meta name="robots" content="noindex, nofollow">
+  <link rel="icon" type="image/svg+xml" href="../images/logo-icon.svg">
+  <link rel="stylesheet" href="../fonts/inter.css">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+      background: #f0f2ef;
+      min-height: 100dvh;
+      padding: 2rem 1rem 3rem;
+      display: flex; flex-direction: column; align-items: center;
+    }
+    .back { font-size: 0.82rem; color: #2d6a4f; text-decoration: none; margin-bottom: 1.5rem; align-self: flex-start; max-width: 680px; width: 100%; }
+    .back:hover { text-decoration: underline; }
+
+    h1 { font-size: 1.35rem; font-weight: 800; color: #1a2e1a; margin-bottom: 0.3rem; max-width: 680px; width: 100%; }
+    .subtitle { font-size: 0.88rem; color: #666; margin-bottom: 1.75rem; max-width: 680px; width: 100%; }
+
+    .calculators { display: flex; flex-direction: column; gap: 1.25rem; max-width: 680px; width: 100%; }
+
+    .calc-card {
+      background: #fff; border-radius: 18px;
+      box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+      overflow: hidden;
+    }
+    .calc-head {
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 1.1rem 1.4rem 0.9rem;
+      cursor: pointer; user-select: none;
+      border-bottom: 1.5px solid transparent;
+      transition: background 0.15s;
+    }
+    .calc-head:hover { background: #f9fafb; }
+    .calc-card.open .calc-head { border-bottom-color: #e5e7eb; }
+    .calc-head-left { display: flex; align-items: center; gap: 0.75rem; }
+    .calc-icon { font-size: 1.4rem; }
+    .calc-title { font-size: 1rem; font-weight: 700; color: #1a2e1a; }
+    .calc-desc { font-size: 0.78rem; color: #888; margin-top: 0.1rem; }
+    .chevron { font-size: 0.95rem; color: #aaa; transition: transform 0.2s; }
+    .calc-card.open .chevron { transform: rotate(180deg); }
+
+    .calc-body { display: none; padding: 1.4rem; }
+    .calc-card.open .calc-body { display: block; }
+
+    .field-row { display: grid; grid-template-columns: 1fr 1fr; gap: 0.85rem; margin-bottom: 0.85rem; }
+    .field { display: flex; flex-direction: column; gap: 0.3rem; }
+    .field.full { grid-column: 1 / -1; }
+    .field label { font-size: 0.75rem; font-weight: 600; color: #555; }
+    .field input, .field select {
+      font-family: inherit; font-size: 0.9rem; color: #1a2e1a;
+      border: 1.5px solid #e5e7eb; border-radius: 8px;
+      padding: 0.55rem 0.75rem; background: #fafafa;
+      transition: border-color 0.15s;
+    }
+    .field input:focus, .field select:focus { outline: none; border-color: #2d6a4f; background: #fff; }
+    .field .unit { font-size: 0.7rem; color: #999; margin-top: 0.2rem; }
+
+    .result-box {
+      background: #f0fdf4; border: 1.5px solid #2d6a4f;
+      border-radius: 12px; padding: 1.1rem 1.25rem;
+      margin-top: 1rem;
+    }
+    .result-box.warning { background: #fff7ed; border-color: #ea6c1e; }
+    .result-label { font-size: 0.75rem; font-weight: 700; text-transform: uppercase; letter-spacing: .07em; color: #2d6a4f; margin-bottom: 0.4rem; }
+    .result-box.warning .result-label { color: #ea6c1e; }
+    .result-value { font-size: 1.5rem; font-weight: 800; color: #1a2e1a; }
+    .result-detail { font-size: 0.8rem; color: #555; margin-top: 0.4rem; line-height: 1.5; }
+
+    .btn-calc {
+      font-family: inherit; font-size: 0.9rem; font-weight: 700;
+      background: #2d6a4f; color: #fff; border: none; border-radius: 50px;
+      padding: 0.7rem 1.75rem; cursor: pointer; margin-top: 0.85rem;
+      transition: opacity 0.15s;
+    }
+    .btn-calc:hover { opacity: 0.88; }
+
+    .divider { border: none; border-top: 1.5px solid #f0f0f0; margin: 1rem 0; }
+    .info-tip { font-size: 0.78rem; color: #888; background: #f8fafc; border-radius: 8px; padding: 0.65rem 0.85rem; margin-top: 0.75rem; line-height: 1.55; }
+    .info-tip strong { color: #555; }
+  </style>
+</head>
+<body>
+
+<a class="back" href="index.html">← Retour à l'administration</a>
+
+<h1>🧮 Calculateur de dosage</h1>
+<p class="subtitle">Calculez rapidement les quantités de produits nécessaires selon la surface, le volume ou le nombre de points d'appâtage.</p>
+
+<div class="calculators">
+
+  <!-- ── 1. Dilution produit concentré ── -->
+  <div class="calc-card" id="calc-dilution">
+    <div class="calc-head" onclick="toggleCalc('calc-dilution')">
+      <div class="calc-head-left">
+        <span class="calc-icon">💧</span>
+        <div>
+          <div class="calc-title">Dilution d'un produit concentré</div>
+          <div class="calc-desc">Volume d'eau + volume de concentré à préparer</div>
+        </div>
+      </div>
+      <span class="chevron">▾</span>
+    </div>
+    <div class="calc-body">
+      <div class="field-row">
+        <div class="field">
+          <label>Volume de solution à préparer (L)</label>
+          <input type="number" id="dil-volume" min="0.1" step="0.1" placeholder="Ex. : 5" oninput="calcDilution()">
+        </div>
+        <div class="field">
+          <label>Concentration souhaitée (%)</label>
+          <input type="number" id="dil-conc" min="0.01" step="0.01" placeholder="Ex. : 0.5" oninput="calcDilution()">
+          <span class="unit">Vérifiez l'étiquette du produit</span>
+        </div>
+        <div class="field">
+          <label>Concentration du concentré (%)</label>
+          <input type="number" id="dil-stock" min="1" step="0.1" placeholder="Ex. : 20" oninput="calcDilution()">
+        </div>
+        <div class="field">
+          <label>Unité d'affichage résultat</label>
+          <select id="dil-unit" onchange="calcDilution()">
+            <option value="ml">mL</option>
+            <option value="l">L</option>
+          </select>
+        </div>
+      </div>
+      <div id="dil-result" class="result-box" style="display:none">
+        <div class="result-label">Concentré à ajouter</div>
+        <div class="result-value" id="dil-qty">—</div>
+        <div class="result-detail" id="dil-detail"></div>
+      </div>
+      <div class="info-tip">
+        <strong>Rappel :</strong> Toujours ajouter le concentré dans l'eau (jamais l'inverse). Agiter avant utilisation. Porter les EPI appropriés.
+      </div>
+    </div>
+  </div>
+
+  <!-- ── 2. Quantité insecticide par surface ── -->
+  <div class="calc-card" id="calc-surface">
+    <div class="calc-head" onclick="toggleCalc('calc-surface')">
+      <div class="calc-head-left">
+        <span class="calc-icon">📐</span>
+        <div>
+          <div class="calc-title">Quantité insecticide / surface</div>
+          <div class="calc-desc">Volume de bouillie nécessaire pour couvrir une surface</div>
+        </div>
+      </div>
+      <span class="chevron">▾</span>
+    </div>
+    <div class="calc-body">
+      <div class="field-row">
+        <div class="field">
+          <label>Surface à traiter (m²)</label>
+          <input type="number" id="surf-m2" min="1" placeholder="Ex. : 80" oninput="calcSurface()">
+        </div>
+        <div class="field">
+          <label>Dose d'application (L/100 m²)</label>
+          <input type="number" id="surf-dose" min="0.1" step="0.1" placeholder="Ex. : 5" oninput="calcSurface()">
+          <span class="unit">Reportez-vous à l'étiquette du produit</span>
+        </div>
+        <div class="field">
+          <label>Concentration du produit (%)</label>
+          <input type="number" id="surf-conc" min="0.01" step="0.01" placeholder="Ex. : 0.5" oninput="calcSurface()">
+        </div>
+        <div class="field">
+          <label>Concentration du concentré (%)</label>
+          <input type="number" id="surf-stock" min="1" step="0.1" placeholder="Ex. : 20" oninput="calcSurface()">
+        </div>
+      </div>
+      <div id="surf-result" class="result-box" style="display:none">
+        <div class="result-label">Bouillie totale nécessaire</div>
+        <div class="result-value" id="surf-bouillie">—</div>
+        <div class="result-detail" id="surf-detail"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── 3. Points d'appâtage ── -->
+  <div class="calc-card" id="calc-appat">
+    <div class="calc-head" onclick="toggleCalc('calc-appat')">
+      <div class="calc-head-left">
+        <span class="calc-icon">🐀</span>
+        <div>
+          <div class="calc-title">Plan d'appâtage dératisation</div>
+          <div class="calc-desc">Nombre de postes et quantité de raticide</div>
+        </div>
+      </div>
+      <span class="chevron">▾</span>
+    </div>
+    <div class="calc-body">
+      <div class="field-row">
+        <div class="field">
+          <label>Surface du site (m²)</label>
+          <input type="number" id="app-surface" min="1" placeholder="Ex. : 200" oninput="calcAppat()">
+        </div>
+        <div class="field">
+          <label>Type de nuisible</label>
+          <select id="app-type" onchange="calcAppat()">
+            <option value="rat">Rat surmulot</option>
+            <option value="souris">Souris</option>
+          </select>
+        </div>
+        <div class="field">
+          <label>Niveau d'infestation</label>
+          <select id="app-niveau" onchange="calcAppat()">
+            <option value="faible">Faible</option>
+            <option value="moyen">Moyen</option>
+            <option value="eleve">Élevé</option>
+          </select>
+        </div>
+        <div class="field">
+          <label>Dose par poste (g)</label>
+          <input type="number" id="app-dose" min="1" value="50" oninput="calcAppat()">
+          <span class="unit">Rats : 50–100 g / poste · Souris : 15–30 g</span>
+        </div>
+      </div>
+      <div id="app-result" class="result-box" style="display:none">
+        <div class="result-label">Plan d'appâtage recommandé</div>
+        <div class="result-value" id="app-postes">—</div>
+        <div class="result-detail" id="app-detail"></div>
+      </div>
+      <div class="info-tip">
+        <strong>Règle de base :</strong> Rats — 1 poste / 20–40 m² · Souris — 1 poste / 5–10 m². Augmentez la densité en cas de forte infestation. Vérifiez et rechargez les postes tous les 3–5 jours.
+      </div>
+    </div>
+  </div>
+
+  <!-- ── 4. Traitement fumigation / nébulisation ── -->
+  <div class="calc-card" id="calc-nebul">
+    <div class="calc-head" onclick="toggleCalc('calc-nebul')">
+      <div class="calc-head-left">
+        <span class="calc-icon">💨</span>
+        <div>
+          <div class="calc-title">Nébulisation / fumigation</div>
+          <div class="calc-desc">Volume de produit pour un espace confiné</div>
+        </div>
+      </div>
+      <span class="chevron">▾</span>
+    </div>
+    <div class="calc-body">
+      <div class="field-row">
+        <div class="field">
+          <label>Surface (m²)</label>
+          <input type="number" id="neb-surface" min="1" placeholder="Ex. : 100" oninput="calcNebul()">
+        </div>
+        <div class="field">
+          <label>Hauteur sous plafond (m)</label>
+          <input type="number" id="neb-hauteur" min="1" step="0.1" placeholder="Ex. : 2.5" oninput="calcNebul()">
+        </div>
+        <div class="field">
+          <label>Dose produit (mL/m³)</label>
+          <input type="number" id="neb-dose" min="0.1" step="0.1" placeholder="Ex. : 10" oninput="calcNebul()">
+          <span class="unit">Reportez-vous à l'AMM du produit</span>
+        </div>
+        <div class="field">
+          <label>Débit du nébulisateur (mL/min)</label>
+          <input type="number" id="neb-debit" min="1" placeholder="Ex. : 120" oninput="calcNebul()">
+        </div>
+      </div>
+      <div id="neb-result" class="result-box" style="display:none">
+        <div class="result-label">Volume total &amp; durée de traitement</div>
+        <div class="result-value" id="neb-vol">—</div>
+        <div class="result-detail" id="neb-detail"></div>
+      </div>
+      <div class="info-tip">
+        <strong>Sécurité :</strong> Évacuer et ventiler la zone avant et après. Temps de contact minimal recommandé : 2h. Ne jamais nébuliser en présence de personnes.
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<script>
+function toggleCalc(id) {
+  var card = document.getElementById(id);
+  card.classList.toggle('open');
+}
+
+/* ── Dilution ── */
+function calcDilution() {
+  var V  = parseFloat(document.getElementById('dil-volume').value);
+  var C  = parseFloat(document.getElementById('dil-conc').value);
+  var Cs = parseFloat(document.getElementById('dil-stock').value);
+  var unit = document.getElementById('dil-unit').value;
+  var box = document.getElementById('dil-result');
+
+  if (isNaN(V) || isNaN(C) || isNaN(Cs) || Cs === 0) { box.style.display = 'none'; return; }
+  var Vc_L = (V * C) / Cs;       // L de concentré
+  var Ve_L = V - Vc_L;           // L d'eau
+
+  var display = unit === 'ml' ? (Vc_L * 1000).toFixed(1) + ' mL' : Vc_L.toFixed(3) + ' L';
+  document.getElementById('dil-qty').textContent = display;
+  document.getElementById('dil-detail').textContent =
+    'Compléter avec ' + (Ve_L * 1000).toFixed(0) + ' mL d\'eau pour obtenir ' + V + ' L de solution à ' + C + ' %.';
+  box.style.display = '';
+}
+
+/* ── Surface ── */
+function calcSurface() {
+  var S  = parseFloat(document.getElementById('surf-m2').value);
+  var D  = parseFloat(document.getElementById('surf-dose').value);   // L/100m²
+  var C  = parseFloat(document.getElementById('surf-conc').value);
+  var Cs = parseFloat(document.getElementById('surf-stock').value);
+  var box = document.getElementById('surf-result');
+
+  if (isNaN(S) || isNaN(D)) { box.style.display = 'none'; return; }
+  var bouillie_L = (S / 100) * D;
+  document.getElementById('surf-bouillie').textContent = bouillie_L.toFixed(2) + ' L';
+
+  var detail = 'Pour ' + S + ' m² à ' + D + ' L/100 m².';
+  if (!isNaN(C) && !isNaN(Cs) && Cs > 0) {
+    var conc_mL = (bouillie_L * C / Cs) * 1000;
+    var eau_mL  = bouillie_L * 1000 - conc_mL;
+    detail += '\n→ ' + conc_mL.toFixed(1) + ' mL de concentré + ' + eau_mL.toFixed(0) + ' mL d\'eau.';
+  }
+  document.getElementById('surf-detail').textContent = detail;
+  box.style.display = '';
+}
+
+/* ── Appâtage ── */
+function calcAppat() {
+  var S      = parseFloat(document.getElementById('app-surface').value);
+  var type   = document.getElementById('app-type').value;
+  var niveau = document.getElementById('app-niveau').value;
+  var dose   = parseFloat(document.getElementById('app-dose').value) || (type === 'rat' ? 75 : 20);
+  var box    = document.getElementById('app-result');
+
+  if (isNaN(S)) { box.style.display = 'none'; return; }
+
+  var densiteBase = type === 'rat' ? 30 : 7;   // m²/poste
+  var mult = niveau === 'faible' ? 1 : niveau === 'moyen' ? 0.7 : 0.5;
+  var nbPostes = Math.ceil(S / (densiteBase * mult));
+  var qteTotal = nbPostes * dose;
+
+  document.getElementById('app-postes').textContent = nbPostes + ' postes d\'appâtage';
+  document.getElementById('app-detail').textContent =
+    'Quantité totale de raticide : ' + qteTotal + ' g (' + (qteTotal / 1000).toFixed(2) + ' kg).\n'
+    + 'Dose par poste : ' + dose + ' g. Infestation : ' + niveau + '.';
+  box.style.display = '';
+}
+
+/* ── Nébulisation ── */
+function calcNebul() {
+  var S = parseFloat(document.getElementById('neb-surface').value);
+  var H = parseFloat(document.getElementById('neb-hauteur').value);
+  var D = parseFloat(document.getElementById('neb-dose').value);     // mL/m³
+  var Q = parseFloat(document.getElementById('neb-debit').value);    // mL/min
+  var box = document.getElementById('neb-result');
+
+  if (isNaN(S) || isNaN(H) || isNaN(D)) { box.style.display = 'none'; return; }
+  var volume_m3 = S * H;
+  var qte_mL    = volume_m3 * D;
+
+  document.getElementById('neb-vol').textContent = qte_mL.toFixed(0) + ' mL';
+  var detail = 'Volume traité : ' + volume_m3.toFixed(1) + ' m³.';
+  if (!isNaN(Q) && Q > 0) {
+    var duree = qte_mL / Q;
+    detail += '\nDurée estimée de nébulisation : ' + duree.toFixed(1) + ' min.';
+  }
+  document.getElementById('neb-detail').textContent = detail;
+  box.style.display = '';
+}
+</script>
+</body>
+</html>

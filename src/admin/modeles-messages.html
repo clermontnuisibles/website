@@ -1,0 +1,333 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Modèles de messages – Clermont Nuisibles</title>
+  <meta name="robots" content="noindex, nofollow">
+  <link rel="icon" type="image/svg+xml" href="../images/logo-icon.svg">
+  <link rel="stylesheet" href="../fonts/inter.css">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+      background: #f0f2ef;
+      min-height: 100dvh;
+      padding: 2rem 1rem 3rem;
+      display: flex; flex-direction: column; align-items: center;
+    }
+    .back { font-size: 0.82rem; color: #2d6a4f; text-decoration: none; margin-bottom: 1.5rem; align-self: flex-start; max-width: 700px; width: 100%; }
+    .back:hover { text-decoration: underline; }
+
+    h1 { font-size: 1.35rem; font-weight: 800; color: #1a2e1a; margin-bottom: 0.3rem; max-width: 700px; width: 100%; }
+    .subtitle { font-size: 0.88rem; color: #666; margin-bottom: 1.75rem; max-width: 700px; width: 100%; }
+
+    /* Filtres */
+    .filters { display: flex; gap: 0.55rem; flex-wrap: wrap; max-width: 700px; width: 100%; margin-bottom: 1.5rem; }
+    .filter-btn {
+      font-family: inherit; font-size: 0.8rem; font-weight: 600;
+      padding: 0.35rem 1rem; border-radius: 50px; cursor: pointer;
+      border: 1.5px solid #e5e7eb; background: #fff; color: #555;
+      transition: background 0.15s, border-color 0.15s, color 0.15s;
+    }
+    .filter-btn.active, .filter-btn:hover { background: #2d6a4f; color: #fff; border-color: #2d6a4f; }
+
+    /* Cards */
+    .cards { display: flex; flex-direction: column; gap: 1rem; max-width: 700px; width: 100%; }
+
+    .card {
+      background: #fff; border-radius: 16px;
+      box-shadow: 0 4px 18px rgba(0,0,0,0.07);
+      overflow: hidden;
+    }
+    .card-head {
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 1rem 1.25rem 0.75rem;
+      cursor: pointer; user-select: none;
+    }
+    .card-head:hover { background: #fafafa; }
+    .card-meta { display: flex; align-items: center; gap: 0.65rem; }
+    .tag {
+      font-size: 0.7rem; font-weight: 700; text-transform: uppercase;
+      letter-spacing: .07em; padding: 2px 8px; border-radius: 20px;
+    }
+    .tag-sms    { background: #dbeafe; color: #1e40af; }
+    .tag-email  { background: #fce7f3; color: #9d174d; }
+    .tag-verbal { background: #d1fae5; color: #065f46; }
+    .card-title { font-size: 0.95rem; font-weight: 700; color: #1a2e1a; }
+    .card-chevron { font-size: 1rem; color: #aaa; transition: transform 0.2s; }
+    .card.open .card-chevron { transform: rotate(180deg); }
+
+    .card-body { display: none; padding: 0 1.25rem 1.25rem; }
+    .card.open .card-body { display: block; }
+
+    .msg-box {
+      background: #f8fafc; border: 1.5px solid #e5e7eb; border-radius: 10px;
+      padding: 0.9rem 1rem; font-size: 0.86rem; line-height: 1.65;
+      color: #1a2e1a; white-space: pre-wrap; margin-bottom: 0.85rem;
+    }
+    .msg-box .var { color: #ea6c1e; font-weight: 600; }
+
+    .card-actions { display: flex; gap: 0.6rem; flex-wrap: wrap; }
+    .btn-copy {
+      font-family: inherit; font-size: 0.82rem; font-weight: 600;
+      padding: 0.5rem 1.1rem; border-radius: 50px; cursor: pointer;
+      border: 1.5px solid #2d6a4f; background: #fff; color: #2d6a4f;
+      transition: background 0.15s;
+    }
+    .btn-copy:hover, .btn-copy.copied { background: #2d6a4f; color: #fff; }
+    .btn-copy.copied { pointer-events: none; }
+
+    .note { font-size: 0.72rem; color: #aaa; margin-top: 0.5rem; }
+  </style>
+</head>
+<body>
+
+<a class="back" href="index.html">← Retour à l'administration</a>
+
+<h1>📨 Modèles de messages</h1>
+<p class="subtitle">Cliquez sur un modèle pour le développer, puis copiez le texte. Les zones en <strong style="color:#ea6c1e">orange</strong> sont à personnaliser.</p>
+
+<div class="filters">
+  <button class="filter-btn active" data-filter="all">Tous</button>
+  <button class="filter-btn" data-filter="sms">SMS</button>
+  <button class="filter-btn" data-filter="email">E-mail</button>
+  <button class="filter-btn" data-filter="verbal">Verbal / Tel</button>
+</div>
+
+<div class="cards" id="cards-list">
+
+  <!-- ── CONFIRMATION RDV ── -->
+  <div class="card" data-type="sms">
+    <div class="card-head" onclick="toggleCard(this)">
+      <div class="card-meta">
+        <span class="tag tag-sms">SMS</span>
+        <span class="card-title">Confirmation de rendez-vous</span>
+      </div>
+      <span class="card-chevron">▾</span>
+    </div>
+    <div class="card-body">
+      <div class="msg-box" id="msg-1">Bonjour <span class="var">[Prénom client]</span>, Clermont Nuisibles vous confirme votre intervention le <span class="var">[date]</span> entre <span class="var">[heure début]</span> et <span class="var">[heure fin]</span>. Technicien : <span class="var">[prénom technicien]</span>. Tél : 07 66 50 29 38. À bientôt !</div>
+      <div class="card-actions">
+        <button class="btn-copy" onclick="copyMsg('msg-1', this)">📋 Copier</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── RAPPEL VEILLE ── -->
+  <div class="card" data-type="sms">
+    <div class="card-head" onclick="toggleCard(this)">
+      <div class="card-meta">
+        <span class="tag tag-sms">SMS</span>
+        <span class="card-title">Rappel veille d'intervention</span>
+      </div>
+      <span class="card-chevron">▾</span>
+    </div>
+    <div class="card-body">
+      <div class="msg-box" id="msg-2">Bonjour <span class="var">[Prénom]</span>, rappel : votre intervention Clermont Nuisibles est demain <span class="var">[date]</span> à partir de <span class="var">[heure]</span>. Merci de vous assurer que l'accès est libre. À demain !</div>
+      <div class="card-actions">
+        <button class="btn-copy" onclick="copyMsg('msg-2', this)">📋 Copier</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── DEVIS ENVOYÉ ── -->
+  <div class="card" data-type="sms">
+    <div class="card-head" onclick="toggleCard(this)">
+      <div class="card-meta">
+        <span class="tag tag-sms">SMS</span>
+        <span class="card-title">Devis envoyé</span>
+      </div>
+      <span class="card-chevron">▾</span>
+    </div>
+    <div class="card-body">
+      <div class="msg-box" id="msg-3">Bonjour <span class="var">[Prénom]</span>, votre devis Clermont Nuisibles (<span class="var">[type de prestation]</span>) vient de vous être envoyé par e-mail. N'hésitez pas à me contacter au 07 66 50 29 38 pour toute question.</div>
+      <div class="card-actions">
+        <button class="btn-copy" onclick="copyMsg('msg-3', this)">📋 Copier</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── SUIVI APRÈS INTERVENTION ── -->
+  <div class="card" data-type="sms">
+    <div class="card-head" onclick="toggleCard(this)">
+      <div class="card-meta">
+        <span class="tag tag-sms">SMS</span>
+        <span class="card-title">Suivi après intervention</span>
+      </div>
+      <span class="card-chevron">▾</span>
+    </div>
+    <div class="card-body">
+      <div class="msg-box" id="msg-4">Bonjour <span class="var">[Prénom]</span>, suite à notre intervention du <span class="var">[date]</span>, je vous contacte pour un point de suivi. N'hésitez pas à me faire un retour sur la situation. Bonne journée, Evan – Clermont Nuisibles.</div>
+      <div class="card-actions">
+        <button class="btn-copy" onclick="copyMsg('msg-4', this)">📋 Copier</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── DEMANDE D'AVIS GOOGLE ── -->
+  <div class="card" data-type="sms">
+    <div class="card-head" onclick="toggleCard(this)">
+      <div class="card-meta">
+        <span class="tag tag-sms">SMS</span>
+        <span class="card-title">Demande d'avis Google</span>
+      </div>
+      <span class="card-chevron">▾</span>
+    </div>
+    <div class="card-body">
+      <div class="msg-box" id="msg-5">Bonjour <span class="var">[Prénom]</span>, j'espère que l'intervention vous a donné satisfaction ! Si vous avez 2 min, un avis Google m'aiderait beaucoup : <span class="var">[lien Google Review]</span> Merci d'avance ! Evan – Clermont Nuisibles.</div>
+      <div class="card-actions">
+        <button class="btn-copy" onclick="copyMsg('msg-5', this)">📋 Copier</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── E-MAIL DEVIS PRO ── -->
+  <div class="card" data-type="email">
+    <div class="card-head" onclick="toggleCard(this)">
+      <div class="card-meta">
+        <span class="tag tag-email">E-mail</span>
+        <span class="card-title">Envoi de devis (professionnel)</span>
+      </div>
+      <span class="card-chevron">▾</span>
+    </div>
+    <div class="card-body">
+      <div class="msg-box" id="msg-6">Objet : Devis intervention <span class="var">[type]</span> – Clermont Nuisibles
+
+Bonjour <span class="var">[Madame / Monsieur + NOM]</span>,
+
+Suite à notre échange, veuillez trouver ci-joint le devis n°<span class="var">[numéro]</span> pour une intervention de <span class="var">[type de prestation]</span> sur votre établissement situé au <span class="var">[adresse]</span>.
+
+Montant : <span class="var">[XX,XX]</span> € HT (TVA non applicable – art. 293 B du CGI)
+Validité du devis : 30 jours.
+
+Je reste disponible pour tout renseignement complémentaire.
+
+Cordialement,
+Evan PENARANDA
+Clermont Nuisibles – SIRET 100 387 190 00018
+Tél. : 07 66 50 29 38</div>
+      <div class="card-actions">
+        <button class="btn-copy" onclick="copyMsg('msg-6', this)">📋 Copier</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── E-MAIL RAPPORT INTERVENTION ── -->
+  <div class="card" data-type="email">
+    <div class="card-head" onclick="toggleCard(this)">
+      <div class="card-meta">
+        <span class="tag tag-email">E-mail</span>
+        <span class="card-title">Envoi du rapport d'intervention</span>
+      </div>
+      <span class="card-chevron">▾</span>
+    </div>
+    <div class="card-body">
+      <div class="msg-box" id="msg-7">Objet : Rapport d'intervention n°<span class="var">[numéro]</span> – Clermont Nuisibles
+
+Bonjour <span class="var">[Madame / Monsieur + NOM]</span>,
+
+Vous trouverez en pièce jointe le rapport de notre intervention du <span class="var">[date]</span> concernant <span class="var">[type de prestation]</span>.
+
+<span class="var">[Si suivi prévu]</span> Un passage de contrôle est prévu le <span class="var">[date de retour]</span>.
+
+Je reste à votre disposition pour toute question.
+
+Cordialement,
+Evan PENARANDA
+Clermont Nuisibles – 07 66 50 29 38</div>
+      <div class="card-actions">
+        <button class="btn-copy" onclick="copyMsg('msg-7', this)">📋 Copier</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── VERBAL ACCUEIL TÉLÉPHONIQUE ── -->
+  <div class="card" data-type="verbal">
+    <div class="card-head" onclick="toggleCard(this)">
+      <div class="card-meta">
+        <span class="tag tag-verbal">Verbal</span>
+        <span class="card-title">Accueil téléphonique</span>
+      </div>
+      <span class="card-chevron">▾</span>
+    </div>
+    <div class="card-body">
+      <div class="msg-box" id="msg-8">« Clermont Nuisibles, bonjour, Evan à l'appareil. »
+
+→ Écouter le problème
+→ Qualifier : quel nuisible ? Quelle surface ? Maison, appart ou pro ?
+→ Proposer : disponibilité, délai d'intervention
+→ Conclure : « Je vous envoie un SMS de confirmation avec la date et l'heure. »</div>
+      <div class="card-actions">
+        <button class="btn-copy" onclick="copyMsg('msg-8', this)">📋 Copier</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── VERBAL RÉPONSE AUX OBJECTIONS PRIX ── -->
+  <div class="card" data-type="verbal">
+    <div class="card-head" onclick="toggleCard(this)">
+      <div class="card-meta">
+        <span class="tag tag-verbal">Verbal</span>
+        <span class="card-title">Réponse à l'objection prix</span>
+      </div>
+      <span class="card-chevron">▾</span>
+    </div>
+    <div class="card-body">
+      <div class="msg-box" id="msg-9">« Je comprends. Le tarif inclut le déplacement, les produits professionnels homologués, et le rapport d'intervention. J'utilise des produits que vous ne trouverez pas en grande surface — c'est ce qui fait la différence sur la durée. Et si le problème revient dans les 30 jours, je repasse sans supplément. »</div>
+      <div class="card-actions">
+        <button class="btn-copy" onclick="copyMsg('msg-9', this)">📋 Copier</button>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<script>
+function toggleCard(head) {
+  var card = head.closest('.card');
+  card.classList.toggle('open');
+}
+
+function copyMsg(id, btn) {
+  var box = document.getElementById(id);
+  // Texte brut (sans les spans HTML)
+  var text = box.innerText;
+  navigator.clipboard.writeText(text).then(function () {
+    var orig = btn.textContent;
+    btn.textContent = '✓ Copié !';
+    btn.classList.add('copied');
+    setTimeout(function () {
+      btn.textContent = orig;
+      btn.classList.remove('copied');
+    }, 2000);
+  });
+}
+
+// Filtres
+document.querySelectorAll('.filter-btn').forEach(function (btn) {
+  btn.addEventListener('click', function () {
+    document.querySelectorAll('.filter-btn').forEach(function(b){ b.classList.remove('active'); });
+    btn.classList.add('active');
+    var filter = btn.dataset.filter;
+    document.querySelectorAll('.card').forEach(function (card) {
+      card.style.display = (filter === 'all' || card.dataset.type === filter) ? '' : 'none';
+    });
+  });
+});
+
+// Injecter le lien Google Review depuis config.js si dispo
+(function () {
+  var cfg = window.SiteConfig || {};
+  if (cfg.googleReviewUrl) {
+    var box = document.getElementById('msg-5');
+    box.innerHTML = box.innerHTML.replace(
+      '<span class="var">[lien Google Review]</span>',
+      '<span class="var">' + cfg.googleReviewUrl + '</span>'
+    );
+  }
+})();
+</script>
+<script src="../js/config.js"></script>
+</body>
+</html>

@@ -103,7 +103,10 @@
   <div class="icon-wrap">📅</div>
 
   <h1>Agenda & rendez-vous</h1>
-  <p class="subtitle">Accédez à votre outil de prise de rendez-vous en ligne et gérez votre planning d'interventions.</p>
+  <p class="subtitle">
+    Ci-dessous votre agenda Google en vue liste. Utilisez le bouton <strong>« Ouvrir dans Google Agenda »</strong> pour ajouter ou modifier des événements.<br><br>
+    Le bouton <strong>« Prendre un rendez-vous »</strong> ouvre votre page de réservation publique — c'est ce lien que vous pouvez partager à vos clients pour qu'ils choisissent eux-mêmes un créneau disponible.
+  </p>
 
   <div id="agenda-container">
     <div class="agenda-placeholder">
@@ -113,12 +116,9 @@
     <a id="btn-agenda" href="#" class="btn btn-disabled" target="_blank" rel="noopener" aria-disabled="true">
       📅 Ouvrir l'agenda
     </a>
-  </div>
-
-  <div class="config-hint">
-    Pour activer : ouvrez <code>js/config.js</code> et renseignez la clé <code>googleCalendarId</code>
-    avec l'adresse Gmail associée à votre Google Agenda.<br>
-    Exemple : <code>googleCalendarId: 'clermontnuisibles@gmail.com'</code>
+    <a id="btn-booking" href="#" class="btn btn-disabled" target="_blank" rel="noopener" aria-disabled="true" style="margin-top:0.75rem;">
+      ➕ Prendre un rendez-vous
+    </a>
   </div>
 
   <p class="note">Cette page est privée (noindex). Elle n'apparaît pas dans les moteurs de recherche.</p>
@@ -153,6 +153,16 @@
     btn.className = 'btn btn-primary';
     btn.style.display = 'inline-flex';
     btn.removeAttribute('aria-disabled');
+  }
+
+  var bookingUrl = cfg.googleBookingUrl;
+  var btnBooking = document.getElementById('btn-booking');
+  if (bookingUrl && bookingUrl.trim() !== '') {
+    btnBooking.href = bookingUrl;
+    btnBooking.className = 'btn btn-primary';
+    btnBooking.style.display = 'inline-flex';
+    btnBooking.style.marginTop = '0.75rem';
+    btnBooking.removeAttribute('aria-disabled');
   }
 })();
 </script>

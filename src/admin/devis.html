@@ -1,0 +1,377 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Devis – Clermont Nuisibles</title>
+  <meta name="robots" content="noindex, nofollow">
+  <link rel="icon" type="image/svg+xml" href="../images/logo-icon.svg">
+  <link rel="stylesheet" href="../fonts/inter.css">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+      background: #f0f2ef;
+      min-height: 100dvh;
+      padding: 2rem 1rem 3rem;
+      display: flex; flex-direction: column; align-items: center;
+    }
+    .back { font-size: 0.82rem; color: #2d6a4f; text-decoration: none; margin-bottom: 1.5rem; align-self: flex-start; max-width: 760px; width: 100%; }
+    .back:hover { text-decoration: underline; }
+
+    .actions { display: flex; gap: 0.75rem; justify-content: flex-end; max-width: 760px; width: 100%; margin-bottom: 1.25rem; flex-wrap: wrap; }
+    .btn {
+      display: inline-flex; align-items: center; gap: 0.45rem;
+      font-family: inherit; font-size: 0.9rem; font-weight: 600;
+      padding: 0.65rem 1.25rem; border-radius: 50px; cursor: pointer;
+      text-decoration: none; border: none; transition: opacity 0.15s, transform 0.15s;
+    }
+    .btn:hover { opacity: 0.88; transform: translateY(-1px); }
+    .btn-primary { background: #ea6c1e; color: #fff; }
+    .btn-outline { background: #fff; color: #2d6a4f; border: 1.5px solid #2d6a4f; }
+    .btn-ghost   { background: #f3f4f6; color: #555; }
+
+    /* ── Devis ── */
+    .devis {
+      background: #fff; border-radius: 20px;
+      box-shadow: 0 8px 40px rgba(0,0,0,0.09);
+      max-width: 760px; width: 100%;
+      padding: 2.5rem 2.25rem;
+    }
+
+    /* En-tête */
+    .devis-header {
+      display: flex; justify-content: space-between; align-items: flex-start; gap: 1rem;
+      margin-bottom: 2rem; padding-bottom: 1.5rem; border-bottom: 2px solid #2d6a4f;
+    }
+    .brand { display: flex; align-items: center; gap: 0.85rem; }
+    .brand img { width: 48px; height: 48px; }
+    .brand-text strong { display: block; font-size: 1.1rem; color: #1a2e1a; }
+    .brand-text span   { font-size: 0.78rem; color: #666; }
+    .devis-title-block { text-align: right; }
+    .devis-title-block h1 { font-size: 1.3rem; font-weight: 800; color: #2d6a4f; }
+    .devis-meta { font-size: 0.8rem; color: #999; margin-top: 0.3rem; display: flex; flex-direction: column; gap: 0.15rem; align-items: flex-end; }
+
+    /* Sections */
+    .section { margin-bottom: 1.75rem; }
+    .section-title {
+      font-size: 0.72rem; font-weight: 700; text-transform: uppercase;
+      letter-spacing: .09em; color: #2d6a4f;
+      background: #f0fdf4; border-left: 3px solid #2d6a4f;
+      padding: 0.35rem 0.75rem; border-radius: 0 6px 6px 0;
+      margin-bottom: 1rem;
+    }
+
+    .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 0.85rem; }
+    .field { display: flex; flex-direction: column; gap: 0.3rem; }
+    .field.full { grid-column: 1 / -1; }
+    .field label { font-size: 0.75rem; font-weight: 600; color: #555; }
+    .field input, .field textarea, .field select {
+      font-family: inherit; font-size: 0.88rem; color: #1a2e1a;
+      border: 1.5px solid #e5e7eb; border-radius: 8px;
+      padding: 0.55rem 0.75rem; background: #fafafa;
+      transition: border-color 0.15s; resize: vertical;
+    }
+    .field input:focus, .field textarea:focus, .field select:focus {
+      outline: none; border-color: #2d6a4f; background: #fff;
+    }
+
+    /* Lignes prestations */
+    .table-wrap { overflow-x: auto; }
+    table { width: 100%; border-collapse: collapse; font-size: 0.83rem; }
+    th {
+      background: #f0fdf4; color: #2d6a4f; font-weight: 700;
+      padding: 0.55rem 0.65rem; text-align: left; border: 1.5px solid #e5e7eb;
+      white-space: nowrap;
+    }
+    th.right, td.right { text-align: right; }
+    td { border: 1.5px solid #e5e7eb; padding: 0.3rem 0.4rem; }
+    td input {
+      width: 100%; font-family: inherit; font-size: 0.83rem; color: #1a2e1a;
+      border: none; background: transparent; padding: 0.2rem 0.3rem;
+    }
+    td input:focus { outline: none; background: #f0fdf4; border-radius: 4px; }
+    td input.right { text-align: right; }
+    td.total-cell { font-weight: 700; text-align: right; padding: 0.35rem 0.65rem; background: #fafafa; }
+    td.del-cell { text-align: center; width: 32px; }
+    .btn-del {
+      background: none; border: none; cursor: pointer; color: #d1d5db;
+      font-size: 1rem; padding: 0.1rem 0.3rem; transition: color 0.15s;
+    }
+    .btn-del:hover { color: #ef4444; }
+
+    .btn-add-row {
+      margin-top: 0.6rem; font-size: 0.8rem; font-weight: 600;
+      background: #f0fdf4; color: #2d6a4f; border: 1.5px dashed #2d6a4f;
+      border-radius: 8px; padding: 0.4rem 0.9rem; cursor: pointer;
+      font-family: inherit; transition: background 0.15s;
+    }
+    .btn-add-row:hover { background: #dcfce7; }
+
+    /* Totaux */
+    .totaux { display: flex; justify-content: flex-end; margin-top: 1.25rem; }
+    .totaux-table { width: 280px; font-size: 0.88rem; }
+    .totaux-table td { border: none; padding: 0.35rem 0.5rem; }
+    .totaux-table .total-ht { font-weight: 700; }
+    .totaux-table .total-ttc {
+      font-size: 1.05rem; font-weight: 800; color: #2d6a4f;
+      border-top: 2px solid #2d6a4f; padding-top: 0.5rem;
+    }
+    .totaux-table td:last-child { text-align: right; font-weight: 600; }
+
+    /* Conditions */
+    .conditions { display: grid; gap: 0.75rem; }
+    .cond-row { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 0.75rem; }
+
+    /* Signature */
+    .sig-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem; }
+    .sig-box { border: 1.5px solid #e5e7eb; border-radius: 12px; padding: 1rem; }
+    .sig-box label { font-size: 0.75rem; font-weight: 600; color: #555; display: block; margin-bottom: 0.5rem; }
+    .sig-zone { width: 100%; height: 80px; border: 1.5px dashed #d1d5db; border-radius: 8px; background: #fafafa; display: flex; align-items: center; justify-content: center; font-size: 0.8rem; color: #bbb; }
+
+    .mention { font-size: 0.72rem; color: #aaa; line-height: 1.6; margin-top: 1.5rem; padding-top: 1.25rem; border-top: 1px solid #f0f0f0; }
+
+    /* Impression */
+    @media print {
+      body { background: #fff; padding: 0; }
+      .back, .actions { display: none; }
+      .devis { box-shadow: none; border-radius: 0; padding: 1.5rem; max-width: 100%; }
+      .field input, .field textarea, .field select, td input { border-color: #ccc; background: #fff; }
+      .btn-add-row, .btn-del { display: none; }
+      @page { margin: 1.5cm; }
+    }
+
+    @media (max-width: 560px) {
+      .grid-2, .cond-row, .sig-grid { grid-template-columns: 1fr; }
+      .devis-header { flex-direction: column; }
+      .devis-title-block { text-align: left; }
+      .devis-meta { align-items: flex-start; }
+    }
+  </style>
+</head>
+<body>
+
+<a class="back" href="index.html">← Retour à l'administration</a>
+
+<div class="actions">
+  <button class="btn btn-ghost" onclick="resetDevis()">🗑 Effacer</button>
+  <button class="btn btn-outline" onclick="window.print()">🖨 Imprimer / PDF</button>
+</div>
+
+<div class="devis" id="devis">
+
+  <!-- En-tête -->
+  <div class="devis-header">
+    <div class="brand">
+      <img src="../images/logo-icon.svg" alt="Logo">
+      <div class="brand-text" id="brand-text">
+        <strong>Clermont Nuisibles</strong>
+        <span id="brand-details">Chargement…</span>
+      </div>
+    </div>
+    <div class="devis-title-block">
+      <h1>DEVIS</h1>
+      <div class="devis-meta">
+        <span>N° <input type="text" id="devis-num" style="width:110px;font-size:0.8rem;padding:0.2rem 0.4rem;border:1.5px solid #e5e7eb;border-radius:6px;" placeholder="2026-001"></span>
+        <span>Date : <input type="date" id="devis-date" style="font-size:0.8rem;padding:0.2rem 0.4rem;border:1.5px solid #e5e7eb;border-radius:6px;"></span>
+        <span>Valable jusqu'au : <input type="date" id="devis-validite" style="font-size:0.8rem;padding:0.2rem 0.4rem;border:1.5px solid #e5e7eb;border-radius:6px;"></span>
+      </div>
+    </div>
+  </div>
+
+  <!-- 1. Client -->
+  <div class="section">
+    <div class="section-title">1. Client</div>
+    <div class="grid-2">
+      <div class="field"><label>Nom / Raison sociale</label><input type="text" id="cli-nom" placeholder="M. Dupont / SAS Dupont"></div>
+      <div class="field"><label>Contact</label><input type="text" id="cli-contact" placeholder="Prénom NOM"></div>
+      <div class="field full"><label>Adresse</label><input type="text" id="cli-adresse" placeholder="N° rue, code postal, ville"></div>
+      <div class="field"><label>Téléphone</label><input type="tel" id="cli-tel" placeholder="06 XX XX XX XX"></div>
+      <div class="field"><label>E-mail</label><input type="email" id="cli-email" placeholder="client@email.fr"></div>
+    </div>
+  </div>
+
+  <!-- 2. Objet -->
+  <div class="section">
+    <div class="section-title">2. Objet de l'intervention</div>
+    <div class="grid-2">
+      <div class="field">
+        <label>Type d'intervention</label>
+        <select id="objet-type">
+          <option value="">— Sélectionner —</option>
+          <option>Dératisation</option>
+          <option>Désinsectisation</option>
+          <option>Désinfection</option>
+          <option>Traitement punaises de lit</option>
+          <option>Traitement cafards / blattes</option>
+          <option>Traitement fourmis</option>
+          <option>Traitement guêpes / frelons</option>
+          <option>Traitement moustiques</option>
+          <option>Diagnostic</option>
+          <option>Contrat de maintenance</option>
+        </select>
+      </div>
+      <div class="field"><label>Adresse du site (si différente)</label><input type="text" id="objet-lieu" placeholder="Adresse d'intervention"></div>
+      <div class="field full"><label>Description / détails</label><textarea id="objet-desc" rows="2" placeholder="Surface, nombre de pièces, contexte, contraintes particulières…"></textarea></div>
+    </div>
+  </div>
+
+  <!-- 3. Prestations -->
+  <div class="section">
+    <div class="section-title">3. Détail des prestations</div>
+    <div class="table-wrap">
+      <table id="table-lignes">
+        <thead>
+          <tr>
+            <th style="width:40%">Désignation</th>
+            <th class="right" style="width:10%">Qté</th>
+            <th class="right" style="width:15%">P.U. HT (€)</th>
+            <th class="right" style="width:15%">TVA (%)</th>
+            <th class="right" style="width:14%">Total HT (€)</th>
+            <th style="width:6%"></th>
+          </tr>
+        </thead>
+        <tbody id="tbody-lignes">
+          <!-- Les lignes sont ajoutées par JS -->
+        </tbody>
+      </table>
+    </div>
+    <button class="btn-add-row" onclick="addLigne()">+ Ajouter une ligne</button>
+
+    <div class="totaux">
+      <table class="totaux-table">
+        <tr class="total-ht"><td>Total HT</td><td id="tot-ht">0,00 €</td></tr>
+        <tr><td>TVA</td><td id="tot-tva">0,00 €</td></tr>
+        <tr class="total-ttc"><td>Total TTC</td><td id="tot-ttc">0,00 €</td></tr>
+      </table>
+    </div>
+  </div>
+
+  <!-- 4. Conditions -->
+  <div class="section">
+    <div class="section-title">4. Conditions</div>
+    <div class="conditions">
+      <div class="cond-row">
+        <div class="field"><label>Délai d'intervention</label><input type="text" id="cond-delai" placeholder="Ex. : Sous 48h"></div>
+        <div class="field"><label>Modalités de paiement</label><input type="text" id="cond-paiement" placeholder="Ex. : À réception de facture"></div>
+        <div class="field"><label>Garantie / suivi</label><input type="text" id="cond-garantie" placeholder="Ex. : Retour gratuit sous 30 jours"></div>
+      </div>
+      <div class="field"><label>Remarques / conditions particulières</label><textarea id="cond-remarques" rows="2" placeholder="Ex. : Tarif valable pour une intervention unique. Devis établi sans engagement."></textarea></div>
+    </div>
+  </div>
+
+  <!-- 5. Signature -->
+  <div class="section">
+    <div class="section-title">5. Bon pour accord</div>
+    <div class="sig-grid">
+      <div class="sig-box">
+        <label>Clermont Nuisibles — Signature &amp; cachet</label>
+        <div class="sig-zone">Signature</div>
+      </div>
+      <div class="sig-box">
+        <label>Client — Signature précédée de « Bon pour accord »</label>
+        <div class="sig-zone">Bon pour accord</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="mention" id="mention-footer">
+    TVA non applicable — article 293 B du CGI. &nbsp;|&nbsp; Clermont Nuisibles — auto-entrepreneur &nbsp;|&nbsp;
+    SIRET <span id="foot-siret">—</span> &nbsp;|&nbsp; <span id="foot-adresse">—</span>
+  </div>
+
+</div>
+
+<script src="../js/config.js"></script>
+<script>
+(function () {
+  var cfg = window.SiteConfig || {};
+
+  // En-tête
+  var details = [];
+  if (cfg.phone) details.push(cfg.phone);
+  if (cfg.email) details.push(cfg.email);
+  if (cfg.siteUrl) details.push(cfg.siteUrl.replace('https://', ''));
+  document.getElementById('brand-details').textContent = details.join(' · ');
+
+  // Pied de page
+  if (cfg.siret)        document.getElementById('foot-siret').textContent   = cfg.siret;
+  if (cfg.ownerAddress) document.getElementById('foot-adresse').textContent = cfg.ownerAddress;
+
+  // Dates par défaut
+  var today = new Date();
+  var pad = function(n){ return String(n).padStart(2,'0'); };
+  var iso  = today.getFullYear() + '-' + pad(today.getMonth()+1) + '-' + pad(today.getDate());
+  document.getElementById('devis-date').value = iso;
+
+  var validity = new Date(today);
+  validity.setDate(validity.getDate() + 30);
+  var isoV = validity.getFullYear() + '-' + pad(validity.getMonth()+1) + '-' + pad(validity.getDate());
+  document.getElementById('devis-validite').value = isoV;
+
+  // Numéro auto
+  var num = today.getFullYear() + '-' + pad(today.getMonth()+1) + pad(today.getDate());
+  document.getElementById('devis-num').placeholder = num;
+
+  // Première ligne
+  addLigne();
+})();
+
+var rowId = 0;
+
+function addLigne() {
+  rowId++;
+  var id = rowId;
+  var tbody = document.getElementById('tbody-lignes');
+  var tr = document.createElement('tr');
+  tr.id = 'row-' + id;
+  tr.innerHTML =
+    '<td><input type="text" placeholder="Ex. : Traitement cafards T3" oninput="updateTotaux()"></td>' +
+    '<td><input type="number" class="right" value="1" min="0" step="0.5" oninput="updateTotaux()" data-role="qty"></td>' +
+    '<td><input type="number" class="right" value="" min="0" step="0.01" placeholder="0.00" oninput="updateTotaux()" data-role="pu"></td>' +
+    '<td><input type="number" class="right" value="0" min="0" max="100" step="0.1" oninput="updateTotaux()" data-role="tva"></td>' +
+    '<td class="total-cell" id="tot-row-' + id + '">0,00</td>' +
+    '<td class="del-cell"><button class="btn-del" onclick="delLigne(' + id + ')" title="Supprimer">✕</button></td>';
+  tbody.appendChild(tr);
+}
+
+function delLigne(id) {
+  var row = document.getElementById('row-' + id);
+  if (row) row.remove();
+  updateTotaux();
+}
+
+function updateTotaux() {
+  var rows = document.querySelectorAll('#tbody-lignes tr');
+  var totalHT = 0, totalTVA = 0;
+  rows.forEach(function(tr) {
+    var qty = parseFloat(tr.querySelector('[data-role=qty]').value) || 0;
+    var pu  = parseFloat(tr.querySelector('[data-role=pu]').value)  || 0;
+    var tva = parseFloat(tr.querySelector('[data-role=tva]').value) || 0;
+    var ht  = qty * pu;
+    var tvaAmt = ht * tva / 100;
+    totalHT  += ht;
+    totalTVA += tvaAmt;
+    var cell = tr.querySelector('[id^=tot-row-]');
+    if (cell) cell.textContent = ht.toFixed(2).replace('.', ',');
+  });
+  document.getElementById('tot-ht').textContent  = totalHT.toFixed(2).replace('.', ',') + ' €';
+  document.getElementById('tot-tva').textContent = totalTVA.toFixed(2).replace('.', ',') + ' €';
+  document.getElementById('tot-ttc').textContent = (totalHT + totalTVA).toFixed(2).replace('.', ',') + ' €';
+}
+
+function resetDevis() {
+  if (!confirm('Effacer tous les champs du devis ?')) return;
+  document.querySelectorAll('input[type=text], input[type=tel], input[type=email], input[type=number], textarea, select')
+    .forEach(function(el) {
+      if (el.id === 'devis-date' || el.id === 'devis-validite') return;
+      el.value = '';
+    });
+  document.getElementById('tbody-lignes').innerHTML = '';
+  rowId = 0;
+  addLigne();
+  updateTotaux();
+}
+</script>
+</body>
+</html>

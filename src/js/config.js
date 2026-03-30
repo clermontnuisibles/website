@@ -53,4 +53,10 @@ window.SiteConfig = {
      src=XXXX dans l'URL d'intégration (souvent votre adresse Gmail).
      Ex. : 'clermontnuisibles@gmail.com'                            */
   googleCalendarId: 'clermontnuisibles@gmail.com',
+
+  /* ── Lien de réservation Google ────────────────────────────────────
+     Google Agenda → + Créer → Créneaux de réservation → Voir la page
+     Copier l'URL de partage (ex. https://calendar.app.google/XXXX)
+     Laisser vide (‘’) pour masquer le bouton de réservation.         */
+  googleBookingUrl: 'https://calendar.app.google/W3hPKxHths3qbvYF6',
 };

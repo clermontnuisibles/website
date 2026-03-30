@@ -1,0 +1,298 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Alertes certifications – Clermont Nuisibles</title>
+  <meta name="robots" content="noindex, nofollow">
+  <link rel="icon" type="image/svg+xml" href="../images/logo-icon.svg">
+  <link rel="stylesheet" href="../fonts/inter.css">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    body { font-family: 'Inter', sans-serif; background: #f0f2ef; min-height: 100dvh; padding: 2rem 1rem 3rem; display: flex; flex-direction: column; align-items: center; }
+    .back { font-size: .82rem; color: #2d6a4f; text-decoration: none; margin-bottom: 1.5rem; align-self: flex-start; max-width: 700px; width: 100%; }
+    .back:hover { text-decoration: underline; }
+    .page-head { max-width: 700px; width: 100%; display: flex; align-items: flex-start; justify-content: space-between; gap: 1rem; margin-bottom: 1.25rem; flex-wrap: wrap; }
+    h1 { font-size: 1.3rem; font-weight: 800; color: #1a2e1a; }
+    .subtitle { font-size: .82rem; color: #888; margin-top: .2rem; }
+    .btn { display: inline-flex; align-items: center; gap: .4rem; font-family: inherit; font-size: .88rem; font-weight: 700; padding: .6rem 1.2rem; border-radius: 50px; cursor: pointer; border: none; transition: opacity .15s, transform .15s; text-decoration: none; }
+    .btn:hover { opacity: .88; transform: translateY(-1px); }
+    .btn-primary { background: #2d6a4f; color: #fff; }
+    .btn-small { font-size: .75rem; padding: .35rem .85rem; }
+    .btn-danger { background: #fee2e2; color: #b91c1c; }
+    .btn-edit   { background: #f0fdf4; color: #2d6a4f; border: 1.5px solid #2d6a4f; }
+
+    /* Bannière globale */
+    .alert-banner { max-width: 700px; width: 100%; border-radius: 12px; padding: .75rem 1rem; font-size: .83rem; font-weight: 600; margin-bottom: 1rem; display: none; }
+    .alert-banner.danger { background: #fee2e2; color: #b91c1c; border: 1.5px solid #fca5a5; }
+    .alert-banner.warn   { background: #fff7ed; color: #c2410c; border: 1.5px solid #fdba74; }
+
+    /* Cards */
+    .cards { display: flex; flex-direction: column; gap: .85rem; max-width: 700px; width: 100%; }
+    .card {
+      background: #fff; border-radius: 16px; box-shadow: 0 4px 18px rgba(0,0,0,.07);
+      padding: 1.1rem 1.25rem; display: flex; align-items: center; gap: 1rem;
+      border-left: 5px solid #e5e7eb;
+    }
+    .card.red    { border-left-color: #ef4444; }
+    .card.orange { border-left-color: #ea6c1e; }
+    .card.green  { border-left-color: #2d6a4f; }
+    .card-info { flex: 1; min-width: 0; }
+    .card-name { font-size: .98rem; font-weight: 700; color: #1a2e1a; }
+    .card-org  { font-size: .78rem; color: #888; margin-top: .15rem; }
+    .card-date { font-size: .8rem; color: #555; margin-top: .4rem; }
+    .card-notes { font-size: .77rem; color: #aaa; margin-top: .25rem; font-style: italic; white-space: pre-wrap; word-break: break-word; }
+    .badge {
+      flex-shrink: 0; font-size: .78rem; font-weight: 800; text-align: center;
+      padding: .4rem .75rem; border-radius: 10px; white-space: nowrap;
+    }
+    .badge.red    { background: #fee2e2; color: #b91c1c; }
+    .badge.orange { background: #fff7ed; color: #c2410c; }
+    .badge.green  { background: #d1fae5; color: #065f46; }
+    .card-actions { display: flex; gap: .4rem; flex-shrink: 0; }
+
+    .empty { color: #aaa; font-size: .88rem; text-align: center; padding: 2.5rem; max-width: 700px; width: 100%; }
+
+    /* Modal */
+    .overlay { position: fixed; inset: 0; background: rgba(0,0,0,.35); display: flex; align-items: center; justify-content: center; z-index: 100; padding: 1rem; }
+    .overlay.hidden { display: none; }
+    .modal { background: #fff; border-radius: 20px; padding: 2rem; width: 100%; max-width: 460px; box-shadow: 0 20px 60px rgba(0,0,0,.2); }
+    .modal h2 { font-size: 1.1rem; font-weight: 800; margin-bottom: 1.25rem; color: #1a2e1a; }
+    .field { display: flex; flex-direction: column; gap: .3rem; margin-bottom: .85rem; }
+    .field label { font-size: .75rem; font-weight: 600; color: #555; }
+    .field input, .field select, .field textarea {
+      font-family: inherit; font-size: .88rem; color: #1a2e1a;
+      border: 1.5px solid #e5e7eb; border-radius: 8px; padding: .55rem .75rem; background: #fafafa;
+    }
+    .field input:focus, .field select:focus, .field textarea:focus { outline: none; border-color: #2d6a4f; background: #fff; }
+    .field textarea { resize: vertical; }
+    .modal-actions { display: flex; gap: .6rem; justify-content: flex-end; margin-top: 1.25rem; }
+
+    .storage-note { font-size: .72rem; color: #aaa; max-width: 700px; width: 100%; margin-top: 1.5rem; padding: .65rem .85rem; background: #f8fafc; border-radius: 8px; line-height: 1.55; }
+
+    @media (max-width: 500px) { .card { flex-wrap: wrap; } .card-actions { width: 100%; } }
+  </style>
+</head>
+<body>
+
+<a class="back" href="index.html">← Retour à l'administration</a>
+
+<div class="page-head">
+  <div>
+    <h1>🔔 Alertes certifications</h1>
+    <div class="subtitle">Certiphyto, assurances, agréments, formations — ne manquez aucune échéance.</div>
+  </div>
+  <button class="btn btn-primary" onclick="openModal()">+ Ajouter</button>
+</div>
+
+<div id="banner-danger" class="alert-banner danger"></div>
+<div id="banner-warn"   class="alert-banner warn"></div>
+
+<div id="cards-list" class="cards"></div>
+<div id="empty-msg"  class="empty" style="display:none">Aucune certification enregistrée. Cliquez sur « + Ajouter » pour commencer.</div>
+
+<div class="storage-note">🔒 Données stockées localement dans ce navigateur (localStorage). Aucune information n'est transmise à un serveur. En cas de changement de navigateur ou d'effacement des données, les entrées seront perdues — pensez à imprimer vos alertes importantes.</div>
+
+<!-- Modal -->
+<div id="modal" class="overlay hidden" role="dialog" aria-modal="true" aria-labelledby="modal-title">
+  <div class="modal">
+    <h2 id="modal-title">Ajouter une certification</h2>
+    <input type="hidden" id="edit-id">
+    <div class="field"><label>Nom de la certification *</label><input type="text" id="f-nom" placeholder="Ex. : Certiphyto opérateur" maxlength="120"></div>
+    <div class="field"><label>Organisme</label><input type="text" id="f-org" placeholder="Ex. : Chambre d'Agriculture 63" maxlength="100"></div>
+    <div class="field"><label>Date d'expiration *</label><input type="date" id="f-date"></div>
+    <div class="field">
+      <label>Alerte avant expiration</label>
+      <select id="f-alerte">
+        <option value="30">30 jours avant</option>
+        <option value="60">60 jours avant</option>
+        <option value="90" selected>90 jours avant</option>
+        <option value="180">6 mois avant</option>
+        <option value="365">1 an avant</option>
+      </select>
+    </div>
+    <div class="field"><label>Notes</label><textarea id="f-notes" rows="2" placeholder="N° de certificat, contact organisme…" maxlength="500"></textarea></div>
+    <div id="modal-error" style="font-size:.8rem;color:#b91c1c;margin-top:.5rem;display:none;"></div>
+    <div class="modal-actions">
+      <button class="btn btn-small btn-danger" onclick="closeModal()">Annuler</button>
+      <button class="btn btn-small btn-primary" onclick="saveItem()">Enregistrer</button>
+    </div>
+  </div>
+</div>
+
+<script>
+var STORE_KEY = 'cn_certifs';
+
+function esc(s) {
+  return String(s ?? '').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/'/g,'&#x27;');
+}
+
+function load() {
+  try { return JSON.parse(localStorage.getItem(STORE_KEY) || '[]'); }
+  catch(e) { return []; }
+}
+
+function save(data) {
+  localStorage.setItem(STORE_KEY, JSON.stringify(data));
+}
+
+function uid() {
+  return Date.now().toString(36) + Math.random().toString(36).slice(2);
+}
+
+function daysUntil(dateStr) {
+  var d = new Date(dateStr);
+  d.setHours(0,0,0,0);
+  var now = new Date(); now.setHours(0,0,0,0);
+  return Math.round((d - now) / 86400000);
+}
+
+function colorClass(days) {
+  if (days < 0)   return 'red';
+  if (days <= 30)  return 'red';
+  if (days <= 90)  return 'orange';
+  return 'green';
+}
+
+function badgeLabel(days) {
+  if (days < 0)  return 'Expirée';
+  if (days === 0) return 'Aujourd\'hui !';
+  return days + ' j restants';
+}
+
+function render() {
+  var data = load();
+  var list = document.getElementById('cards-list');
+  var empty = document.getElementById('empty-msg');
+  list.innerHTML = '';
+
+  if (!data.length) { empty.style.display = ''; return; }
+  empty.style.display = 'none';
+
+  // Trier par urgence (plus proche en premier)
+  data.sort(function(a,b){ return new Date(a.dateExpiration) - new Date(b.dateExpiration); });
+
+  var hasExpired = false, hasWarn = false;
+  data.forEach(function(item) {
+    var days = daysUntil(item.dateExpiration);
+    var cls  = colorClass(days);
+    if (cls === 'red')    hasExpired = true;
+    if (cls === 'orange') hasWarn    = true;
+
+    var card = document.createElement('div');
+    card.className = 'card ' + cls;
+    card.innerHTML =
+      '<div class="card-info">' +
+        '<div class="card-name">' + esc(item.nom) + '</div>' +
+        (item.organisme ? '<div class="card-org">' + esc(item.organisme) + '</div>' : '') +
+        '<div class="card-date">Expiration : ' + formatDate(item.dateExpiration) + ' &nbsp;·&nbsp; Alerte : ' + esc(item.alerteJours) + 'j avant</div>' +
+        (item.notes ? '<div class="card-notes">' + esc(item.notes) + '</div>' : '') +
+      '</div>' +
+      '<span class="badge ' + cls + '">' + esc(badgeLabel(days)) + '</span>' +
+      '<div class="card-actions">' +
+        '<button class="btn btn-small btn-edit" onclick="openModal(\'' + esc(item.id) + '\')">✏️</button>' +
+        '<button class="btn btn-small btn-danger" onclick="deleteItem(\'' + esc(item.id) + '\')">🗑</button>' +
+      '</div>';
+    list.appendChild(card);
+  });
+
+  var bd = document.getElementById('banner-danger');
+  var bw = document.getElementById('banner-warn');
+  bd.style.display = hasExpired ? '' : 'none';
+  if (hasExpired) { var nb = data.filter(function(i){return colorClass(daysUntil(i.dateExpiration))==='red';}).length; bd.textContent = '⚠️ ' + nb + ' certification(s) expirée(s) ou à renouveler dans moins de 30 jours !'; }
+  bw.style.display = hasWarn ? '' : 'none';
+  if (hasWarn)    { var nb2 = data.filter(function(i){return colorClass(daysUntil(i.dateExpiration))==='orange';}).length; bw.textContent = '⏰ ' + nb2 + ' certification(s) à renouveler dans les 90 jours.'; }
+}
+
+function formatDate(str) {
+  if (!str) return '—';
+  var p = str.split('-');
+  return p[2] + '/' + p[1] + '/' + p[0];
+}
+
+function openModal(id) {
+  document.getElementById('edit-id').value = id || '';
+  document.getElementById('f-nom').value = '';
+  document.getElementById('f-org').value = '';
+  document.getElementById('f-date').value = '';
+  document.getElementById('f-alerte').value = '90';
+  document.getElementById('f-notes').value= '';
+  document.getElementById('modal-error').style.display = 'none';
+  document.getElementById('modal-title').textContent = id ? 'Modifier' : 'Ajouter une certification';
+
+  if (id) {
+    var item = load().find(function(i){ return i.id === id; });
+    if (item) {
+      document.getElementById('f-nom').value   = item.nom;
+      document.getElementById('f-org').value   = item.organisme || '';
+      document.getElementById('f-date').value  = item.dateExpiration;
+      document.getElementById('f-alerte').value= String(item.alerteJours);
+      document.getElementById('f-notes').value = item.notes || '';
+    }
+  }
+  document.getElementById('modal').classList.remove('hidden');
+  document.getElementById('f-nom').focus();
+}
+
+function closeModal() {
+  document.getElementById('modal').classList.add('hidden');
+}
+
+function saveItem() {
+  var nom   = document.getElementById('f-nom').value.trim();
+  var date  = document.getElementById('f-date').value;
+  var errEl = document.getElementById('modal-error');
+
+  if (!nom) { errEl.textContent = 'Le nom est obligatoire.'; errEl.style.display=''; return; }
+  if (!date) { errEl.textContent = 'La date d\'expiration est obligatoire.'; errEl.style.display=''; return; }
+  errEl.style.display = 'none';
+
+  var data = load();
+  var editId = document.getElementById('edit-id').value;
+  var item = {
+    id:             editId || uid(),
+    nom:            nom,
+    organisme:      document.getElementById('f-org').value.trim(),
+    dateExpiration: date,
+    alerteJours:    parseInt(document.getElementById('f-alerte').value, 10),
+    notes:          document.getElementById('f-notes').value.trim()
+  };
+
+  if (editId) {
+    var idx = data.findIndex(function(i){ return i.id === editId; });
+    if (idx !== -1) data[idx] = item; else data.push(item);
+  } else {
+    data.push(item);
+  }
+  save(data);
+  closeModal();
+  render();
+}
+
+function deleteItem(id) {
+  if (!confirm('Supprimer cette certification ?')) return;
+  save(load().filter(function(i){ return i.id !== id; }));
+  render();
+}
+
+// Fermer modal sur clic en dehors
+document.getElementById('modal').addEventListener('click', function(e){
+  if (e.target === this) closeModal();
+});
+
+// Données de démonstration au premier lancement
+if (!localStorage.getItem(STORE_KEY)) {
+  var today = new Date();
+  var addDays = function(d, n){ var r=new Date(d);r.setDate(r.getDate()+n);return r.toISOString().split('T')[0]; };
+  var demo = [
+    { id: uid(), nom: 'Certiphyto opérateur', organisme: 'Chambre d\'Agriculture 63', dateExpiration: addDays(today, 20), alerteJours: 90, notes: '' },
+    { id: uid(), nom: 'Assurance RC Pro', organisme: 'MAAF', dateExpiration: addDays(today, 120), alerteJours: 60, notes: 'Renouvellement annuel' },
+    { id: uid(), nom: 'Agrément préfectoral biocides', organisme: 'Préfecture 63', dateExpiration: addDays(today, 400), alerteJours: 90, notes: '' }
+  ];
+  save(demo);
+}
+
+render();
+</script>
+</body>
+</html>

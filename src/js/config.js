@@ -59,4 +59,13 @@ window.SiteConfig = {
      Copier l'URL de partage (ex. https://calendar.app.google/XXXX)
      Laisser vide (‘’) pour masquer le bouton de réservation.         */
   googleBookingUrl: 'https://calendar.app.google/W3hPKxHths3qbvYF6',
+
+  /* ── Google Drive — sauvegarde admin ───────────────────────────
+     Créez un projet sur https://console.cloud.google.com,
+     activez l'API Google Drive, puis créez un ID client OAuth 2.0
+     (type : Application Web) avec comme origine autorisée votre
+     domaine (ex. https://clermont-nuisibles.fr).
+     Collez ici l'ID se terminant par .apps.googleusercontent.com
+     Laisser vide ('') pour désactiver la sync Google Drive.       */
+  googleDriveClientId: '',
 };

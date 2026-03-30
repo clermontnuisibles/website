@@ -1,0 +1,410 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Suivi clients – Clermont Nuisibles</title>
+  <meta name="robots" content="noindex, nofollow">
+  <link rel="icon" type="image/svg+xml" href="../images/logo-icon.svg">
+  <link rel="stylesheet" href="../fonts/inter.css">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    body { font-family: 'Inter', sans-serif; background: #f0f2ef; min-height: 100dvh; padding: 2rem 1rem 3rem; display: flex; flex-direction: column; align-items: center; }
+    .back { font-size: .82rem; color: #2d6a4f; text-decoration: none; margin-bottom: 1.5rem; align-self: flex-start; max-width: 900px; width: 100%; }
+    .back:hover { text-decoration: underline; }
+    .page-head { max-width: 900px; width: 100%; display: flex; align-items: flex-start; justify-content: space-between; gap: 1rem; margin-bottom: 1rem; flex-wrap: wrap; }
+    h1 { font-size: 1.3rem; font-weight: 800; color: #1a2e1a; }
+    .subtitle { font-size: .82rem; color: #888; margin-top: .2rem; }
+    .btn { display: inline-flex; align-items: center; gap: .4rem; font-family: inherit; font-size: .88rem; font-weight: 700; padding: .6rem 1.2rem; border-radius: 50px; cursor: pointer; border: none; transition: opacity .15s, transform .15s; }
+    .btn:hover { opacity: .88; transform: translateY(-1px); }
+    .btn-primary { background: #2d6a4f; color: #fff; }
+    .btn-small { font-size: .75rem; padding: .3rem .75rem; }
+    .btn-danger { background: #fee2e2; color: #b91c1c; }
+    .btn-edit   { background: #f0fdf4; color: #2d6a4f; border: 1.5px solid #2d6a4f; }
+    .btn-ghost  { background: #f3f4f6; color: #555; }
+
+    /* Layout deux colonnes */
+    .layout { max-width: 900px; width: 100%; display: grid; grid-template-columns: 280px 1fr; gap: 1rem; }
+
+    /* ── Panel gauche : liste clients ── */
+    .client-panel { background: #fff; border-radius: 18px; box-shadow: 0 4px 20px rgba(0,0,0,.08); overflow: hidden; display: flex; flex-direction: column; max-height: 75vh; }
+    .panel-header { padding: .85rem 1rem; border-bottom: 1.5px solid #f0f0f0; }
+    .search-input { width: 100%; font-family: inherit; font-size: .84rem; border: 1.5px solid #e5e7eb; border-radius: 8px; padding: .4rem .75rem; background: #fafafa; }
+    .search-input:focus { outline: none; border-color: #2d6a4f; }
+    .client-list { overflow-y: auto; flex: 1; }
+    .client-item { display: flex; align-items: center; gap: .65rem; padding: .8rem 1rem; cursor: pointer; border-bottom: 1px solid #f5f5f5; transition: background .1s; }
+    .client-item:hover  { background: #f9fafb; }
+    .client-item.active { background: #f0fdf4; }
+    .client-avatar { width: 36px; height: 36px; border-radius: 50%; background: #d8f3e8; display: flex; align-items: center; justify-content: center; font-size: .88rem; font-weight: 800; color: #2d6a4f; flex-shrink: 0; }
+    .client-name  { font-size: .88rem; font-weight: 700; color: #1a2e1a; }
+    .client-meta  { font-size: .73rem; color: #aaa; }
+    .client-badge { margin-left: auto; flex-shrink: 0; background: #e5e7eb; color: #555; font-size: .7rem; font-weight: 700; padding: 1px 7px; border-radius: 20px; }
+    .no-clients   { padding: 1.5rem; text-align: center; color: #aaa; font-size: .84rem; }
+    .panel-footer { padding: .7rem 1rem; border-top: 1.5px solid #f0f0f0; }
+    .count { font-size: .75rem; color: #aaa; }
+
+    /* ── Panel droit : fiche client ── */
+    .detail-panel { background: #fff; border-radius: 18px; box-shadow: 0 4px 20px rgba(0,0,0,.08); padding: 1.5rem; overflow-y: auto; max-height: 75vh; }
+    .detail-empty { color: #bbb; font-size: .9rem; text-align: center; padding: 3rem 1rem; }
+
+    .client-card-head { display: flex; align-items: flex-start; justify-content: space-between; gap: 1rem; margin-bottom: 1.25rem; flex-wrap: wrap; }
+    .client-card-name { font-size: 1.2rem; font-weight: 800; color: #1a2e1a; }
+    .client-card-type { font-size: .72rem; font-weight: 700; text-transform: uppercase; letter-spacing: .07em; background: #dbeafe; color: #1e40af; padding: 2px 8px; border-radius: 20px; display: inline-block; margin-top: .25rem; }
+    .client-info-grid { display: grid; grid-template-columns: 1fr 1fr; gap: .4rem .85rem; font-size: .83rem; margin-bottom: 1.25rem; }
+    .info-lbl { font-size: .72rem; font-weight: 700; text-transform: uppercase; letter-spacing: .06em; color: #aaa; }
+    .info-val { color: #1a2e1a; word-break: break-word; }
+    .client-notes { font-size: .8rem; color: #888; font-style: italic; background: #f8fafc; border-radius: 8px; padding: .65rem .85rem; margin-bottom: 1.25rem; white-space: pre-wrap; word-break: break-word; }
+
+    /* Interventions */
+    .section-title { font-size: .72rem; font-weight: 700; text-transform: uppercase; letter-spacing: .09em; color: #2d6a4f; background: #f0fdf4; border-left: 3px solid #2d6a4f; padding: .3rem .6rem; border-radius: 0 6px 6px 0; margin-bottom: .85rem; display: flex; align-items: center; justify-content: space-between; }
+    .itv-list { display: flex; flex-direction: column; gap: .55rem; }
+    .itv-card { border: 1.5px solid #e5e7eb; border-radius: 10px; padding: .75rem .9rem; font-size: .82rem; }
+    .itv-head { display: flex; align-items: center; justify-content: space-between; gap: .5rem; }
+    .itv-date { font-weight: 700; color: #1a2e1a; }
+    .itv-type { font-size: .72rem; background: #dbeafe; color: #1e40af; padding: 1px 7px; border-radius: 20px; font-weight: 700; }
+    .itv-detail { margin-top: .35rem; color: #555; }
+    .itv-montant { font-weight: 700; color: #2d6a4f; }
+    .itv-notes { margin-top: .25rem; color: #aaa; font-style: italic; white-space: pre-wrap; word-break: break-word; }
+    .no-itv { color: #aaa; font-size: .82rem; text-align: center; padding: 1rem; }
+
+    /* Modals */
+    .overlay { position: fixed; inset: 0; background: rgba(0,0,0,.35); display: flex; align-items: center; justify-content: center; z-index: 100; padding: 1rem; }
+    .overlay.hidden { display: none; }
+    .modal { background: #fff; border-radius: 20px; padding: 2rem; width: 100%; max-width: 500px; box-shadow: 0 20px 60px rgba(0,0,0,.2); max-height: 90vh; overflow-y: auto; }
+    .modal h2 { font-size: 1.1rem; font-weight: 800; margin-bottom: 1.25rem; }
+    .field { display: flex; flex-direction: column; gap: .3rem; margin-bottom: .8rem; }
+    .field label { font-size: .75rem; font-weight: 600; color: #555; }
+    .field input, .field select, .field textarea { font-family: inherit; font-size: .88rem; border: 1.5px solid #e5e7eb; border-radius: 8px; padding: .55rem .75rem; background: #fafafa; color: #1a2e1a; resize: vertical; }
+    .field input:focus, .field select:focus, .field textarea:focus { outline: none; border-color: #2d6a4f; background: #fff; }
+    .grid-2m { display: grid; grid-template-columns: 1fr 1fr; gap: .75rem; }
+    .modal-actions { display: flex; gap: .6rem; justify-content: flex-end; margin-top: 1.25rem; }
+    .modal-error { font-size: .8rem; color: #b91c1c; margin-top: .5rem; display: none; }
+
+    .storage-note { font-size: .72rem; color: #aaa; max-width: 900px; width: 100%; margin-top: 1.5rem; padding: .65rem .85rem; background: #f8fafc; border-radius: 8px; line-height: 1.55; }
+
+    @media (max-width: 640px) {
+      .layout { grid-template-columns: 1fr; }
+      .client-panel, .detail-panel { max-height: none; }
+      .grid-2m { grid-template-columns: 1fr; }
+    }
+  </style>
+</head>
+<body>
+
+<a class="back" href="index.html">← Retour à l'administration</a>
+
+<div class="page-head">
+  <div>
+    <h1>👥 Suivi clients</h1>
+    <div class="subtitle">Fiches clients et historique d'interventions.</div>
+  </div>
+  <button class="btn btn-primary" onclick="openClientModal()">+ Nouveau client</button>
+</div>
+
+<div class="layout">
+  <!-- Liste clients -->
+  <div class="client-panel">
+    <div class="panel-header">
+      <input class="search-input" type="search" id="search" placeholder="🔍 Rechercher un client…" oninput="renderList()">
+    </div>
+    <div class="client-list" id="client-list"></div>
+    <div class="panel-footer"><span class="count" id="list-count">0 client(s)</span></div>
+  </div>
+
+  <!-- Fiche client -->
+  <div class="detail-panel" id="detail-panel">
+    <div class="detail-empty">Sélectionnez un client pour voir sa fiche.</div>
+  </div>
+</div>
+
+<div class="storage-note">🔒 Données stockées localement dans ce navigateur (localStorage). Aucune information n'est transmise à un serveur. Changement d'appareil ou effacement du navigateur = perte des données.</div>
+
+<!-- Modal client -->
+<div id="client-modal" class="overlay hidden" role="dialog" aria-modal="true">
+  <div class="modal">
+    <h2 id="client-modal-title">Nouveau client</h2>
+    <input type="hidden" id="ec-id">
+    <div class="grid-2m">
+      <div class="field"><label>Nom / Raison sociale *</label><input type="text" id="ec-nom" maxlength="100" placeholder="M. Dupont / SAS…"></div>
+      <div class="field">
+        <label>Type</label>
+        <select id="ec-type">
+          <option value="particulier">Particulier</option>
+          <option value="professionnel">Professionnel</option>
+          <option value="syndic">Syndic / Copropriété</option>
+          <option value="collectivite">Collectivité</option>
+        </select>
+      </div>
+    </div>
+    <div class="field"><label>Adresse</label><input type="text" id="ec-adresse" maxlength="150" placeholder="Rue, code postal, ville"></div>
+    <div class="grid-2m">
+      <div class="field"><label>Téléphone</label><input type="tel" id="ec-tel" maxlength="20" placeholder="06 XX XX XX XX"></div>
+      <div class="field"><label>E-mail</label><input type="email" id="ec-email" maxlength="100" placeholder="client@email.fr"></div>
+    </div>
+    <div class="field"><label>Notes</label><textarea id="ec-notes" rows="2" maxlength="500" placeholder="Informations utiles, contraintes…"></textarea></div>
+    <div class="modal-error" id="ec-error"></div>
+    <div class="modal-actions">
+      <button class="btn btn-small btn-danger" onclick="closeClientModal()">Annuler</button>
+      <button class="btn btn-small btn-primary" onclick="saveClient()">Enregistrer</button>
+    </div>
+  </div>
+</div>
+
+<!-- Modal intervention -->
+<div id="itv-modal" class="overlay hidden" role="dialog" aria-modal="true">
+  <div class="modal">
+    <h2 id="itv-modal-title">Ajouter une intervention</h2>
+    <input type="hidden" id="ei-clientId">
+    <input type="hidden" id="ei-id">
+    <div class="grid-2m">
+      <div class="field"><label>Date *</label><input type="date" id="ei-date"></div>
+      <div class="field">
+        <label>Type *</label>
+        <select id="ei-type">
+          <option value="">— Sélectionner —</option>
+          <option>Dératisation</option>
+          <option>Désinsectisation</option>
+          <option>Désinfection</option>
+          <option>Traitement punaises de lit</option>
+          <option>Traitement cafards / blattes</option>
+          <option>Traitement fourmis</option>
+          <option>Traitement guêpes / frelons</option>
+          <option>Diagnostic</option>
+          <option>Autre</option>
+        </select>
+      </div>
+    </div>
+    <div class="grid-2m">
+      <div class="field"><label>Nuisible ciblé</label><input type="text" id="ei-nuisible" maxlength="80" placeholder="Rats, cafards…"></div>
+      <div class="field"><label>Montant (€)</label><input type="number" id="ei-montant" min="0" step="0.01" placeholder="0.00"></div>
+    </div>
+    <div class="field"><label>Notes / résultat</label><textarea id="ei-notes" rows="2" maxlength="400" placeholder="Produits utilisés, résultat, suivi prévu…"></textarea></div>
+    <div class="modal-error" id="itv-error"></div>
+    <div class="modal-actions">
+      <button class="btn btn-small btn-danger" onclick="closeItvModal()">Annuler</button>
+      <button class="btn btn-small btn-primary" onclick="saveIntervention()">Enregistrer</button>
+    </div>
+  </div>
+</div>
+
+<script>
+var STORE_KEY = 'cn_clients';
+var selectedId = null;
+
+function esc(s){ return String(s??'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/'/g,'&#x27;'); }
+function load(){ try{ return JSON.parse(localStorage.getItem(STORE_KEY)||'[]'); }catch(e){ return []; } }
+function save(d){ localStorage.setItem(STORE_KEY, JSON.stringify(d)); }
+function uid(){ return Date.now().toString(36)+Math.random().toString(36).slice(2); }
+function formatDate(str){ if(!str) return '—'; var p=str.split('-'); return p[2]+'/'+p[1]+'/'+p[0]; }
+function initials(nom){ return (nom||'?').trim().split(/\s+/).map(function(w){return w[0];}).join('').toUpperCase().slice(0,2); }
+
+/* ── liste ── */
+function renderList() {
+  var q = document.getElementById('search').value.trim().toLowerCase();
+  var data = load();
+  var filtered = q ? data.filter(function(c){ return (c.nom||'').toLowerCase().includes(q) || (c.tel||'').includes(q) || (c.adresse||'').toLowerCase().includes(q); }) : data;
+  filtered.sort(function(a,b){ return (a.nom||'').localeCompare(b.nom||''); });
+  document.getElementById('list-count').textContent = filtered.length + ' client(s)';
+
+  var list = document.getElementById('client-list');
+  list.innerHTML = '';
+  if (!filtered.length) {
+    var el = document.createElement('div'); el.className = 'no-clients'; el.textContent = 'Aucun client trouvé.';
+    list.appendChild(el); return;
+  }
+  filtered.forEach(function(c) {
+    var item = document.createElement('div');
+    item.className = 'client-item' + (c.id === selectedId ? ' active' : '');
+    item.onclick = function(){ selectedId = c.id; renderList(); renderDetail(); };
+    var nbItv = (c.interventions||[]).length;
+    item.innerHTML =
+      '<div class="client-avatar">' + esc(initials(c.nom)) + '</div>' +
+      '<div style="flex:1;min-width:0;">' +
+        '<div class="client-name">' + esc(c.nom) + '</div>' +
+        '<div class="client-meta">' + esc(c.tel||c.email||c.type||'') + '</div>' +
+      '</div>' +
+      (nbItv ? '<span class="client-badge">' + nbItv + '</span>' : '');
+    list.appendChild(item);
+  });
+}
+
+/* ── detail ── */
+function renderDetail() {
+  var panel = document.getElementById('detail-panel');
+  if (!selectedId) { panel.innerHTML = '<div class="detail-empty">Sélectionnez un client pour voir sa fiche.</div>'; return; }
+  var c = load().find(function(x){ return x.id === selectedId; });
+  if (!c) { selectedId = null; panel.innerHTML = '<div class="detail-empty">Client introuvable.</div>'; return; }
+
+  var itvs = (c.interventions||[]).slice().sort(function(a,b){ return (b.date||'').localeCompare(a.date||''); });
+  var totalCA = itvs.reduce(function(s,i){ return s + (parseFloat(i.montant)||0); }, 0);
+
+  var itvHTML = itvs.length
+    ? itvs.map(function(itv){
+        return '<div class="itv-card">' +
+          '<div class="itv-head">' +
+            '<span class="itv-date">' + esc(formatDate(itv.date)) + '</span>' +
+            '<span class="itv-type">' + esc(itv.type||'') + '</span>' +
+            '<div style="display:flex;gap:.35rem;margin-left:auto">' +
+              '<button class="btn btn-small btn-edit" onclick="openItvModal(\'' + esc(c.id) + '\',\'' + esc(itv.id) + '\')">✏️</button>' +
+              '<button class="btn btn-small btn-danger" onclick="deleteItv(\'' + esc(c.id) + '\',\'' + esc(itv.id) + '\')">🗑</button>' +
+            '</div>' +
+          '</div>' +
+          (itv.nuisible||itv.montant ? '<div class="itv-detail">' + (itv.nuisible?esc(itv.nuisible):'') + (itv.montant?' — <span class="itv-montant">'+esc(String(parseFloat(itv.montant).toFixed(2)))+' €</span>':'') + '</div>' : '') +
+          (itv.notes ? '<div class="itv-notes">' + esc(itv.notes) + '</div>' : '') +
+        '</div>';
+      }).join('')
+    : '<div class="no-itv">Aucune intervention enregistrée.</div>';
+
+  panel.innerHTML =
+    '<div class="client-card-head">' +
+      '<div>' +
+        '<div class="client-card-name">' + esc(c.nom) + '</div>' +
+        '<span class="client-card-type">' + esc(c.type||'particulier') + '</span>' +
+      '</div>' +
+      '<div style="display:flex;gap:.4rem;flex-wrap:wrap;">' +
+        '<button class="btn btn-small btn-edit" onclick="openClientModal(\'' + esc(c.id) + '\')">✏️ Modifier</button>' +
+        '<button class="btn btn-small btn-danger" onclick="deleteClient(\'' + esc(c.id) + '\')">🗑 Supprimer</button>' +
+      '</div>' +
+    '</div>' +
+    '<div class="client-info-grid">' +
+      (c.adresse ? '<span class="info-lbl">Adresse</span><span class="info-val">' + esc(c.adresse) + '</span>' : '') +
+      (c.tel     ? '<span class="info-lbl">Téléphone</span><span class="info-val"><a href="tel:' + esc(c.tel) + '" style="color:#2d6a4f">' + esc(c.tel) + '</a></span>' : '') +
+      (c.email   ? '<span class="info-lbl">E-mail</span><span class="info-val"><a href="mailto:' + esc(c.email) + '" style="color:#2d6a4f">' + esc(c.email) + '</a></span>' : '') +
+      (itvs.length ? '<span class="info-lbl">Interventions</span><span class="info-val">' + itvs.length + '</span>' : '') +
+      (totalCA    ? '<span class="info-lbl">CA total</span><span class="info-val" style="font-weight:700;color:#2d6a4f">' + totalCA.toFixed(2) + ' €</span>' : '') +
+    '</div>' +
+    (c.notes ? '<div class="client-notes">' + esc(c.notes) + '</div>' : '') +
+    '<div class="section-title">Historique interventions <button class="btn btn-small btn-primary" style="font-size:.72rem;padding:.25rem .7rem;" onclick="openItvModal(\'' + esc(c.id) + '\')">+ Ajouter</button></div>' +
+    '<div class="itv-list">' + itvHTML + '</div>';
+}
+
+/* ── client modal ── */
+function openClientModal(id) {
+  ['ec-nom','ec-adresse','ec-tel','ec-email','ec-notes'].forEach(function(k){ document.getElementById(k).value=''; });
+  document.getElementById('ec-type').value='particulier';
+  document.getElementById('ec-id').value=id||'';
+  document.getElementById('ec-error').style.display='none';
+  document.getElementById('client-modal-title').textContent = id ? 'Modifier le client' : 'Nouveau client';
+  if (id) {
+    var c = load().find(function(x){ return x.id===id; });
+    if (c) {
+      document.getElementById('ec-nom').value    = c.nom||'';
+      document.getElementById('ec-type').value   = c.type||'particulier';
+      document.getElementById('ec-adresse').value= c.adresse||'';
+      document.getElementById('ec-tel').value    = c.tel||'';
+      document.getElementById('ec-email').value  = c.email||'';
+      document.getElementById('ec-notes').value  = c.notes||'';
+    }
+  }
+  document.getElementById('client-modal').classList.remove('hidden');
+  document.getElementById('ec-nom').focus();
+}
+function closeClientModal(){ document.getElementById('client-modal').classList.add('hidden'); }
+
+function saveClient() {
+  var nom = document.getElementById('ec-nom').value.trim();
+  var err = document.getElementById('ec-error');
+  if (!nom){ err.textContent='Le nom est obligatoire.'; err.style.display=''; return; }
+  err.style.display='none';
+  var data = load();
+  var editId = document.getElementById('ec-id').value;
+  var existing = editId ? data.find(function(c){return c.id===editId;}) : null;
+  var client = {
+    id:          editId || uid(),
+    nom:         nom,
+    type:        document.getElementById('ec-type').value,
+    adresse:     document.getElementById('ec-adresse').value.trim(),
+    tel:         document.getElementById('ec-tel').value.trim(),
+    email:       document.getElementById('ec-email').value.trim(),
+    notes:       document.getElementById('ec-notes').value.trim(),
+    interventions: existing ? (existing.interventions||[]) : []
+  };
+  if (editId){ var idx=data.findIndex(function(c){return c.id===editId;}); if(idx!==-1) data[idx]=client; else data.push(client); }
+  else { data.push(client); selectedId = client.id; }
+  save(data); closeClientModal(); renderList(); renderDetail();
+}
+
+function deleteClient(id) {
+  if (!confirm('Supprimer ce client et tout son historique ?')) return;
+  save(load().filter(function(c){ return c.id!==id; }));
+  if (selectedId===id) selectedId=null;
+  renderList(); renderDetail();
+}
+
+/* ── intervention modal ── */
+function openItvModal(clientId, itvId) {
+  ['ei-date','ei-type','ei-nuisible','ei-montant','ei-notes'].forEach(function(k){ document.getElementById(k).value=''; });
+  document.getElementById('ei-type').value='';
+  document.getElementById('ei-clientId').value = clientId;
+  document.getElementById('ei-id').value = itvId||'';
+  document.getElementById('itv-error').style.display='none';
+  document.getElementById('itv-modal-title').textContent = itvId ? 'Modifier l\'intervention' : 'Ajouter une intervention';
+  if (!itvId) {
+    document.getElementById('ei-date').value = new Date().toISOString().split('T')[0];
+  } else {
+    var c = load().find(function(x){ return x.id===clientId; });
+    var itv = c && (c.interventions||[]).find(function(i){ return i.id===itvId; });
+    if (itv) {
+      document.getElementById('ei-date').value    = itv.date||'';
+      document.getElementById('ei-type').value    = itv.type||'';
+      document.getElementById('ei-nuisible').value= itv.nuisible||'';
+      document.getElementById('ei-montant').value = itv.montant||'';
+      document.getElementById('ei-notes').value   = itv.notes||'';
+    }
+  }
+  document.getElementById('itv-modal').classList.remove('hidden');
+  document.getElementById('ei-date').focus();
+}
+function closeItvModal(){ document.getElementById('itv-modal').classList.add('hidden'); }
+
+function saveIntervention() {
+  var date = document.getElementById('ei-date').value;
+  var type = document.getElementById('ei-type').value;
+  var err  = document.getElementById('itv-error');
+  if (!date){ err.textContent='La date est obligatoire.'; err.style.display=''; return; }
+  if (!type){ err.textContent='Le type est obligatoire.'; err.style.display=''; return; }
+  var montant = document.getElementById('ei-montant').value;
+  if (montant !== '' && (isNaN(parseFloat(montant)) || parseFloat(montant) < 0)){ err.textContent='Le montant doit être un nombre positif.'; err.style.display=''; return; }
+  err.style.display='none';
+
+  var clientId = document.getElementById('ei-clientId').value;
+  var editId   = document.getElementById('ei-id').value;
+  var data = load();
+  var cIdx = data.findIndex(function(c){ return c.id===clientId; });
+  if (cIdx===-1){ closeItvModal(); return; }
+
+  var itv = {
+    id:       editId || uid(),
+    date:     date,
+    type:     type,
+    nuisible: document.getElementById('ei-nuisible').value.trim(),
+    montant:  montant !== '' ? parseFloat(montant) : '',
+    notes:    document.getElementById('ei-notes').value.trim()
+  };
+
+  var itvs = data[cIdx].interventions || [];
+  if (editId){ var idx=itvs.findIndex(function(i){return i.id===editId;}); if(idx!==-1) itvs[idx]=itv; else itvs.push(itv); }
+  else itvs.push(itv);
+  data[cIdx].interventions = itvs;
+  save(data); closeItvModal(); renderList(); renderDetail();
+}
+
+function deleteItv(clientId, itvId) {
+  if (!confirm('Supprimer cette intervention ?')) return;
+  var data = load();
+  var cIdx = data.findIndex(function(c){ return c.id===clientId; });
+  if (cIdx!==-1) {
+    data[cIdx].interventions = (data[cIdx].interventions||[]).filter(function(i){ return i.id!==itvId; });
+    save(data);
+  }
+  renderList(); renderDetail();
+}
+
+document.getElementById('client-modal').addEventListener('click', function(e){ if(e.target===this) closeClientModal(); });
+document.getElementById('itv-modal').addEventListener('click',    function(e){ if(e.target===this) closeItvModal(); });
+
+renderList();
+renderDetail();
+</script>
+</body>
+</html>

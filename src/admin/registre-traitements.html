@@ -1,0 +1,300 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Registre des traitements – Clermont Nuisibles</title>
+  <meta name="robots" content="noindex, nofollow">
+  <link rel="icon" type="image/svg+xml" href="../images/logo-icon.svg">
+  <link rel="stylesheet" href="../fonts/inter.css">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    body { font-family: 'Inter', sans-serif; background: #f0f2ef; min-height: 100dvh; padding: 2rem 1rem 3rem; display: flex; flex-direction: column; align-items: center; }
+    .back { font-size: .82rem; color: #2d6a4f; text-decoration: none; margin-bottom: 1.5rem; align-self: flex-start; max-width: 860px; width: 100%; }
+    .back:hover { text-decoration: underline; }
+    .page-head { max-width: 860px; width: 100%; display: flex; align-items: flex-start; justify-content: space-between; gap: 1rem; margin-bottom: 1rem; flex-wrap: wrap; }
+    h1 { font-size: 1.3rem; font-weight: 800; color: #1a2e1a; }
+    .subtitle { font-size: .82rem; color: #888; margin-top: .2rem; }
+    .btn { display: inline-flex; align-items: center; gap: .4rem; font-family: inherit; font-size: .88rem; font-weight: 700; padding: .6rem 1.2rem; border-radius: 50px; cursor: pointer; border: none; transition: opacity .15s, transform .15s; }
+    .btn:hover { opacity: .88; transform: translateY(-1px); }
+    .btn-primary { background: #2d6a4f; color: #fff; }
+    .btn-outline { background: #fff; color: #2d6a4f; border: 1.5px solid #2d6a4f; }
+    .btn-small { font-size: .75rem; padding: .3rem .75rem; }
+    .btn-danger { background: #fee2e2; color: #b91c1c; }
+    .btn-edit   { background: #f0fdf4; color: #2d6a4f; border: 1.5px solid #2d6a4f; }
+
+    .controls { max-width: 860px; width: 100%; background: #fff; border-radius: 18px; box-shadow: 0 4px 20px rgba(0,0,0,.08); padding: 1rem 1.25rem; margin-bottom: 1rem; display: flex; gap: .65rem; flex-wrap: wrap; align-items: center; }
+    .search-input { font-family: inherit; font-size: .85rem; border: 1.5px solid #e5e7eb; border-radius: 8px; padding: .45rem .85rem; background: #fafafa; flex: 1; min-width: 160px; }
+    .search-input:focus { outline: none; border-color: #2d6a4f; }
+    .date-input { font-family: inherit; font-size: .82rem; border: 1.5px solid #e5e7eb; border-radius: 8px; padding: .4rem .65rem; background: #fafafa; }
+    .date-input:focus { outline: none; border-color: #2d6a4f; }
+    .count { font-size: .8rem; color: #888; white-space: nowrap; margin-left: auto; }
+
+    /* Liste */
+    .list-wrap { max-width: 860px; width: 100%; display: flex; flex-direction: column; gap: .75rem; }
+    .entry-card { background: #fff; border-radius: 14px; box-shadow: 0 3px 14px rgba(0,0,0,.07); padding: 1.1rem 1.25rem; }
+    .entry-head { display: flex; align-items: flex-start; justify-content: space-between; gap: .75rem; flex-wrap: wrap; }
+    .entry-date { font-size: .78rem; color: #888; }
+    .entry-title { font-size: .97rem; font-weight: 700; color: #1a2e1a; }
+    .entry-client { font-size: .82rem; color: #555; }
+    .entry-tags { display: flex; gap: .4rem; flex-wrap: wrap; margin-top: .5rem; }
+    .tag { font-size: .7rem; font-weight: 700; padding: 2px 8px; border-radius: 20px; }
+    .tag-type    { background: #dbeafe; color: #1e40af; }
+    .tag-nuisible{ background: #fce7f3; color: #9d174d; }
+    .entry-body { margin-top: .75rem; font-size: .82rem; color: #555; display: grid; grid-template-columns: 1fr 1fr; gap: .4rem .85rem; }
+    .entry-body .row { display: contents; }
+    .entry-body .lbl { color: #aaa; font-weight: 600; font-size: .74rem; text-transform: uppercase; letter-spacing: .06em; }
+    .entry-body .val { }
+    .entry-notes { margin-top: .6rem; font-size: .8rem; color: #888; font-style: italic; white-space: pre-wrap; word-break: break-word; }
+    .entry-actions { display: flex; gap: .4rem; margin-top: .75rem; justify-content: flex-end; }
+
+    .empty { color: #aaa; font-size: .88rem; text-align: center; padding: 2.5rem; background: #fff; border-radius: 14px; box-shadow: 0 3px 14px rgba(0,0,0,.07); }
+
+    /* Modal */
+    .overlay { position: fixed; inset: 0; background: rgba(0,0,0,.35); display: flex; align-items: center; justify-content: center; z-index: 100; padding: 1rem; }
+    .overlay.hidden { display: none; }
+    .modal { background: #fff; border-radius: 20px; padding: 2rem; width: 100%; max-width: 540px; box-shadow: 0 20px 60px rgba(0,0,0,.2); max-height: 90vh; overflow-y: auto; }
+    .modal h2 { font-size: 1.1rem; font-weight: 800; margin-bottom: 1.25rem; }
+    .field { display: flex; flex-direction: column; gap: .3rem; margin-bottom: .8rem; }
+    .field label { font-size: .75rem; font-weight: 600; color: #555; }
+    .field input, .field select, .field textarea { font-family: inherit; font-size: .88rem; border: 1.5px solid #e5e7eb; border-radius: 8px; padding: .55rem .75rem; background: #fafafa; color: #1a2e1a; resize: vertical; }
+    .field input:focus, .field select:focus, .field textarea:focus { outline: none; border-color: #2d6a4f; background: #fff; }
+    .grid-2m { display: grid; grid-template-columns: 1fr 1fr; gap: .75rem; }
+    .modal-actions { display: flex; gap: .6rem; justify-content: flex-end; margin-top: 1.25rem; }
+    .modal-error { font-size: .8rem; color: #b91c1c; margin-top: .5rem; display: none; }
+    .section-sep { font-size: .72rem; font-weight: 700; text-transform: uppercase; letter-spacing: .08em; color: #2d6a4f; background: #f0fdf4; border-left: 3px solid #2d6a4f; padding: .3rem .6rem; border-radius: 0 6px 6px 0; margin: 1rem 0 .75rem; }
+
+    .storage-note { font-size: .72rem; color: #aaa; max-width: 860px; width: 100%; margin-top: 1.5rem; padding: .65rem .85rem; background: #f8fafc; border-radius: 8px; line-height: 1.55; }
+
+    @media print {
+      body { background: #fff; } .back, .controls, .entry-actions, .page-head .btn, .storage-note { display: none; } .page-head { margin-bottom: 1rem; }
+      .entry-card { box-shadow: none; border: 1px solid #e5e7eb; break-inside: avoid; }
+      @page { margin: 1.5cm; }
+    }
+    @media (max-width: 580px) { .entry-body { grid-template-columns: 1fr; } .grid-2m { grid-template-columns: 1fr; } }
+  </style>
+</head>
+<body>
+
+<a class="back" href="index.html">← Retour à l'administration</a>
+
+<div class="page-head">
+  <div>
+    <h1>📒 Registre des traitements</h1>
+    <div class="subtitle">Journal réglementaire — conservation obligatoire 5 ans (Règlement UE 528/2012).</div>
+  </div>
+  <div style="display:flex;gap:.6rem;flex-wrap:wrap;">
+    <button class="btn btn-outline" onclick="window.print()">🖨 Imprimer</button>
+    <button class="btn btn-primary" onclick="openModal()">+ Ajouter</button>
+  </div>
+</div>
+
+<div class="controls">
+  <input class="search-input" type="search" id="search" placeholder="🔍 Client, type, produit…" oninput="render()">
+  <input class="date-input" type="date" id="date-from" onchange="render()" title="Du">
+  <input class="date-input" type="date" id="date-to"   onchange="render()" title="Au">
+  <span class="count" id="count">0 entrée(s)</span>
+</div>
+
+<div id="list-wrap" class="list-wrap"></div>
+
+<div class="storage-note">🔒 Données stockées localement dans ce navigateur (localStorage). Aucune information n'est transmise à un serveur. Imprimez régulièrement ce registre pour conserver une copie papier conforme à la réglementation.</div>
+
+<!-- Modal -->
+<div id="modal" class="overlay hidden" role="dialog" aria-modal="true">
+  <div class="modal">
+    <h2 id="modal-title">Nouvelle entrée</h2>
+    <input type="hidden" id="edit-id">
+
+    <div class="section-sep">Intervention</div>
+    <div class="grid-2m">
+      <div class="field"><label>Date *</label><input type="date" id="f-date"></div>
+      <div class="field"><label>Heure</label><input type="time" id="f-heure"></div>
+    </div>
+    <div class="grid-2m">
+      <div class="field">
+        <label>Type *</label>
+        <select id="f-type">
+          <option value="">— Sélectionner —</option>
+          <option>Dératisation</option>
+          <option>Désinsectisation</option>
+          <option>Désinfection</option>
+          <option>Traitement punaises de lit</option>
+          <option>Traitement cafards / blattes</option>
+          <option>Traitement fourmis</option>
+          <option>Traitement guêpes / frelons</option>
+          <option>Diagnostic</option>
+          <option>Autre</option>
+        </select>
+      </div>
+      <div class="field"><label>Nuisible ciblé</label><input type="text" id="f-nuisible" placeholder="Ex. : Rats surmulots" maxlength="80"></div>
+    </div>
+
+    <div class="section-sep">Client &amp; site</div>
+    <div class="grid-2m">
+      <div class="field"><label>Nom client *</label><input type="text" id="f-client" placeholder="M. Dupont / SAS…" maxlength="100"></div>
+      <div class="field"><label>Téléphone</label><input type="tel" id="f-tel" placeholder="06 XX XX XX XX" maxlength="20"></div>
+    </div>
+    <div class="field"><label>Adresse du site</label><input type="text" id="f-adresse" placeholder="Rue, code postal, ville" maxlength="150"></div>
+
+    <div class="section-sep">Produit utilisé</div>
+    <div class="grid-2m">
+      <div class="field"><label>Nom commercial</label><input type="text" id="f-produit" placeholder="Ex. : Racumin Gel" maxlength="100"></div>
+      <div class="field"><label>N° AMM</label><input type="text" id="f-amm" placeholder="FR-XXXX-XXXX" maxlength="60"></div>
+    </div>
+    <div class="grid-2m">
+      <div class="field"><label>Quantité utilisée</label><input type="text" id="f-qte" placeholder="Ex. : 200 g" maxlength="40"></div>
+      <div class="field"><label>Zones traitées</label><input type="text" id="f-zones" placeholder="Cave, extérieur…" maxlength="150"></div>
+    </div>
+
+    <div class="field"><label>Observations</label><textarea id="f-notes" rows="2" placeholder="Résultat, recommandations, suivi prévu…" maxlength="600"></textarea></div>
+
+    <div class="modal-error" id="modal-error"></div>
+    <div class="modal-actions">
+      <button class="btn btn-small btn-danger" onclick="closeModal()">Annuler</button>
+      <button class="btn btn-small btn-primary" onclick="saveItem()">Enregistrer</button>
+    </div>
+  </div>
+</div>
+
+<script>
+var STORE_KEY = 'cn_traitements';
+function esc(s){ return String(s??'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/'/g,'&#x27;'); }
+function load(){ try{ return JSON.parse(localStorage.getItem(STORE_KEY)||'[]'); }catch(e){ return []; } }
+function save(d){ localStorage.setItem(STORE_KEY, JSON.stringify(d)); }
+function uid(){ return Date.now().toString(36)+Math.random().toString(36).slice(2); }
+function formatDate(str){ if(!str) return '—'; var p=str.split('-'); return p[2]+'/'+p[1]+'/'+p[0]; }
+
+function render() {
+  var data = load();
+  var q      = document.getElementById('search').value.trim().toLowerCase();
+  var dfrom  = document.getElementById('date-from').value;
+  var dto    = document.getElementById('date-to').value;
+  var wrap   = document.getElementById('list-wrap');
+  wrap.innerHTML = '';
+
+  var filtered = data.filter(function(item) {
+    if (dfrom && item.date < dfrom) return false;
+    if (dto   && item.date > dto)   return false;
+    if (q && !((item.clientNom||'').toLowerCase().includes(q) ||
+               (item.type||'').toLowerCase().includes(q) ||
+               (item.produit||'').toLowerCase().includes(q) ||
+               (item.nuisible||'').toLowerCase().includes(q))) return false;
+    return true;
+  });
+
+  document.getElementById('count').textContent = filtered.length + ' entrée(s)';
+
+  if (!filtered.length) {
+    var el = document.createElement('div'); el.className = 'empty'; el.textContent = 'Aucune entrée correspondante.';
+    wrap.appendChild(el); return;
+  }
+
+  // Plus récent en premier
+  filtered.sort(function(a,b){ return (b.date+b.heure).localeCompare(a.date+a.heure); });
+
+  filtered.forEach(function(item) {
+    var card = document.createElement('div');
+    card.className = 'entry-card';
+    var bodyRows = '';
+    if (item.adresse) bodyRows += '<span class="lbl">Adresse</span><span class="val">' + esc(item.adresse) + '</span>';
+    if (item.produit) bodyRows += '<span class="lbl">Produit</span><span class="val">' + esc(item.produit) + (item.amm?' ('+esc(item.amm)+')':'') + '</span>';
+    if (item.qte)     bodyRows += '<span class="lbl">Quantité</span><span class="val">' + esc(item.qte) + '</span>';
+    if (item.zones)   bodyRows += '<span class="lbl">Zones</span><span class="val">' + esc(item.zones) + '</span>';
+
+    card.innerHTML =
+      '<div class="entry-head">' +
+        '<div>' +
+          '<div class="entry-date">' + esc(formatDate(item.date)) + (item.heure ? ' à ' + esc(item.heure) : '') + '</div>' +
+          '<div class="entry-title">' + esc(item.type||'Intervention') + '</div>' +
+          '<div class="entry-client">👤 ' + esc(item.clientNom) + (item.tel ? ' · ' + esc(item.tel) : '') + '</div>' +
+          '<div class="entry-tags">' +
+            (item.type    ? '<span class="tag tag-type">'    + esc(item.type)    + '</span>' : '') +
+            (item.nuisible? '<span class="tag tag-nuisible">' + esc(item.nuisible)+ '</span>' : '') +
+          '</div>' +
+        '</div>' +
+        '<div style="display:flex;gap:.4rem;">' +
+          '<button class="btn btn-small btn-edit" onclick="openModal(\'' + esc(item.id) + '\')">✏️</button>' +
+          '<button class="btn btn-small btn-danger" onclick="deleteItem(\'' + esc(item.id) + '\')">🗑</button>' +
+        '</div>' +
+      '</div>' +
+      (bodyRows ? '<div class="entry-body">' + bodyRows + '</div>' : '') +
+      (item.notes ? '<div class="entry-notes">' + esc(item.notes) + '</div>' : '');
+    wrap.appendChild(card);
+  });
+}
+
+function openModal(id) {
+  ['f-date','f-heure','f-type','f-nuisible','f-client','f-tel','f-adresse','f-produit','f-amm','f-qte','f-zones','f-notes'].forEach(function(k){ document.getElementById(k).value=''; });
+  document.getElementById('f-type').value = '';
+  document.getElementById('edit-id').value = id||'';
+  document.getElementById('modal-error').style.display = 'none';
+  document.getElementById('modal-title').textContent = id ? 'Modifier l\'entrée' : 'Nouvelle entrée';
+
+  if (!id) {
+    document.getElementById('f-date').value = new Date().toISOString().split('T')[0];
+  } else {
+    var item = load().find(function(i){ return i.id===id; });
+    if (item) {
+      document.getElementById('f-date').value    = item.date||'';
+      document.getElementById('f-heure').value   = item.heure||'';
+      document.getElementById('f-type').value    = item.type||'';
+      document.getElementById('f-nuisible').value= item.nuisible||'';
+      document.getElementById('f-client').value  = item.clientNom||'';
+      document.getElementById('f-tel').value     = item.tel||'';
+      document.getElementById('f-adresse').value = item.adresse||'';
+      document.getElementById('f-produit').value = item.produit||'';
+      document.getElementById('f-amm').value     = item.amm||'';
+      document.getElementById('f-qte').value     = item.qte||'';
+      document.getElementById('f-zones').value   = item.zones||'';
+      document.getElementById('f-notes').value   = item.notes||'';
+    }
+  }
+  document.getElementById('modal').classList.remove('hidden');
+  document.getElementById('f-date').focus();
+}
+
+function closeModal(){ document.getElementById('modal').classList.add('hidden'); }
+
+function saveItem() {
+  var date   = document.getElementById('f-date').value;
+  var client = document.getElementById('f-client').value.trim();
+  var type   = document.getElementById('f-type').value;
+  var err    = document.getElementById('modal-error');
+  if (!date)   { err.textContent='La date est obligatoire.'; err.style.display=''; return; }
+  if (!client) { err.textContent='Le nom du client est obligatoire.'; err.style.display=''; return; }
+  if (!type)   { err.textContent='Le type d\'intervention est obligatoire.'; err.style.display=''; return; }
+  err.style.display = 'none';
+
+  var data = load();
+  var editId = document.getElementById('edit-id').value;
+  var item = {
+    id: editId || uid(),
+    date:       date,
+    heure:      document.getElementById('f-heure').value,
+    type:       type,
+    nuisible:   document.getElementById('f-nuisible').value.trim(),
+    clientNom:  client,
+    tel:        document.getElementById('f-tel').value.trim(),
+    adresse:    document.getElementById('f-adresse').value.trim(),
+    produit:    document.getElementById('f-produit').value.trim(),
+    amm:        document.getElementById('f-amm').value.trim(),
+    qte:        document.getElementById('f-qte').value.trim(),
+    zones:      document.getElementById('f-zones').value.trim(),
+    notes:      document.getElementById('f-notes').value.trim()
+  };
+  if (editId){ var idx=data.findIndex(function(i){return i.id===editId;}); if(idx!==-1) data[idx]=item; else data.push(item); }
+  else data.push(item);
+  save(data); closeModal(); render();
+}
+
+function deleteItem(id) {
+  if (!confirm('Supprimer cette entrée du registre ?')) return;
+  save(load().filter(function(i){ return i.id!==id; })); render();
+}
+
+document.getElementById('modal').addEventListener('click', function(e){ if(e.target===this) closeModal(); });
+render();
+</script>
+</body>
+</html>

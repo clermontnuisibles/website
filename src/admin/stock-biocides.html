@@ -1,0 +1,311 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Stock biocides – Clermont Nuisibles</title>
+  <meta name="robots" content="noindex, nofollow">
+  <link rel="icon" type="image/svg+xml" href="../images/logo-icon.svg">
+  <link rel="stylesheet" href="../fonts/inter.css">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    body { font-family: 'Inter', sans-serif; background: #f0f2ef; min-height: 100dvh; padding: 2rem 1rem 3rem; display: flex; flex-direction: column; align-items: center; }
+    .back { font-size: .82rem; color: #2d6a4f; text-decoration: none; margin-bottom: 1.5rem; align-self: flex-start; max-width: 860px; width: 100%; }
+    .back:hover { text-decoration: underline; }
+    .page-head { max-width: 860px; width: 100%; display: flex; align-items: flex-start; justify-content: space-between; gap: 1rem; margin-bottom: 1rem; flex-wrap: wrap; }
+    h1 { font-size: 1.3rem; font-weight: 800; color: #1a2e1a; }
+    .subtitle { font-size: .82rem; color: #888; margin-top: .2rem; }
+    .btn { display: inline-flex; align-items: center; gap: .4rem; font-family: inherit; font-size: .88rem; font-weight: 700; padding: .6rem 1.2rem; border-radius: 50px; cursor: pointer; border: none; transition: opacity .15s, transform .15s; }
+    .btn:hover { opacity: .88; transform: translateY(-1px); }
+    .btn-primary { background: #2d6a4f; color: #fff; }
+    .btn-small { font-size: .75rem; padding: .3rem .75rem; }
+    .btn-danger { background: #fee2e2; color: #b91c1c; }
+    .btn-edit   { background: #f0fdf4; color: #2d6a4f; border: 1.5px solid #2d6a4f; }
+    .btn-outline { background: #fff; color: #2d6a4f; border: 1.5px solid #2d6a4f; }
+
+    .alert-banner { max-width: 860px; width: 100%; border-radius: 12px; padding: .75rem 1rem; font-size: .83rem; font-weight: 600; margin-bottom: 1rem; display: none; }
+    .alert-banner.danger { background: #fee2e2; color: #b91c1c; border: 1.5px solid #fca5a5; }
+
+    /* Tableau */
+    .table-wrap { max-width: 860px; width: 100%; background: #fff; border-radius: 18px; box-shadow: 0 4px 20px rgba(0,0,0,.08); overflow: hidden; }
+    .table-toolbar { display: flex; gap: .65rem; align-items: center; padding: 1rem 1.25rem; border-bottom: 1.5px solid #f0f0f0; flex-wrap: wrap; }
+    .search-input {
+      font-family: inherit; font-size: .85rem; border: 1.5px solid #e5e7eb; border-radius: 8px;
+      padding: .45rem .85rem; background: #fafafa; flex: 1; min-width: 160px;
+    }
+    .search-input:focus { outline: none; border-color: #2d6a4f; }
+    .filter-btn { font-family: inherit; font-size: .78rem; font-weight: 600; padding: .35rem .9rem; border-radius: 50px; cursor: pointer; border: 1.5px solid #e5e7eb; background: #fff; color: #555; transition: background .15s; }
+    .filter-btn.active { background: #2d6a4f; color: #fff; border-color: #2d6a4f; }
+
+    table { width: 100%; border-collapse: collapse; font-size: .83rem; }
+    thead th { background: #f0fdf4; color: #2d6a4f; font-weight: 700; padding: .7rem .85rem; text-align: left; border-bottom: 1.5px solid #e5e7eb; white-space: nowrap; }
+    tbody tr { border-bottom: 1px solid #f5f5f5; transition: background .1s; }
+    tbody tr:last-child { border-bottom: none; }
+    tbody tr:hover { background: #fafafa; }
+    td { padding: .6rem .85rem; vertical-align: middle; }
+    .td-name { font-weight: 700; color: #1a2e1a; }
+    .td-small { font-size: .75rem; color: #888; }
+
+    .stock-bar-wrap { background: #e5e7eb; border-radius: 20px; height: 8px; width: 80px; overflow: hidden; }
+    .stock-bar { height: 100%; border-radius: 20px; transition: width .3s; }
+    .stock-bar.ok   { background: #2d6a4f; }
+    .stock-bar.low  { background: #ea6c1e; }
+    .stock-bar.zero { background: #ef4444; }
+    .td-qty { font-weight: 700; white-space: nowrap; }
+    .td-qty.low  { color: #ea6c1e; }
+    .td-qty.zero { color: #ef4444; }
+
+    .tag-peremption { font-size: .72rem; padding: 2px 7px; border-radius: 20px; font-weight: 600; }
+    .tag-peremption.ok   { background: #d1fae5; color: #065f46; }
+    .tag-peremption.soon { background: #fff7ed; color: #c2410c; }
+    .tag-peremption.exp  { background: #fee2e2; color: #b91c1c; }
+
+    .empty { color: #aaa; font-size: .88rem; text-align: center; padding: 2.5rem; }
+
+    /* Modal */
+    .overlay { position: fixed; inset: 0; background: rgba(0,0,0,.35); display: flex; align-items: center; justify-content: center; z-index: 100; padding: 1rem; }
+    .overlay.hidden { display: none; }
+    .modal { background: #fff; border-radius: 20px; padding: 2rem; width: 100%; max-width: 500px; box-shadow: 0 20px 60px rgba(0,0,0,.2); max-height: 90vh; overflow-y: auto; }
+    .modal h2 { font-size: 1.1rem; font-weight: 800; margin-bottom: 1.25rem; color: #1a2e1a; }
+    .field { display: flex; flex-direction: column; gap: .3rem; margin-bottom: .8rem; }
+    .field label { font-size: .75rem; font-weight: 600; color: #555; }
+    .field input, .field select, .field textarea { font-family: inherit; font-size: .88rem; border: 1.5px solid #e5e7eb; border-radius: 8px; padding: .55rem .75rem; background: #fafafa; color: #1a2e1a; }
+    .field input:focus, .field select:focus { outline: none; border-color: #2d6a4f; background: #fff; }
+    .grid-2m { display: grid; grid-template-columns: 1fr 1fr; gap: .75rem; }
+    .modal-actions { display: flex; gap: .6rem; justify-content: flex-end; margin-top: 1.25rem; }
+    .modal-error { font-size: .8rem; color: #b91c1c; margin-top: .5rem; display: none; }
+
+    .storage-note { font-size: .72rem; color: #aaa; max-width: 860px; width: 100%; margin-top: 1.5rem; padding: .65rem .85rem; background: #f8fafc; border-radius: 8px; line-height: 1.55; }
+
+    @media (max-width: 600px) { .table-wrap { overflow-x: auto; } .grid-2m { grid-template-columns: 1fr; } }
+  </style>
+</head>
+<body>
+
+<a class="back" href="index.html">← Retour à l'administration</a>
+
+<div class="page-head">
+  <div>
+    <h1>🧪 Stock biocides</h1>
+    <div class="subtitle">Inventaire des produits — alertes de rupture et péremption.</div>
+  </div>
+  <button class="btn btn-primary" onclick="openModal()">+ Ajouter un produit</button>
+</div>
+
+<div id="banner-low" class="alert-banner danger"></div>
+
+<div class="table-wrap">
+  <div class="table-toolbar">
+    <input class="search-input" type="search" id="search" placeholder="🔍 Rechercher…" oninput="render()">
+    <button class="filter-btn active" data-filter="all"    onclick="setFilter('all',this)">Tous</button>
+    <button class="filter-btn"        data-filter="low"    onclick="setFilter('low',this)">Stock faible</button>
+    <button class="filter-btn"        data-filter="expiry" onclick="setFilter('expiry',this)">Péremption proche</button>
+  </div>
+  <table>
+    <thead>
+      <tr>
+        <th>Produit</th>
+        <th>N° AMM</th>
+        <th>Substance active</th>
+        <th>Stock actuel</th>
+        <th>Niveau</th>
+        <th>Péremption</th>
+        <th>Localisation</th>
+        <th></th>
+      </tr>
+    </thead>
+    <tbody id="tbody"></tbody>
+  </table>
+  <div id="empty-msg" class="empty" style="display:none">Aucun produit enregistré.</div>
+</div>
+
+<div class="storage-note">🔒 Données stockées localement dans ce navigateur (localStorage). Aucune information n'est transmise à un serveur. En cas de changement d'appareil, les données seront perdues — imprimez régulièrement votre inventaire.</div>
+
+<!-- Modal -->
+<div id="modal" class="overlay hidden" role="dialog" aria-modal="true">
+  <div class="modal">
+    <h2 id="modal-title">Ajouter un produit</h2>
+    <input type="hidden" id="edit-id">
+    <div class="field"><label>Nom commercial *</label><input type="text" id="f-nom" placeholder="Ex. : Racumin Gel" maxlength="100"></div>
+    <div class="grid-2m">
+      <div class="field"><label>N° AMM</label><input type="text" id="f-amm" placeholder="FR-XXXX-XXXX" maxlength="60"></div>
+      <div class="field"><label>Substance active</label><input type="text" id="f-substance" placeholder="Ex. : Coumatétralyl" maxlength="100"></div>
+    </div>
+    <div class="grid-2m">
+      <div class="field"><label>Quantité actuelle *</label><input type="number" id="f-qty" min="0" step="0.01" placeholder="0"></div>
+      <div class="field">
+        <label>Unité</label>
+        <select id="f-unite">
+          <option value="kg">kg</option>
+          <option value="g">g</option>
+          <option value="L">L</option>
+          <option value="mL">mL</option>
+          <option value="unité(s)">unité(s)</option>
+          <option value="boîte(s)">boîte(s)</option>
+          <option value="sachet(s)">sachet(s)</option>
+        </select>
+      </div>
+    </div>
+    <div class="grid-2m">
+      <div class="field"><label>Seuil d'alerte (même unité)</label><input type="number" id="f-min" min="0" step="0.01" placeholder="0"></div>
+      <div class="field"><label>Date de péremption</label><input type="date" id="f-peremption"></div>
+    </div>
+    <div class="field"><label>Localisation</label><input type="text" id="f-loc" placeholder="Ex. : Coffre véhicule, étagère A" maxlength="100"></div>
+    <div class="field"><label>Notes</label><input type="text" id="f-notes" placeholder="Fournisseur, référence commande…" maxlength="200"></div>
+    <div class="modal-error" id="modal-error"></div>
+    <div class="modal-actions">
+      <button class="btn btn-small btn-danger" onclick="closeModal()">Annuler</button>
+      <button class="btn btn-small btn-primary" onclick="saveItem()">Enregistrer</button>
+    </div>
+  </div>
+</div>
+
+<script>
+var STORE_KEY = 'cn_stock';
+var currentFilter = 'all';
+
+function esc(s){ return String(s??'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/'/g,'&#x27;'); }
+function load(){ try{ return JSON.parse(localStorage.getItem(STORE_KEY)||'[]'); }catch(e){ return []; } }
+function save(d){ localStorage.setItem(STORE_KEY, JSON.stringify(d)); }
+function uid(){ return Date.now().toString(36)+Math.random().toString(36).slice(2); }
+
+function daysUntil(str){ if(!str) return 9999; var d=new Date(str);d.setHours(0,0,0,0);var n=new Date();n.setHours(0,0,0,0);return Math.round((d-n)/86400000); }
+function formatDate(str){ if(!str) return '—'; var p=str.split('-'); return p[2]+'/'+p[1]+'/'+p[0]; }
+
+function setFilter(f, btn) {
+  currentFilter = f;
+  document.querySelectorAll('.filter-btn').forEach(function(b){ b.classList.remove('active'); });
+  btn.classList.add('active');
+  render();
+}
+
+function render() {
+  var data = load();
+  var tbody = document.getElementById('tbody');
+  var empty = document.getElementById('empty-msg');
+  var q = document.getElementById('search').value.trim().toLowerCase();
+  tbody.innerHTML = '';
+
+  var filtered = data.filter(function(item) {
+    if (q && !(item.nom.toLowerCase().includes(q) || (item.substance||'').toLowerCase().includes(q) || (item.amm||'').toLowerCase().includes(q))) return false;
+    if (currentFilter === 'low') {
+      var qtyOk = parseFloat(item.qteActuelle) > parseFloat(item.qteMin||0);
+      return !qtyOk;
+    }
+    if (currentFilter === 'expiry') return daysUntil(item.datePeremption) <= 90;
+    return true;
+  });
+
+  var lowCount = data.filter(function(i){ return parseFloat(i.qteActuelle) <= parseFloat(i.qteMin||0); }).length;
+  var banner = document.getElementById('banner-low');
+  banner.style.display = lowCount ? '' : 'none';
+  if (lowCount) banner.textContent = '⚠️ ' + lowCount + ' produit(s) sous le seuil d\'alerte — pensez à réapprovisionner.';
+
+  if (!filtered.length) { empty.style.display = ''; return; }
+  empty.style.display = 'none';
+
+  filtered.sort(function(a,b){ return a.nom.localeCompare(b.nom); });
+
+  filtered.forEach(function(item) {
+    var qty = parseFloat(item.qteActuelle) || 0;
+    var min = parseFloat(item.qteMin) || 0;
+    var pct = min > 0 ? Math.min(100, Math.round((qty / (min * 3)) * 100)) : 100;
+    var lvl = qty === 0 ? 'zero' : (qty <= min ? 'low' : 'ok');
+    var exp = daysUntil(item.datePeremption);
+    var expCls = exp < 0 ? 'exp' : exp <= 90 ? 'soon' : 'ok';
+    var expLabel = item.datePeremption ? (exp < 0 ? 'Expirée' : formatDate(item.datePeremption)) : '—';
+
+    var tr = document.createElement('tr');
+    tr.innerHTML =
+      '<td><div class="td-name">' + esc(item.nom) + '</div>' + (item.notes ? '<div class="td-small">' + esc(item.notes) + '</div>' : '') + '</td>' +
+      '<td><span class="td-small">' + esc(item.amm||'—') + '</span></td>' +
+      '<td><span class="td-small">' + esc(item.substance||'—') + '</span></td>' +
+      '<td><span class="td-qty ' + lvl + '">' + esc(String(qty)) + ' ' + esc(item.unite||'') + '</span>' +
+        (min > 0 ? '<div class="td-small">min : ' + esc(String(min)) + '</div>' : '') + '</td>' +
+      '<td><div class="stock-bar-wrap"><div class="stock-bar ' + lvl + '" style="width:' + pct + '%"></div></div></td>' +
+      '<td><span class="tag-peremption ' + expCls + '">' + esc(expLabel) + '</span></td>' +
+      '<td><span class="td-small">' + esc(item.localisation||'—') + '</span></td>' +
+      '<td style="white-space:nowrap">' +
+        '<button class="btn btn-small btn-edit" style="margin-right:.4rem" onclick="openModal(\'' + esc(item.id) + '\')">✏️</button>' +
+        '<button class="btn btn-small btn-danger" onclick="deleteItem(\'' + esc(item.id) + '\')">🗑</button>' +
+      '</td>';
+    tbody.appendChild(tr);
+  });
+}
+
+function openModal(id) {
+  ['f-nom','f-amm','f-substance','f-qty','f-min','f-peremption','f-loc','f-notes'].forEach(function(k){ document.getElementById(k).value=''; });
+  document.getElementById('f-unite').value = 'kg';
+  document.getElementById('edit-id').value = id||'';
+  document.getElementById('modal-error').style.display = 'none';
+  document.getElementById('modal-title').textContent = id ? 'Modifier le produit' : 'Ajouter un produit';
+
+  if (id) {
+    var item = load().find(function(i){ return i.id===id; });
+    if (item) {
+      document.getElementById('f-nom').value       = item.nom;
+      document.getElementById('f-amm').value       = item.amm||'';
+      document.getElementById('f-substance').value = item.substance||'';
+      document.getElementById('f-qty').value       = item.qteActuelle;
+      document.getElementById('f-unite').value     = item.unite||'kg';
+      document.getElementById('f-min').value       = item.qteMin||'';
+      document.getElementById('f-peremption').value= item.datePeremption||'';
+      document.getElementById('f-loc').value       = item.localisation||'';
+      document.getElementById('f-notes').value     = item.notes||'';
+    }
+  }
+  document.getElementById('modal').classList.remove('hidden');
+  document.getElementById('f-nom').focus();
+}
+
+function closeModal(){ document.getElementById('modal').classList.add('hidden'); }
+
+function saveItem() {
+  var nom = document.getElementById('f-nom').value.trim();
+  var qty = document.getElementById('f-qty').value;
+  var err = document.getElementById('modal-error');
+  if (!nom)            { err.textContent='Le nom est obligatoire.'; err.style.display=''; return; }
+  if (qty === '')      { err.textContent='La quantité est obligatoire.'; err.style.display=''; return; }
+  if (parseFloat(qty) < 0) { err.textContent='La quantité ne peut pas être négative.'; err.style.display=''; return; }
+  err.style.display = 'none';
+
+  var data = load();
+  var editId = document.getElementById('edit-id').value;
+  var item = {
+    id: editId || uid(),
+    nom: nom,
+    amm: document.getElementById('f-amm').value.trim(),
+    substance: document.getElementById('f-substance').value.trim(),
+    qteActuelle: parseFloat(qty),
+    unite: document.getElementById('f-unite').value,
+    qteMin: parseFloat(document.getElementById('f-min').value)||0,
+    datePeremption: document.getElementById('f-peremption').value,
+    localisation: document.getElementById('f-loc').value.trim(),
+    notes: document.getElementById('f-notes').value.trim()
+  };
+  if (editId) { var idx=data.findIndex(function(i){return i.id===editId;}); if(idx!==-1) data[idx]=item; else data.push(item); }
+  else data.push(item);
+  save(data); closeModal(); render();
+}
+
+function deleteItem(id) {
+  if (!confirm('Supprimer ce produit du stock ?')) return;
+  save(load().filter(function(i){ return i.id!==id; })); render();
+}
+
+document.getElementById('modal').addEventListener('click', function(e){ if(e.target===this) closeModal(); });
+
+// Données de démonstration
+if (!localStorage.getItem(STORE_KEY)) {
+  var today = new Date(); var addDays=function(d,n){var r=new Date(d);r.setDate(r.getDate()+n);return r.toISOString().split('T')[0];};
+  save([
+    { id:uid(), nom:'Racumin Gel', amm:'FR-2021-0001', substance:'Coumatétralyl', qteActuelle:0.4, unite:'kg', qteMin:1, datePeremption:addDays(today,400), localisation:'Coffre véhicule', notes:'' },
+    { id:uid(), nom:'K-Othrine SC 25', amm:'FR-2018-0042', substance:'Deltaméthrine', qteActuelle:2, unite:'L', qteMin:0.5, datePeremption:addDays(today,200), localisation:'Coffre véhicule', notes:'' },
+    { id:uid(), nom:'Solfac Trio', amm:'FR-2019-0115', substance:'Cyfluthrine', qteActuelle:0, unite:'L', qteMin:1, datePeremption:addDays(today,60), localisation:'Atelier', notes:'À commander' }
+  ]);
+}
+
+render();
+</script>
+</body>
+</html>

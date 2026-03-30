@@ -1,0 +1,449 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Sauvegarde – Clermont Nuisibles</title>
+  <meta name="robots" content="noindex, nofollow">
+  <link rel="icon" type="image/svg+xml" href="../images/logo-icon.svg">
+  <link rel="stylesheet" href="../fonts/inter.css">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    body { font-family: 'Inter', sans-serif; background: #f0f2ef; min-height: 100dvh; padding: 2rem 1rem 3rem; display: flex; flex-direction: column; align-items: center; }
+    .back { font-size: .82rem; color: #2d6a4f; text-decoration: none; margin-bottom: 1.5rem; align-self: flex-start; max-width: 680px; width: 100%; }
+    .back:hover { text-decoration: underline; }
+    .page-head { max-width: 680px; width: 100%; margin-bottom: 1.75rem; }
+    h1 { font-size: 1.3rem; font-weight: 800; color: #1a2e1a; }
+    .subtitle { font-size: .83rem; color: #888; margin-top: .25rem; }
+
+    .wrap { max-width: 680px; width: 100%; display: flex; flex-direction: column; gap: 1.25rem; }
+
+    /* Cards */
+    .card { background: #fff; border-radius: 18px; box-shadow: 0 4px 20px rgba(0,0,0,.08); padding: 1.5rem 1.6rem; }
+    .card-title { font-size: .78rem; font-weight: 800; text-transform: uppercase; letter-spacing: .09em; color: #2d6a4f; background: #f0fdf4; border-left: 3px solid #2d6a4f; padding: .3rem .6rem; border-radius: 0 6px 6px 0; margin-bottom: 1.1rem; }
+    .card-desc { font-size: .83rem; color: #666; line-height: 1.6; margin-bottom: 1.1rem; }
+
+    /* Buttons */
+    .btn { display: inline-flex; align-items: center; gap: .4rem; font-family: inherit; font-size: .88rem; font-weight: 700; padding: .65rem 1.35rem; border-radius: 50px; cursor: pointer; border: none; transition: opacity .15s, transform .15s; }
+    .btn:hover:not(:disabled) { opacity: .85; transform: translateY(-1px); }
+    .btn:disabled { opacity: .45; cursor: not-allowed; transform: none; }
+    .btn-primary  { background: #2d6a4f; color: #fff; }
+    .btn-blue     { background: #1d4ed8; color: #fff; }
+    .btn-outline  { background: #fff; color: #2d6a4f; border: 2px solid #2d6a4f; }
+    .btn-danger   { background: #fee2e2; color: #b91c1c; border: none; }
+    .btn-row      { display: flex; gap: .65rem; flex-wrap: wrap; align-items: center; }
+
+    /* Modules list */
+    .modules { display: flex; flex-direction: column; gap: .4rem; margin-bottom: 1.1rem; }
+    .mod-row { display: flex; align-items: center; justify-content: space-between; font-size: .82rem; padding: .4rem .65rem; background: #f9fafb; border-radius: 8px; }
+    .mod-name { font-weight: 600; color: #1a2e1a; }
+    .mod-count { font-size: .75rem; color: #888; background: #e5e7eb; padding: 1px 8px; border-radius: 20px; }
+    .mod-count.has-data { background: #d1fae5; color: #065f46; }
+
+    /* Drive section */
+    .drive-status { display: flex; align-items: center; gap: .7rem; padding: .75rem 1rem; border-radius: 10px; font-size: .84rem; margin-bottom: 1rem; }
+    .drive-status.disconnected { background: #f3f4f6; color: #6b7280; }
+    .drive-status.connected    { background: #d1fae5; color: #065f46; }
+    .drive-status.error        { background: #fee2e2; color: #b91c1c; }
+    .drive-dot { width: 9px; height: 9px; border-radius: 50%; flex-shrink: 0; }
+    .dot-grey  { background: #9ca3af; }
+    .dot-green { background: #16a34a; }
+    .dot-red   { background: #dc2626; }
+    .drive-user { font-weight: 700; }
+
+    /* Drive files list */
+    .drive-files { display: flex; flex-direction: column; gap: .35rem; max-height: 200px; overflow-y: auto; margin: .85rem 0; }
+    .drive-file { display: flex; align-items: center; justify-content: space-between; gap: .5rem; padding: .45rem .75rem; background: #f9fafb; border: 1.5px solid #e5e7eb; border-radius: 8px; font-size: .81rem; cursor: pointer; transition: border-color .15s; }
+    .drive-file:hover { border-color: #2d6a4f; background: #f0fdf4; }
+    .drive-file.selected { border-color: #2d6a4f; background: #f0fdf4; }
+    .df-name { font-weight: 600; color: #1a2e1a; }
+    .df-date { color: #aaa; font-size: .74rem; }
+    .no-files { font-size: .82rem; color: #aaa; padding: .65rem; text-align: center; }
+
+    /* Setup instructions */
+    .setup-box { background: #fffbeb; border: 1.5px solid #fcd34d; border-radius: 12px; padding: 1rem 1.1rem; font-size: .81rem; line-height: 1.65; color: #78350f; }
+    .setup-box ol { padding-left: 1.25rem; margin-top: .5rem; }
+    .setup-box li { margin-bottom: .3rem; }
+    .setup-box code { background: #fef3c7; padding: 1px 5px; border-radius: 4px; font-size: .78rem; font-family: monospace; }
+    .setup-box a { color: #b45309; }
+
+    /* Last backup info */
+    .last-backup { font-size: .78rem; color: #aaa; margin-top: .65rem; }
+    .last-backup strong { color: #4b5563; }
+
+    /* Progress bar */
+    .progress { height: 4px; background: #e5e7eb; border-radius: 99px; overflow: hidden; margin-top: .85rem; display: none; }
+    .progress-bar { height: 100%; background: #2d6a4f; border-radius: 99px; width: 0; transition: width .3s; }
+
+    /* Toast */
+    .toast { position: fixed; bottom: 1.5rem; left: 50%; transform: translateX(-50%); background: #1a2e1a; color: #fff; font-size: .84rem; font-weight: 600; padding: .65rem 1.35rem; border-radius: 50px; box-shadow: 0 8px 30px rgba(0,0,0,.25); z-index: 200; opacity: 0; transition: opacity .25s; pointer-events: none; white-space: nowrap; }
+    .toast.show { opacity: 1; }
+    .toast.error { background: #b91c1c; }
+
+    /* Restore confirm */
+    .restore-warn { background: #fff7ed; border: 1.5px solid #fb923c; border-radius: 10px; padding: .75rem 1rem; font-size: .81rem; color: #9a3412; margin-bottom: .85rem; display: none; }
+
+    .storage-note { font-size: .72rem; color: #aaa; max-width: 680px; width: 100%; margin-top: 1rem; padding: .65rem .85rem; background: #f8fafc; border-radius: 8px; line-height: 1.55; }
+  </style>
+</head>
+<body>
+
+<a class="back" href="index.html">← Retour à l'administration</a>
+
+<div class="page-head">
+  <h1>💾 Sauvegarde & Restauration</h1>
+  <div class="subtitle">Exportez vos données admin (clients, stock, traitements…) et restaurez-les si besoin.</div>
+</div>
+
+<div class="wrap">
+
+  <!-- ── Module summary ── -->
+  <div class="card">
+    <div class="card-title">Données stockées localement</div>
+    <div class="modules" id="modules-list"></div>
+    <div class="btn-row">
+      <button class="btn btn-primary" onclick="exportJSON()">⬇ Exporter (fichier JSON)</button>
+      <label class="btn btn-outline" style="cursor:pointer;">
+        ⬆ Importer un fichier
+        <input type="file" id="import-file" accept=".json,application/json" style="display:none;" onchange="importJSON(this)">
+      </label>
+    </div>
+    <div id="last-export" class="last-backup"></div>
+  </div>
+
+  <!-- ── Google Drive ── -->
+  <div class="card">
+    <div class="card-title">Synchronisation Google Drive</div>
+    <div class="card-desc">Sauvegardez automatiquement sur votre Google Drive et restaurez en un clic. Nécessite un <strong>Client ID Google Cloud</strong> (configuration unique, gratuite).</div>
+
+    <div id="drive-config-missing" class="setup-box" style="display:none;">
+      <strong>⚙️ Configuration requise</strong>
+      <ol>
+        <li>Allez sur <a href="https://console.cloud.google.com/" target="_blank" rel="noopener">console.cloud.google.com</a></li>
+        <li>Créez un projet → activez l'<strong>API Google Drive</strong></li>
+        <li>Identifiants → Créer → <strong>ID client OAuth 2.0</strong> (type : Application Web)</li>
+        <li>Origines JS autorisées : <code id="origin-hint"></code></li>
+        <li>Copiez l'<strong>ID client</strong> (se termine par <code>.apps.googleusercontent.com</code>)</li>
+        <li>Collez-le dans <code>config.js</code> → champ <code>googleDriveClientId</code></li>
+      </ol>
+    </div>
+
+    <div id="drive-ready" style="display:none;">
+      <div id="drive-status" class="drive-status disconnected">
+        <span class="drive-dot dot-grey" id="drive-dot"></span>
+        <span id="drive-status-text">Non connecté à Google Drive</span>
+      </div>
+
+      <div class="btn-row" id="drive-actions">
+        <button class="btn btn-blue" id="btn-gdrive-connect" onclick="driveConnect()">🔗 Connecter Google Drive</button>
+        <button class="btn btn-primary" id="btn-gdrive-save" onclick="driveBackup()" disabled>☁ Sauvegarder sur Drive</button>
+        <button class="btn btn-outline"  id="btn-gdrive-restore" onclick="driveLoadList()" disabled>↩ Restaurer depuis Drive</button>
+        <button class="btn btn-danger"   id="btn-gdrive-disconnect" onclick="driveDisconnect()" style="display:none;">Déconnecter</button>
+      </div>
+
+      <div id="drive-files-section" style="display:none;margin-top:1rem;">
+        <div style="font-size:.81rem;font-weight:700;color:#555;margin-bottom:.5rem;">Choisir un fichier de sauvegarde :</div>
+        <div class="drive-files" id="drive-files"></div>
+        <div class="restore-warn" id="restore-warn">⚠️ Cette action <strong>remplace toutes vos données locales</strong> par celles du fichier sélectionné. Impossible d'annuler.</div>
+        <div class="btn-row" style="margin-top:.65rem;">
+          <button class="btn btn-danger" id="btn-confirm-restore" onclick="driveRestore()" disabled>Restaurer ce fichier</button>
+          <button class="btn btn-outline" onclick="closeDriveList()">Annuler</button>
+        </div>
+      </div>
+
+      <div class="progress" id="drive-progress"><div class="progress-bar" id="drive-progress-bar"></div></div>
+      <div id="last-drive-backup" class="last-backup" style="margin-top:.65rem;"></div>
+    </div>
+  </div>
+
+</div>
+
+<div class="storage-note">🔒 Toutes les données restent dans votre navigateur (localStorage). L'export Google Drive utilise OAuth2 — seul votre compte Drive peut lire ces fichiers (scope <code>drive.file</code>).</div>
+
+<div class="toast" id="toast"></div>
+
+<script src="../js/config.js"></script>
+<script>
+/* ===== Constantes & helpers ===== */
+var STORE_KEYS = [
+  { key: 'cn_clients',     label: '👥 Carnet clients',           page: 'suivi-clients.html' },
+  { key: 'cn_stock',       label: '🧪 Stock biocides',           page: 'stock-biocides.html' },
+  { key: 'cn_traitements', label: '📖 Registre des traitements', page: 'registre-traitements.html' },
+  { key: 'cn_certifs',     label: '🔔 Alertes certifications',   page: 'alertes-certifications.html' }
+];
+var BACKUP_FILE_PREFIX = 'cn-backup-';
+var DRIVE_KEY = 'cn_drive_last';
+
+function loadLS(key){ try{ return JSON.parse(localStorage.getItem(key)||'null'); }catch(e){ return null; } }
+function countItems(key){ var d=loadLS(key); return Array.isArray(d)?d.length:(d?'?':0); }
+function toast(msg, isError){
+  var el = document.getElementById('toast');
+  el.textContent = msg;
+  el.className = 'toast show' + (isError?' error':'');
+  clearTimeout(el._t);
+  el._t = setTimeout(function(){ el.className='toast'; }, 3200);
+}
+function formatDatetime(iso){ if(!iso) return ''; var d=new Date(iso); return d.toLocaleDateString('fr-FR')+' à '+d.toLocaleTimeString('fr-FR',{hour:'2-digit',minute:'2-digit'}); }
+
+/* ===== Module summary ===== */
+function renderModules(){
+  var html = STORE_KEYS.map(function(m){
+    var n = countItems(m.key);
+    return '<div class="mod-row">' +
+      '<span class="mod-name">' + m.label + '</span>' +
+      '<span class="mod-count' + (n>0?' has-data':'') + '">' + n + ' entrée(s)</span>' +
+    '</div>';
+  }).join('');
+  document.getElementById('modules-list').innerHTML = html;
+}
+
+/* ===== Export JSON ===== */
+function collectBackup(){
+  var data = { version: 1, exportedAt: new Date().toISOString(), modules: {} };
+  STORE_KEYS.forEach(function(m){ data.modules[m.key] = loadLS(m.key); });
+  return data;
+}
+function exportJSON(){
+  var data  = collectBackup();
+  var date  = new Date().toISOString().replace(/[:.]/g,'-').slice(0,16);
+  var fname = BACKUP_FILE_PREFIX + date + '.json';
+  var blob  = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
+  var url   = URL.createObjectURL(blob);
+  var a     = document.createElement('a');
+  a.href    = url; a.download = fname;
+  document.body.appendChild(a); a.click();
+  setTimeout(function(){ URL.revokeObjectURL(url); a.remove(); }, 500);
+  var now = new Date().toISOString();
+  localStorage.setItem('cn_last_export', now);
+  document.getElementById('last-export').innerHTML = 'Dernier export : <strong>' + formatDatetime(now) + '</strong>';
+  toast('✅ Fichier exporté : ' + fname);
+}
+
+/* ===== Import JSON ===== */
+function importJSON(input){
+  var file = input.files[0];
+  if (!file) return;
+  if (!confirm('⚠️ Cette action remplace TOUTES les données locales par celles du fichier. Confirmer ?')){ input.value=''; return; }
+  var reader = new FileReader();
+  reader.onload = function(e){
+    try{
+      var data = JSON.parse(e.target.result);
+      if (!data.modules) throw new Error('Format invalide');
+      var count = 0;
+      STORE_KEYS.forEach(function(m){
+        if (data.modules[m.key] !== undefined && data.modules[m.key] !== null){
+          localStorage.setItem(m.key, JSON.stringify(data.modules[m.key]));
+          count++;
+        }
+      });
+      renderModules();
+      toast('✅ Restauration effectuée (' + count + ' module(s)) depuis ' + file.name);
+    } catch(err){
+      toast('❌ Fichier invalide ou corrompu', true);
+    }
+    input.value = '';
+  };
+  reader.onerror = function(){ toast('❌ Erreur de lecture du fichier', true); input.value=''; };
+  reader.readAsText(file);
+}
+
+/* ===== Google Drive ===== */
+var CLIENT_ID   = (window.SiteConfig && window.SiteConfig.googleDriveClientId) || '';
+var DRIVE_SCOPE = 'https://www.googleapis.com/auth/drive.file';
+var accessToken = '';
+var selectedDriveFileId = null;
+
+function initDriveSection(){
+  document.getElementById('origin-hint').textContent = window.location.origin;
+  if (!CLIENT_ID) {
+    document.getElementById('drive-config-missing').style.display = '';
+    document.getElementById('drive-ready').style.display = 'none';
+  } else {
+    document.getElementById('drive-config-missing').style.display = 'none';
+    document.getElementById('drive-ready').style.display = '';
+    // Load GIS
+    var s = document.createElement('script');
+    s.src = 'https://accounts.google.com/gsi/client';
+    s.async = true; s.defer = true;
+    document.head.appendChild(s);
+    // Restore last backup info
+    var last = localStorage.getItem(DRIVE_KEY);
+    if (last) document.getElementById('last-drive-backup').innerHTML = 'Dernière sauvegarde Drive : <strong>' + formatDatetime(last) + '</strong>';
+  }
+}
+
+function setDriveConnected(email){
+  accessToken = accessToken; // already set
+  var dot  = document.getElementById('drive-dot');
+  var text = document.getElementById('drive-status-text');
+  var st   = document.getElementById('drive-status');
+  dot.className  = 'drive-dot dot-green';
+  st.className   = 'drive-status connected';
+  text.innerHTML = 'Connecté : <span class="drive-user">' + (email||'Google Drive') + '</span>';
+  document.getElementById('btn-gdrive-connect').style.display     = 'none';
+  document.getElementById('btn-gdrive-disconnect').style.display  = '';
+  document.getElementById('btn-gdrive-save').disabled    = false;
+  document.getElementById('btn-gdrive-restore').disabled = false;
+}
+
+function driveConnect(){
+  if (!window.google || !window.google.accounts) { toast('⏳ Chargement Google…, réessayez dans 2s', true); return; }
+  var tokenClient = google.accounts.oauth2.initTokenClient({
+    client_id: CLIENT_ID,
+    scope:     DRIVE_SCOPE,
+    callback:  function(resp){
+      if (resp.error){ toast('❌ Connexion refusée : ' + resp.error, true); return; }
+      accessToken = resp.access_token;
+      // Get user info to display email
+      fetch('https://www.googleapis.com/oauth2/v3/userinfo', {
+        headers: { Authorization: 'Bearer ' + accessToken }
+      }).then(function(r){ return r.json(); }).then(function(u){ setDriveConnected(u.email||''); })
+        .catch(function(){ setDriveConnected(''); });
+    }
+  });
+  tokenClient.requestAccessToken({ prompt: '' });
+}
+
+function driveDisconnect(){
+  if (accessToken && window.google) google.accounts.oauth2.revoke(accessToken, function(){});
+  accessToken = '';
+  selectedDriveFileId = null;
+  document.getElementById('drive-dot').className   = 'drive-dot dot-grey';
+  document.getElementById('drive-status').className = 'drive-status disconnected';
+  document.getElementById('drive-status-text').textContent = 'Non connecté à Google Drive';
+  document.getElementById('btn-gdrive-connect').style.display    = '';
+  document.getElementById('btn-gdrive-disconnect').style.display = 'none';
+  document.getElementById('btn-gdrive-save').disabled    = true;
+  document.getElementById('btn-gdrive-restore').disabled = true;
+  document.getElementById('drive-files-section').style.display = 'none';
+}
+
+/* Upload backup to Drive */
+function driveBackup(){
+  if (!accessToken){ toast('❌ Connectez-vous à Google Drive d\'abord', true); return; }
+  var data     = collectBackup();
+  var date     = new Date().toISOString().replace(/[:.]/g,'-').slice(0,16);
+  var filename = BACKUP_FILE_PREFIX + date + '.json';
+  var content  = JSON.stringify(data, null, 2);
+
+  showProgress(30);
+  var metadata = JSON.stringify({ name: filename, mimeType: 'application/json' });
+  var boundary = '-------cn_boundary';
+  var body = '--' + boundary + '\r\nContent-Type: application/json; charset=UTF-8\r\n\r\n' +
+             metadata + '\r\n--' + boundary + '\r\nContent-Type: application/json\r\n\r\n' +
+             content + '\r\n--' + boundary + '--';
+
+  fetch('https://www.googleapis.com/upload/drive/v3/files?uploadType=multipart', {
+    method:  'POST',
+    headers: {
+      'Authorization': 'Bearer ' + accessToken,
+      'Content-Type':  'multipart/related; boundary=' + boundary
+    },
+    body: body
+  }).then(function(r){
+    showProgress(100);
+    if (!r.ok) throw new Error('HTTP ' + r.status);
+    return r.json();
+  }).then(function(){
+    var now = new Date().toISOString();
+    localStorage.setItem(DRIVE_KEY, now);
+    document.getElementById('last-drive-backup').innerHTML = 'Dernière sauvegarde Drive : <strong>' + formatDatetime(now) + '</strong>';
+    toast('✅ Sauvegardé sur Google Drive : ' + filename);
+    setTimeout(hideProgress, 600);
+  }).catch(function(err){
+    hideProgress();
+    if (err.message && err.message.includes('401')) { driveDisconnect(); toast('❌ Session expirée. Reconnectez-vous.', true); }
+    else toast('❌ Erreur Google Drive : ' + err.message, true);
+  });
+}
+
+/* List backup files */
+function driveLoadList(){
+  if (!accessToken){ toast('❌ Connectez-vous à Google Drive d\'abord', true); return; }
+  showProgress(40);
+  var q = encodeURIComponent("name contains '" + BACKUP_FILE_PREFIX + "' and mimeType='application/json' and trashed=false");
+  fetch('https://www.googleapis.com/drive/v3/files?q=' + q + '&orderBy=createdTime+desc&pageSize=20&fields=files(id,name,createdTime)', {
+    headers: { Authorization: 'Bearer ' + accessToken }
+  }).then(function(r){ showProgress(90); if(!r.ok) throw new Error('HTTP '+r.status); return r.json(); })
+    .then(function(data){
+    hideProgress();
+    selectedDriveFileId = null;
+    document.getElementById('btn-confirm-restore').disabled = true;
+    document.getElementById('restore-warn').style.display = 'none';
+    var section = document.getElementById('drive-files-section');
+    var list    = document.getElementById('drive-files');
+    section.style.display = '';
+    if (!data.files || !data.files.length){
+      list.innerHTML = '<div class="no-files">Aucune sauvegarde trouvée sur ce compte Drive.</div>';
+      return;
+    }
+    list.innerHTML = data.files.map(function(f){
+      var d = f.createdTime ? new Date(f.createdTime).toLocaleString('fr-FR') : '';
+      return '<div class="drive-file" onclick="selectDriveFile(this,\'' + f.id + '\')" data-id="' + f.id + '">' +
+        '<span class="df-name">' + f.name + '</span>' +
+        '<span class="df-date">' + d + '</span>' +
+      '</div>';
+    }).join('');
+  }).catch(function(err){
+    hideProgress();
+    if (err.message.includes('401')){ driveDisconnect(); toast('❌ Session expirée. Reconnectez-vous.', true); }
+    else toast('❌ Impossible de lister les fichiers : ' + err.message, true);
+  });
+}
+
+function selectDriveFile(el, fileId){
+  document.querySelectorAll('.drive-file').forEach(function(f){ f.classList.remove('selected'); });
+  el.classList.add('selected');
+  selectedDriveFileId = fileId;
+  document.getElementById('btn-confirm-restore').disabled = false;
+  document.getElementById('restore-warn').style.display = '';
+}
+
+function closeDriveList(){
+  document.getElementById('drive-files-section').style.display = 'none';
+  selectedDriveFileId = null;
+}
+
+function driveRestore(){
+  if (!selectedDriveFileId){ toast('Sélectionnez un fichier', true); return; }
+  if (!confirm('⚠️ Toutes vos données locales vont être remplacées. Confirmer ?')) return;
+  showProgress(40);
+  fetch('https://www.googleapis.com/drive/v3/files/' + selectedDriveFileId + '?alt=media', {
+    headers: { Authorization: 'Bearer ' + accessToken }
+  }).then(function(r){ showProgress(80); if(!r.ok) throw new Error('HTTP '+r.status); return r.json(); })
+    .then(function(data){
+    if (!data.modules) throw new Error('Format invalide');
+    var count = 0;
+    STORE_KEYS.forEach(function(m){
+      if (data.modules[m.key] !== undefined && data.modules[m.key] !== null){
+        localStorage.setItem(m.key, JSON.stringify(data.modules[m.key]));
+        count++;
+      }
+    });
+    hideProgress();
+    renderModules();
+    closeDriveList();
+    toast('✅ Restauration effectuée (' + count + ' module(s))');
+  }).catch(function(err){
+    hideProgress();
+    if (err.message.includes('401')){ driveDisconnect(); toast('❌ Session expirée. Reconnectez-vous.', true); }
+    else toast('❌ Erreur de restauration : ' + err.message, true);
+  });
+}
+
+/* Progress */
+function showProgress(pct){
+  var p = document.getElementById('drive-progress');
+  p.style.display = '';
+  document.getElementById('drive-progress-bar').style.width = pct + '%';
+}
+function hideProgress(){ document.getElementById('drive-progress').style.display='none'; }
+
+/* ===== Init ===== */
+var lastExport = localStorage.getItem('cn_last_export');
+if (lastExport) document.getElementById('last-export').innerHTML = 'Dernier export : <strong>' + formatDatetime(lastExport) + '</strong>';
+renderModules();
+initDriveSection();
+</script>
+</body>
+</html>

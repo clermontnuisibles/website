@@ -1,0 +1,39 @@
+{
+  "name": "Clermont Nuisibles – Admin",
+  "short_name": "Admin CN",
+  "description": "Espace administration – Clermont Nuisibles",
+  "lang": "fr",
+  "start_url": "/admin/",
+  "scope": "/admin/",
+  "display": "standalone",
+  "orientation": "portrait-primary",
+  "background_color": "#f0f2ef",
+  "theme_color": "#2d6a4f",
+  "categories": ["business", "utilities"],
+  "icons": [
+    {
+      "src": "icons/icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "icons/icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "../images/logo-icon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any"
+    }
+  ],
+  "shortcuts": [
+    { "name": "Nouveau rapport",    "url": "/admin/rapport.html",    "icons": [{ "src": "icons/icon-192.png", "sizes": "192x192" }] },
+    { "name": "Suivi clients",      "url": "/admin/suivi-clients.html", "icons": [{ "src": "icons/icon-192.png", "sizes": "192x192" }] },
+    { "name": "Registre traitements", "url": "/admin/registre-traitements.html", "icons": [{ "src": "icons/icon-192.png", "sizes": "192x192" }] },
+    { "name": "Sauvegarde",         "url": "/admin/sauvegarde.html",  "icons": [{ "src": "icons/icon-192.png", "sizes": "192x192" }] }
+  ]
+}

@@ -1,0 +1,217 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Carte de visite – Clermont Nuisibles</title>
+  <meta name="robots" content="noindex, nofollow">
+  <link rel="icon" type="image/svg+xml" href="../images/logo-icon.svg">
+  <link rel="stylesheet" href="../fonts/inter.css">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+      background: #f0f2ef;
+      min-height: 100dvh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 2rem 1rem 3rem;
+    }
+    .back { font-size: 0.82rem; color: #2d6a4f; text-decoration: none; margin-bottom: 1.5rem; align-self: flex-start; max-width: 480px; width: 100%; }
+    .back:hover { text-decoration: underline; }
+
+    .card {
+      background: #fff;
+      border-radius: 20px;
+      box-shadow: 0 8px 40px rgba(0,0,0,0.10);
+      padding: 2.25rem 2rem;
+      max-width: 480px;
+      width: 100%;
+      text-align: center;
+    }
+
+    .logo {
+      display: flex; align-items: center; justify-content: center;
+      gap: 0.65rem; margin-bottom: 1.5rem;
+    }
+    .logo img { width: 42px; height: 42px; border-radius: 10px; }
+    .logo-text { line-height: 1.1; text-align: left; }
+    .logo-text strong { display: block; font-size: 1.2rem; color: #2d6a4f; }
+    .logo-text span { font-size: 0.85rem; color: #666; }
+
+    h1 { font-size: 1.3rem; font-weight: 700; color: #1a2e1a; margin-bottom: 0.5rem; }
+    .subtitle { font-size: 0.9rem; color: #666; margin-bottom: 1.75rem; line-height: 1.5; }
+
+    /* Business card visual */
+    .biz-card {
+      background: linear-gradient(135deg, #1b4332 0%, #2d6a4f 60%, #40916c 100%);
+      border-radius: 16px;
+      padding: 1.5rem;
+      color: #fff;
+      text-align: left;
+      margin-bottom: 1.75rem;
+      display: flex;
+      gap: 1rem;
+      align-items: center;
+    }
+    .biz-card img { width: 50px; height: 50px; border-radius: 10px; flex-shrink: 0; }
+    .biz-info .name { font-size: 1rem; font-weight: 700; }
+    .biz-info .title-job { font-size: 0.78rem; opacity: 0.8; margin-bottom: 0.6rem; }
+    .biz-info .contact-line { font-size: 0.82rem; opacity: 0.9; margin-top: 0.2rem; }
+
+    #qrcode { display: flex; justify-content: center; margin-bottom: 1.5rem; }
+    #qrcode canvas, #qrcode img { border-radius: 12px; }
+
+    .actions { display: flex; flex-direction: column; gap: 0.75rem; }
+    .btn {
+      display: inline-flex; align-items: center; justify-content: center;
+      gap: 0.5rem; font-family: inherit; font-size: 0.95rem; font-weight: 600;
+      padding: 0.8rem 1.5rem; border-radius: 50px; cursor: pointer;
+      text-decoration: none; border: none; transition: opacity 0.15s, transform 0.15s;
+    }
+    .btn:hover { opacity: 0.88; transform: translateY(-1px); }
+    .btn-primary { background: #2d6a4f; color: #fff; }
+    .btn-outline { background: transparent; color: #2d6a4f; border: 2px solid #2d6a4f; }
+
+    .note { font-size: 0.75rem; color: #aaa; margin-top: 1.25rem; }
+
+    @media print {
+      body { background: #fff; }
+      .card { box-shadow: none; }
+      .actions, .back { display: none; }
+    }
+  </style>
+</head>
+<body>
+
+<a class="back" href="index.html">← Retour à l'administration</a>
+
+<div class="card">
+
+  <div class="logo">
+    <img src="../images/logo-icon.svg" alt="Logo Clermont Nuisibles">
+    <div class="logo-text">
+      <strong>Clermont Nuisibles</strong>
+      <span>Carte de visite numérique</span>
+    </div>
+  </div>
+
+  <h1>Partagez votre contact</h1>
+  <p class="subtitle">Scannez le QR code pour enregistrer le contact directement dans un téléphone, ou téléchargez la fiche vCard.</p>
+
+  <div class="biz-card">
+    <img src="../images/logo-icon.svg" alt="">
+    <div class="biz-info">
+      <div class="name" id="vc-name">Evan PENARANDA</div>
+      <div class="title-job">Spécialiste nuisibles — Clermont-Ferrand</div>
+      <div class="contact-line" id="vc-phone">07 66 50 29 38</div>
+      <div class="contact-line" id="vc-email">clermontnuisibles@gmaill.com</div>
+      <div class="contact-line" id="vc-site">www.clermont-nuisibles.fr</div>
+    </div>
+  </div>
+
+  <div id="qrcode"></div>
+
+  <div class="actions">
+    <a id="btn-download" href="#" class="btn btn-primary" download="clermont-nuisibles.vcf">
+      📥 Télécharger la vCard (.vcf)
+    </a>
+    <button id="btn-share" class="btn btn-outline" style="display:none">
+      📤 Partager le contact
+    </button>
+  </div>
+
+  <p class="note">Compatible iPhone, Android et tous les clients de messagerie.</p>
+</div>
+
+<script src="../js/config.js"></script>
+<script src="../js/qrcode.min.js"></script>
+<script>
+(function () {
+  var cfg = window.SiteConfig || {};
+  var name    = cfg.ownerName    || 'Clermont Nuisibles';
+  var phone   = cfg.phoneE164    || '';
+  var phoneDisplay = cfg.phone   || phone;
+  var email   = cfg.email        || '';
+  var site    = (cfg.siteUrl     || 'https://www.clermont-nuisibles.fr').replace(/^https?:\/\//, '');
+  var siteUrl =  cfg.siteUrl     || 'https://www.clermont-nuisibles.fr';
+
+  // Mise à jour de la carte visuelle
+  var el = function(id) { return document.getElementById(id); };
+  el('vc-name').textContent  = name;
+  el('vc-phone').textContent = phoneDisplay;
+  el('vc-email').textContent = email;
+  el('vc-site').textContent  = site;
+
+  // Construction de la vCard 3.0
+  var nameParts = name.split(' ');
+  var lastName  = nameParts[nameParts.length - 1] || '';
+  var firstName = nameParts.slice(0, -1).join(' ') || '';
+
+  var vcf = [
+    'BEGIN:VCARD',
+    'VERSION:3.0',
+    'FN:' + name,
+    'N:' + lastName + ';' + firstName + ';;;',
+    'ORG:Clermont Nuisibles',
+    'TITLE:Spécialiste dératisation & désinsectisation',
+    phone  ? 'TEL;TYPE=CELL:' + phone   : '',
+    email  ? 'EMAIL:'         + email   : '',
+    siteUrl ? 'URL:'          + siteUrl : '',
+    'ADR;TYPE=WORK:;;63 Puy-de-Dôme;Clermont-Ferrand;;63000;France',
+    'NOTE:Intervention 7j/7 — Certifié Certibiocide',
+    'END:VCARD'
+  ].filter(Boolean).join('\r\n');
+
+  var blob = new Blob([vcf], { type: 'text/vcard;charset=utf-8' });
+  var vcfUrl = URL.createObjectURL(blob);
+
+  // Bouton download
+  var dlBtn = el('btn-download');
+  dlBtn.href = vcfUrl;
+
+  // QR code : vCard minimaliste (champs ASCII uniquement pour compatibilité max)
+  var qrLines = [
+    'BEGIN:VCARD',
+    'VERSION:3.0',
+    'FN:' + name,
+    phone   ? 'TEL;TYPE=CELL:' + phone   : null,
+    email   ? 'EMAIL:'         + email   : null,
+    siteUrl ? 'URL:'           + siteUrl : null,
+    'END:VCARD'
+  ].filter(Boolean).join('\n');
+
+  try {
+    var qr = qrcode(0, 'L');
+    qr.addData(qrLines);
+    qr.make();
+    var img = document.createElement('img');
+    img.src = qr.createDataURL(4, 0);
+    img.width = 210;
+    img.height = 210;
+    img.style.borderRadius = '12px';
+    img.alt = 'QR Code vCard';
+    document.getElementById('qrcode').appendChild(img);
+  } catch (e) {
+    document.getElementById('qrcode').innerHTML =
+      '<p style="color:#c0392b;font-size:.82rem">Impossible de générer le QR code.</p>';
+  }
+
+  // Web Share API si disponible
+  if (navigator.share || navigator.canShare) {
+    var shareBtn = el('btn-share');
+    shareBtn.style.display = 'inline-flex';
+    shareBtn.addEventListener('click', function () {
+      var file = new File([vcf], 'clermont-nuisibles.vcf', { type: 'text/vcard' });
+      if (navigator.canShare && navigator.canShare({ files: [file] })) {
+        navigator.share({ files: [file], title: 'Contact Clermont Nuisibles' });
+      } else {
+        navigator.share({ title: 'Clermont Nuisibles', url: siteUrl });
+      }
+    });
+  }
+})();
+</script>
+</body>
+</html>

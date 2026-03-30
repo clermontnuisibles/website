@@ -1,0 +1,300 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Contact &amp; Devis Gratuit – Clermont Nuisibles | Dératisation Clermont-Ferrand</title>
+  <meta name="description" content="Contactez Clermont Nuisibles pour un devis gratuit et rapide. Dératisation, désinsectisation, punaises de lit à Clermont-Ferrand. Réponse en moins d'une heure, 7j/7.">
+  <meta name="robots" content="index, follow">
+  <link rel="canonical" href="https://www.clermont-nuisibles.fr/contact.html">
+  <link rel="icon" type="image/svg+xml" href="images/logo-icon.svg">
+  
+  
+  <link rel="stylesheet" href="fonts/inter.css">
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+<div style="display:none" aria-hidden="true">
+  <svg xmlns="http://www.w3.org/2000/svg"><use/></svg>
+</div>
+
+<!-- ========== HEADER ========== -->
+<header class="header" id="header">
+  <nav class="nav" role="navigation" aria-label="Navigation principale">
+    <a href="index.html" class="logo" aria-label="Clermont Nuisibles – Accueil">
+      <div class="logo-icon" aria-hidden="true"><img src="images/logo-icon.svg" alt="" width="42" height="42"></div>
+      <div class="logo-text">Clermont<strong>Nuisibles</strong></div>
+    </a>
+    <ul class="nav-links" id="nav-links">
+      <li><a href="index.html"    class="nav-link">Accueil</a></li>
+      <li><a href="services.html" class="nav-link">Services</a></li>
+      <li><a href="tarifs.html"   class="nav-link">Tarifs</a></li>
+      <li><a href="a-propos.html" class="nav-link">À propos</a></li>
+      <li><a href="avis.html"     class="nav-link">Avis clients</a></li>
+      <li><a href="contact.html"  class="nav-link">Contact &amp; Devis</a></li>
+    </ul>
+    <a href="tel:+33700000000" class="nav-phone" aria-label="Appeler Clermont Nuisibles"><svg class="icon icon-sm" aria-hidden="true"><use href="images/icons.svg#icon-phone"/></svg>&nbsp;<span class="cfg-phone">07 XX XX XX XX</span></a>
+    <button class="nav-toggle" id="nav-toggle" aria-label="Ouvrir le menu" aria-expanded="false">
+      <span></span><span></span><span></span>
+    </button>
+  </nav>
+</header>
+
+<main>
+<!-- ========== PAGE HERO ========== -->
+<section class="page-hero">
+  <div class="container">
+    <nav class="breadcrumb" aria-label="Fil d'Ariane">
+      <a href="index.html">Accueil</a>
+      <span class="sep" aria-hidden="true">›</span>
+      <span aria-current="page">Contact &amp; Devis</span>
+    </nav>
+    <h1>Contactez-nous</h1>
+    <p>Devis gratuit en quelques minutes par téléphone. Intervention possible le jour même sur Clermont-Ferrand et agglomération.</p>
+  </div>
+</section>
+
+<!-- ========== CONTACT LAYOUT ========== -->
+<section class="section" aria-labelledby="contact-heading">
+  <div class="container">
+    <div class="contact-layout">
+
+      <!-- FORMULAIRE -->
+      <div>
+        <h2 id="contact-heading" style="margin-bottom:1.75rem">Envoyez-nous votre demande</h2>
+
+        <!-- 
+          IMPORTANT : Remplacez "YOUR_FORM_ID" par votre identifiant Formspree.
+          Créez un compte gratuit sur https://formspree.io et récupérez votre form ID.
+          Exemple d'action : action="https://formspree.io/f/xabc1234"
+          
+          Formspree envoie les soumissions directement à votre adresse e-mail.
+          Vous pouvez aussi utiliser un autre service comme Web3Forms, EmailJS, etc.
+        -->
+        <form
+          id="contact-form"
+          action="https://formspree.io/f/YOUR_FORM_ID"
+          method="POST"
+          novalidate
+          aria-label="Formulaire de contact et de devis"
+        >
+          <!-- Anti-spam honeypot (masqué) -->
+          <input type="text" name="_gotcha" style="display:none" tabindex="-1" autocomplete="off">
+          <input type="hidden" name="_subject" value="Nouveau devis – Clermont Nuisibles">
+          <input type="hidden" name="_next" value="https://www.clermont-nuisibles.fr/contact.html?sent=1">
+
+          <div class="form-grid">
+            <div class="form-group">
+              <label class="form-label" for="prenom">Prénom <span class="req" aria-hidden="true">*</span></label>
+              <input class="form-control" type="text" id="prenom" name="prenom" placeholder="Votre prénom" required autocomplete="given-name">
+            </div>
+            <div class="form-group">
+              <label class="form-label" for="nom">Nom <span class="req" aria-hidden="true">*</span></label>
+              <input class="form-control" type="text" id="nom" name="nom" placeholder="Votre nom" required autocomplete="family-name">
+            </div>
+          </div>
+
+          <div class="form-grid">
+            <div class="form-group">
+              <label class="form-label" for="telephone">Téléphone <span class="req" aria-hidden="true">*</span></label>
+              <input class="form-control" type="tel" id="telephone" name="telephone" placeholder="06 XX XX XX XX" required autocomplete="tel">
+            </div>
+            <div class="form-group">
+              <label class="form-label" for="email">E-mail</label>
+              <input class="form-control" type="email" id="email" name="email" placeholder="votre@email.fr" autocomplete="email">
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label class="form-label" for="type-client">Vous êtes <span class="req" aria-hidden="true">*</span></label>
+            <select class="form-control" id="type-client" name="type-client" required>
+              <option value="">— Sélectionnez —</option>
+              <option value="particulier">Particulier</option>
+              <option value="professionnel">Professionnel / entreprise</option>
+              <option value="agence">Agence immobilière / syndic</option>
+            </select>
+          </div>
+
+          <div class="form-group">
+            <label class="form-label" for="nuisible">Type de nuisible concerné <span class="req" aria-hidden="true">*</span></label>
+            <select class="form-control" id="nuisible" name="nuisible" required>
+              <option value="">— Sélectionnez —</option>
+              <option value="rats-souris">Rats / Souris</option>
+              <option value="cafards">Cafards / Blattes</option>
+              <option value="punaises">Punaises de lit</option>
+              <option value="fourmis">Fourmis</option>
+              <option value="guepes-frelons">Guêpes / Frelons</option>
+              <option value="autre">Autre nuisible</option>
+              <option value="contrat-pro">Contrat d'entretien professionnel</option>
+            </select>
+          </div>
+
+          <div class="form-group">
+            <label class="form-label" for="commune">Commune d'intervention <span class="req" aria-hidden="true">*</span></label>
+            <input class="form-control" type="text" id="commune" name="commune" placeholder="Ex : Clermont-Ferrand, Riom, Aubière…" required autocomplete="address-level2">
+          </div>
+
+          <div class="form-group">
+            <label class="form-label" for="message">Description du problème</label>
+            <textarea class="form-control" id="message" name="message" placeholder="Décrivez brièvement la situation : depuis combien de temps, superficie approximative, type de logement (appartement, maison, commerce)…"></textarea>
+          </div>
+
+          <!-- Consentement RGPD (obligatoire) -->
+          <div class="form-rgpd">
+            <input type="checkbox" id="rgpd" name="rgpd" required>
+            <label for="rgpd">
+              J'accepte que mes données personnelles soient utilisées par Clermont Nuisibles pour traiter ma demande de devis. Ces données ne seront jamais cédées à des tiers et seront conservées 3 ans maximum. Conformément au RGPD, j'ai le droit d'accéder, rectifier ou supprimer mes données en écrivant à <a href="mailto:contact@clermont-nuisibles.fr">contact@clermont-nuisibles.fr</a>. En savoir plus : <a href="politique-confidentialite.html">Politique de confidentialité</a>. <strong>*</strong>
+            </label>
+          </div>
+
+          <button type="submit" class="btn btn-cta btn-lg" style="width:100%">
+            <svg class="icon icon-md" aria-hidden="true"><use href="images/icons.svg#icon-send"/></svg> Envoyer ma demande de devis
+          </button>
+
+          <p style="font-size:.82rem;color:var(--gray-400);margin-top:.75rem;text-align:center">
+            Vous préférez appeler ? <a href="tel:+33700000000" style="color:var(--primary);font-weight:600"><span class="cfg-phone">07 XX XX XX XX</span></a> — disponible 7j/7 de 7h à 21h
+          </p>
+        </form>
+
+        <div class="form-success" id="form-success" role="alert">
+          <svg class="icon icon-md" aria-hidden="true"><use href="images/icons.svg#icon-check"/></svg> Votre message a bien été envoyé ! Nous vous recontactons dans les plus brefs délais, souvent dans l'heure.
+        </div>
+      </div>
+
+      <!-- INFOS DE CONTACT -->
+      <div>
+        <div class="contact-info-card">
+          <h3><svg class="icon icon-md" aria-hidden="true"><use href="images/icons.svg#icon-phone"/></svg> Besoin d'un devis rapide ?</h3>
+
+          <div class="info-item">
+            <div class="info-icon" aria-hidden="true"><svg class="icon " aria-hidden="true"><use href="images/icons.svg#icon-phone"/></svg></div>
+            <div>
+              <div class="info-label">Téléphone</div>
+              <div class="info-value"><a href="tel:+33700000000"><span class="cfg-phone">07 XX XX XX XX</span></a></div>
+              <div style="font-size:.82rem;opacity:.7;margin-top:.25rem">Réponse immédiate 7j/7 · 7h–21h</div>
+            </div>
+          </div>
+
+          <div class="info-item">
+            <div class="info-icon" aria-hidden="true"><svg class="icon " aria-hidden="true"><use href="images/icons.svg#icon-mail"/></svg></div>
+            <div>
+              <div class="info-label">E-mail</div>
+              <div class="info-value"><a href="mailto:contact@clermont-nuisibles.fr">contact@clermont-nuisibles.fr</a></div>
+              <div style="font-size:.82rem;opacity:.7;margin-top:.25rem">Réponse sous 24h</div>
+            </div>
+          </div>
+
+          <div class="info-item">
+            <div class="info-icon" aria-hidden="true"><svg class="icon " aria-hidden="true"><use href="images/icons.svg#icon-pin"/></svg></div>
+            <div>
+              <div class="info-label">Zone d'intervention</div>
+              <div class="info-value">Clermont-Ferrand &amp; Puy-de-Dôme (63)</div>
+              <div style="font-size:.82rem;opacity:.7;margin-top:.25rem">Déplacement inclus dans l'agglo</div>
+            </div>
+          </div>
+
+          <div class="info-item">
+            <div class="info-icon" aria-hidden="true"><svg class="icon " aria-hidden="true"><use href="images/icons.svg#icon-clock"/></svg></div>
+            <div>
+              <div class="info-label">Disponibilité</div>
+              <div class="info-value">Lundi – Dimanche</div>
+              <div style="font-size:.82rem;opacity:.7;margin-top:.25rem">7h00 – 21h00 · Urgences acceptées</div>
+            </div>
+          </div>
+
+          <div style="border-top:1px solid rgba(255,255,255,.15);margin-top:1.5rem;padding-top:1.5rem">
+            <h4 style="color:var(--white);margin-bottom:1rem;font-size:1rem">Pourquoi nous appeler ?</h4>
+            <ul style="display:flex;flex-direction:column;gap:.6rem">
+              <li style="display:flex;gap:.5rem;font-size:.9rem;color:rgba(255,255,255,.8)"><svg class="icon icon-sm" aria-hidden="true"><use href="images/icons.svg#icon-check"/></svg> Devis gratuit en quelques minutes</li>
+              <li style="display:flex;gap:.5rem;font-size:.9rem;color:rgba(255,255,255,.8)"><svg class="icon icon-sm" aria-hidden="true"><use href="images/icons.svg#icon-zap"/></svg> Intervention possible le jour même</li>
+              <li style="display:flex;gap:.5rem;font-size:.9rem;color:rgba(255,255,255,.8)"><svg class="icon icon-sm" aria-hidden="true"><use href="images/icons.svg#icon-flask"/></svg> Produits professionnels homologués</li>
+              <li style="display:flex;gap:.5rem;font-size:.9rem;color:rgba(255,255,255,.8)"><svg class="icon icon-sm" aria-hidden="true"><use href="images/icons.svg#icon-clipboard"/></svg> Rapport d'intervention fourni</li>
+              <li style="display:flex;gap:.5rem;font-size:.9rem;color:rgba(255,255,255,.8)"><svg class="icon icon-sm" aria-hidden="true"><use href="images/icons.svg#icon-handshake"/></svg> Tarif clair, pas de surprise</li>
+            </ul>
+          </div>
+
+          <a href="tel:+33700000000" class="btn btn-cta" style="width:100%;margin-top:1.75rem;font-size:1.1rem">
+            <svg class="icon icon-md" aria-hidden="true"><use href="images/icons.svg#icon-phone"/></svg> Appeler maintenant
+          </a>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</section>
+</main>
+
+<!-- ========== FOOTER ========== -->
+<footer class="footer" role="contentinfo">
+  <div class="container">
+    <div class="footer-grid">
+      <div class="footer-brand">
+        <a href="index.html" class="logo" aria-label="Clermont Nuisibles – Accueil">
+          <div class="logo-icon" aria-hidden="true"><img src="images/logo-icon.svg" alt="" width="42" height="42"></div>
+          <div class="logo-text">Clermont<strong>Nuisibles</strong></div>
+        </a>
+        <p class="footer-tagline">Spécialiste en dératisation, désinsectisation et désinfection à Clermont-Ferrand. Intervention rapide 7j/7.</p>
+        <a href="tel:+33700000000" class="footer-phone"><svg class="icon icon-md" aria-hidden="true"><use href="images/icons.svg#icon-phone"/></svg> <span class="cfg-phone">07 XX XX XX XX</span></a>
+      </div>
+      <div>
+        <h4>Services</h4>
+        <nav class="footer-links" aria-label="Services">
+          <a href="services.html#deratisation">Dératisation</a>
+          <a href="services.html#cafards">Cafards &amp; Blattes</a>
+          <a href="services.html#punaises">Punaises de lit</a>
+          <a href="services.html#fourmis">Fourmis</a>
+          <a href="services.html#guepes">Guêpes &amp; Frelons</a>
+          <a href="services.html#contrats">Contrats pro</a>
+        </nav>
+      </div>
+      <div>
+        <h4>Navigation</h4>
+        <nav class="footer-links" aria-label="Pages">
+          <a href="index.html">Accueil</a>
+          <a href="services.html">Nos services</a>
+          <a href="tarifs.html">Tarifs</a>
+          <a href="a-propos.html">À propos</a>
+          <a href="avis.html">Avis clients</a>
+          <a href="contact.html">Contact &amp; Devis</a>
+        </nav>
+      </div>
+      <div>
+        <h4>Contact</h4>
+        <div class="footer-contact-item"><span class="ico" aria-hidden="true"><svg class="icon " aria-hidden="true"><use href="images/icons.svg#icon-pin"/></svg></span><span>Clermont-Ferrand (63000)</span></div>
+        <div class="footer-contact-item"><span class="ico" aria-hidden="true"><svg class="icon " aria-hidden="true"><use href="images/icons.svg#icon-phone"/></svg></span><a href="tel:+33700000000" style="color:rgba(255,255,255,.75)"><span class="cfg-phone">07 XX XX XX XX</span></a></div>
+        <div class="footer-contact-item"><span class="ico" aria-hidden="true"><svg class="icon " aria-hidden="true"><use href="images/icons.svg#icon-mail"/></svg></span><a href="mailto:contact@clermont-nuisibles.fr" style="color:rgba(255,255,255,.75)">contact@clermont-nuisibles.fr</a></div>
+        <div class="footer-contact-item"><span class="ico" aria-hidden="true"><svg class="icon " aria-hidden="true"><use href="images/icons.svg#icon-clock"/></svg></span><span>Lun – Dim : 7h – 21h</span></div>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <p class="footer-copy">© <span class="cfg-year">2025</span> Clermont Nuisibles <span class="footer-siret">— SIRET : <span class="cfg-siret">XXX XXX XXX XXXXX</span></span></p>
+      <nav class="footer-bottom-links" aria-label="Liens légaux">
+        <a href="mentions-legales.html">Mentions légales</a>
+        <a href="politique-confidentialite.html">Confidentialité</a>
+        <a href="cookies.html">Cookies</a>
+      </nav>
+    </div>
+  </div>
+</footer>
+
+<div class="cookie-banner" id="cookie-banner" role="dialog" aria-modal="true" aria-label="Consentement aux cookies">
+  <p class="cookie-text">Nous utilisons des cookies pour améliorer votre expérience. <a href="cookies.html">En savoir plus</a></p>
+  <div class="cookie-actions">
+    <button class="btn btn-sm btn-ghost" id="cookie-refuse">Refuser</button>
+    <button class="btn btn-sm btn-cta"   id="cookie-accept">Accepter</button>
+  </div>
+</div>
+<div class="float-call"><a href="tel:+33700000000" class="float-call-btn" aria-label="Appeler maintenant"><span class="float-call-icon" aria-hidden="true"><svg class="icon " aria-hidden="true"><use href="images/icons.svg#icon-phone"/></svg></span><span class="btn-text">Appel immédiat</span></a></div>
+
+<script src="js/config.js"></script>
+<script src="js/main.js"></script>
+<script>
+  // Affiche le message de succès si la page est rechargée après soumission Formspree
+  if (window.location.search.includes('sent=1')) {
+    const form = document.getElementById('contact-form');
+    const success = document.getElementById('form-success');
+    if (form && success) { form.style.display = 'none'; success.style.display = 'block'; }
+  }
+</script>
+</body>
+</html>

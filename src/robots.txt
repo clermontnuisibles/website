@@ -1,0 +1,8 @@
+User-agent: *
+Allow: /
+
+Disallow: /mentions-legales.html
+Disallow: /politique-confidentialite.html
+Disallow: /cookies.html
+
+Sitemap: https://www.clermont-nuisibles.fr/sitemap.xml

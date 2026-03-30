@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Laissez un avis Google – Clermont Nuisibles</title>
+  <meta name="robots" content="noindex, nofollow">
+  <link rel="icon" type="image/svg+xml" href="../images/logo-icon.svg">
+  <link rel="stylesheet" href="../fonts/inter.css">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+      background: #f4f6f3;
+      min-height: 100dvh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 2rem 1rem;
+    }
+    .back {
+      font-size: 0.82rem; color: #2d6a4f; text-decoration: none;
+      margin-bottom: 1.5rem; align-self: flex-start;
+      max-width: 420px; width: 100%;
+    }
+    .back:hover { text-decoration: underline; }
+    .card {
+      background: #fff;
+      border-radius: 20px;
+      box-shadow: 0 8px 40px rgba(0,0,0,0.10);
+      padding: 2.5rem 2rem;
+      max-width: 420px;
+      width: 100%;
+      text-align: center;
+    }
+    .logo {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.65rem;
+      margin-bottom: 1.75rem;
+      text-decoration: none;
+      color: inherit;
+    }
+    .logo img { width: 42px; height: 42px; border-radius: 10px; }
+    .logo-text { font-size: 1.05rem; line-height: 1.1; text-align: left; }
+    .logo-text strong { display: block; font-size: 1.25rem; color: #2d6a4f; }
+
+    h1 {
+      font-size: 1.45rem;
+      font-weight: 700;
+      color: #1a2e1a;
+      margin-bottom: 0.6rem;
+      line-height: 1.25;
+    }
+    .subtitle {
+      font-size: 0.95rem;
+      color: #555;
+      margin-bottom: 1.75rem;
+      line-height: 1.55;
+    }
+
+    #qrcode {
+      display: flex;
+      justify-content: center;
+      margin: 0 auto 1.75rem;
+    }
+    #qrcode canvas, #qrcode img { border-radius: 12px; }
+
+    .stars {
+      font-size: 2rem;
+      letter-spacing: 3px;
+      color: #f4b942;
+      margin-bottom: 1.25rem;
+    }
+
+    .btn-review {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      background: #4285F4;
+      color: #fff;
+      font-family: inherit;
+      font-size: 1rem;
+      font-weight: 600;
+      padding: 0.85rem 1.75rem;
+      border-radius: 50px;
+      text-decoration: none;
+      transition: background 0.2s, transform 0.15s;
+      box-shadow: 0 4px 14px rgba(66,133,244,0.35);
+    }
+    .btn-review:hover { background: #3367d6; transform: translateY(-1px); }
+    .btn-review svg { width: 20px; height: 20px; fill: #fff; flex-shrink: 0; }
+
+    .note {
+      margin-top: 1.5rem;
+      font-size: 0.78rem;
+      color: #999;
+    }
+
+    @media print {
+      body { background: #fff; }
+      .card { box-shadow: none; }
+      .btn-review { display: none; }
+      #qrcode { margin-bottom: 1rem; }
+    }
+  </style>
+</head>
+<body>
+<a class="back" href="index.html">← Retour à l'administration</a>
+<div class="card">
+  <a href="../index.html" class="logo">
+    <img src="../images/logo-icon.svg" alt="Logo Clermont Nuisibles">
+    <div class="logo-text">Clermont<strong>Nuisibles</strong></div>
+  </a>
+
+  <h1>Votre avis compte vraiment !</h1>
+  <p class="subtitle">Scannez le QR code ou cliquez sur le bouton pour laisser un avis Google en moins d'une minute. Merci pour votre confiance&nbsp;!</p>
+
+  <div class="stars" aria-hidden="true">★★★★★</div>
+
+  <div id="qrcode"></div>
+
+  <a id="review-link" href="#" class="btn-review" target="_blank" rel="noopener">
+    <!-- Google "G" icon -->
+    <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M21.35 11.1H12v2.9h5.35C16.7 16.1 14.6 17.5 12 17.5c-3.03 0-5.5-2.47-5.5-5.5s2.47-5.5 5.5-5.5c1.4 0 2.67.52 3.63 1.37l2.2-2.2C16.32 4.17 14.28 3.25 12 3.25 7.17 3.25 3.25 7.17 3.25 12S7.17 20.75 12 20.75c4.97 0 8.75-3.5 8.75-8.75 0-.57-.05-1.13-.15-1.9z"/></svg>
+    Laisser un avis Google
+  </a>
+
+  <p class="note">Vous serez redirigé vers Google. Un compte Google est nécessaire.</p>
+</div>
+
+<script src="../js/config.js"></script>
+<script src="../js/qrcode.min.js"></script>
+<script>
+  (function () {
+    var url = (window.SiteConfig && window.SiteConfig.googleReviewUrl) || '#';
+
+    // Bouton
+    document.getElementById('review-link').href = url;
+
+    // QR Code
+    try {
+      var qr = qrcode(0, 'H');
+      qr.addData(url);
+      qr.make();
+      var img = document.createElement('img');
+      img.src = qr.createDataURL(5, 0);
+      img.style.cssText = 'width:220px;height:220px;border-radius:12px';
+      img.alt = 'QR Code avis Google';
+      document.getElementById('qrcode').appendChild(img);
+    } catch (e) {
+      document.getElementById('qrcode').innerHTML =
+        '<p style="color:#c0392b;font-size:.82rem">Impossible de générer le QR code.</p>';
+    }
+  })();
+</script>
+</body>
+</html>

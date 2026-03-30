@@ -1,0 +1,17 @@
+{
+  "version": "0.2.0",
+  "configurations": [
+    {
+      "name": "Clermont Nuisibles — Simple Browser",
+      "type": "node-terminal",
+      "request": "launch",
+      "command": "echo '\\n🌐 Clermont Nuisibles → http://localhost:8080\\n' && python3 -m http.server 8080",
+      "cwd": "${workspaceFolder}/src",
+      "serverReadyAction": {
+        "pattern": "http://localhost:(8080)",
+        "uriFormat": "http://localhost:%s",
+        "action": "openSimpleBrowser"
+      }
+    }
+  ]
+}

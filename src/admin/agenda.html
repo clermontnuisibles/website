@@ -116,9 +116,9 @@
   </div>
 
   <div class="config-hint">
-    Pour activer : ouvrez <code>js/config.js</code> et renseignez la clé <code>agendaUrl</code>
-    avec l'URL de votre outil de planification.<br>
-    Exemple : <code>agendaUrl: 'https://calendly.com/mon-lien'</code>
+    Pour activer : ouvrez <code>js/config.js</code> et renseignez la clé <code>googleCalendarId</code>
+    avec l'adresse Gmail associée à votre Google Agenda.<br>
+    Exemple : <code>googleCalendarId: 'clermontnuisibles@gmail.com'</code>
   </div>
 
   <p class="note">Cette page est privée (noindex). Elle n'apparaît pas dans les moteurs de recherche.</p>
@@ -128,25 +128,31 @@
 <script>
 (function () {
   var cfg = window.SiteConfig || {};
-  var url = cfg.agendaUrl;
-  var placeholder = 'https://calendly.com/VOTRE_LIEN';
+  var calId = cfg.googleCalendarId;
+  var container = document.getElementById('agenda-container');
+  var placeholderDiv = container.querySelector('.agenda-placeholder');
+  var btn = document.getElementById('btn-agenda');
 
-  if (url && url !== placeholder) {
-    var btn = document.getElementById('btn-agenda');
-    btn.href = url;
+  if (calId && calId.trim() !== '') {
+    var calUrl = 'https://calendar.google.com/calendar/embed'
+      + '?src=' + encodeURIComponent(calId)
+      + '&ctz=Europe%2FParis'
+      + '&mode=AGENDA'
+      + '&showTitle=0&showNav=1&showDate=1&showPrint=0&showTabs=0&showCalendars=0&showTz=0'
+      + '&hl=fr';
+
+    var iframe = document.createElement('iframe');
+    iframe.src = calUrl;
+    iframe.style.cssText = 'width:100%;height:520px;border:none;border-radius:14px;margin-bottom:1.25rem;';
+    iframe.title = 'Google Agenda';
+    iframe.loading = 'lazy';
+    placeholderDiv.replaceWith(iframe);
+
+    btn.href = 'https://calendar.google.com/calendar/r?cid=' + encodeURIComponent(calId);
+    btn.textContent = '📅 Ouvrir dans Google Agenda';
     btn.className = 'btn btn-primary';
     btn.style.display = 'inline-flex';
     btn.removeAttribute('aria-disabled');
-
-    // Remplace le cadre tirets par un iframe si l'outil l'autorise
-    var container = document.getElementById('agenda-container');
-    var placeholder_div = container.querySelector('.agenda-placeholder');
-    var iframe = document.createElement('iframe');
-    iframe.src = url;
-    iframe.style.cssText = 'width:100%;height:520px;border:none;border-radius:14px;margin-bottom:1.25rem;';
-    iframe.title = 'Agenda de prise de rendez-vous';
-    iframe.loading = 'lazy';
-    placeholder_div.replaceWith(iframe);
   }
 })();
 </script>

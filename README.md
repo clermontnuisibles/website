@@ -60,60 +60,38 @@ Les valeurs sont propagées automatiquement sur toutes les pages au chargement, 
 
 ## Déploiement
 
-Deux workflows GitHub Actions sont disponibles selon votre hébergement.
+**Infrastructure :**
+- **Hébergement** : GitHub Pages (gratuit)
+- **Nom de domaine** : `clermont-nuisibles.fr` acheté sur Hostinger
+- **SSL** : Let's Encrypt, géré automatiquement par GitHub Pages
+
+Le déploiement s'effectue automatiquement à chaque push sur `main` via `.github/workflows/deploy.yml`.
 
 ---
 
-### Option A — GitHub Pages + domaine personnalisé Hostinger (recommandé)
+### Configuration initiale (première fois)
 
-Gratuit, zéro serveur à gérer. Le site est hébergé sur GitHub Pages et le domaine `clermont-nuisibles.fr` pointe dessus via DNS.
-
-**1. Configurer le DNS sur Hostinger (hPanel → Domaines → DNS Zone)**
+**1. DNS sur Hostinger (hPanel → Domaines → Zone DNS)**
 
 Supprimer les enregistrements A existants pour `@` et `www`, puis ajouter :
 
-| Type  | Nom  | Valeur              | TTL  |
-|-------|------|---------------------|------|
-| A     | @    | 185.199.108.153     | 3600 |
-| A     | @    | 185.199.109.153     | 3600 |
-| A     | @    | 185.199.110.153     | 3600 |
-| A     | @    | 185.199.111.153     | 3600 |
-| CNAME | www  | clermontnuisibles.github.io | 3600 |
+| Type  | Nom | Valeur                      | TTL  |
+|-------|-----|-----------------------------|------|
+| A     | @   | 185.199.108.153             | 3600 |
+| A     | @   | 185.199.109.153             | 3600 |
+| A     | @   | 185.199.110.153             | 3600 |
+| A     | @   | 185.199.111.153             | 3600 |
+| CNAME | www | clermontnuisibles.github.io | 3600 |
 
-**2. Activer GitHub Pages sur le dépôt**
+**2. GitHub Pages (Settings → Pages)**
 
-1. **Settings → Pages → Source : GitHub Actions**
-2. **Settings → Pages → Custom domain** : saisir `clermont-nuisibles.fr` → Save
+1. Source : **GitHub Actions**
+2. Custom domain : saisir `clermont-nuisibles.fr` → Save
 3. Cocher **Enforce HTTPS** (disponible après propagation DNS, ~24 h)
 
-Le fichier `src/CNAME` (déjà présent dans le dépôt) transmet le domaine à GitHub Pages automatiquement à chaque déploiement.
+Le fichier `src/CNAME` présent dans le dépôt transmet le domaine à GitHub Pages à chaque déploiement.
 
-**3. Pousser sur `main`** — le workflow `.github/workflows/deploy.yml` se déclenche.
-
----
-
-### Option B — Déploiement FTP vers l'hébergement Hostinger
-
-Si vous utilisez l'hébergement mutualisé Hostinger (hPanel), le workflow `.github/workflows/deploy-hostinger.yml` dépose les fichiers via FTP à chaque push sur `main`.
-
-**1. Récupérer les identifiants FTP sur Hostinger**
-
-hPanel → Hébergement → **Gestionnaire de fichiers / FTP** → noter :
-- Hôte FTP (ex. : `ftp.clermont-nuisibles.fr` ou IP du serveur)
-- Nom d'utilisateur FTP
-- Mot de passe FTP
-
-**2. Ajouter les secrets dans GitHub**
-
-**Settings → Secrets and variables → Actions → New repository secret** :
-
-| Nom du secret  | Valeur                          |
-|----------------|---------------------------------|
-| `FTP_HOST`     | Hôte FTP Hostinger              |
-| `FTP_USER`     | Nom d'utilisateur FTP           |
-| `FTP_PASSWORD` | Mot de passe FTP                |
-
-**3. Pousser sur `main`** — le workflow se déclenche et synchronise `src/` vers `public_html/`.
+**3. Pousser sur `main`** — le workflow se déclenche automatiquement.
 
 ## Développement local
 

@@ -17,7 +17,7 @@ window.SiteConfig = {
      ownerAddress : adresse postale complète — mentions légales     */
   siret:        '100 387 190 00018',
   ownerName:    'Evan PENARANDA',
-  ownerAddress: '19 Chemin de Prat, Romagnat (63540)]',
+  ownerAddress: '19 Chemin de Prat, Romagnat (63540)',
 
   /* ── Formulaire de contact ──────────────────────────────────────
      Créez un compte gratuit sur https://formspree.io,
@@ -45,10 +45,12 @@ window.SiteConfig = {
   /* ── Lien Google Business — page QR code (avis-google.html) ────
      Récupérez l'URL courte depuis votre fiche Google Business,
      ex. : 'https://g.page/r/XXXXXXXXXXXX/review'                */
-  googleReviewUrl: 'https://g.page/r/VOTRE_ID_GOOGLE/review',
+  googleReviewUrl: 'https://g.page/r/2884236348772897971/review',
 
-  /* ── Agenda en ligne ────────────────────────────────────────────
-     URL de votre outil de prise de rdv (Calendly, Cal.com…)      */
-  agendaUrl: 'https://calendly.com/VOTRE_LIEN',
-
+  /* ── Google Agenda — vue intégrée (page admin) ──────────────────────────────
+     Récupérez l'ID depuis Google Agenda :
+     Paramètres de l'agenda → « Intégrer l'agenda » → copier l'adresse
+     src=XXXX dans l'URL d'intégration (souvent votre adresse Gmail).
+     Ex. : 'clermontnuisibles@gmail.com'                            */
+  googleCalendarId: 'clermontnuisibles@gmail.com',
 };

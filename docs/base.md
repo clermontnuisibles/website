@@ -23,7 +23,7 @@ Ce que je veux voir sur le site :
 - nid de guêpes à partir de 80€
 - traitement insectes à partir de 120€
 
-👉 Des photos réalistes : nuisibles, interventions, matériel, etc. (même en IA si c’est bien fait mais faut que ça fasse pro, pas fake)
+👉 Des photos réalistes : nuisibles, interventions, matériel, etc.
 
 👉 Un bouton pour appeler direct visible partout (ça c’est super important)
 
@@ -33,12 +33,3 @@ Ce que je veux voir sur le site :
 “dératisation Clermont-Ferrand”,
 “exterminateur Clermont”,
 “punaises de lit Clermont”, etc.
-
-Le but c’est vraiment que les gens arrivent sur le site et m’appellent direct.
-
-👉 Exemple de site à copier
-- https://asdepic.com/clermont-ferrand/
-- https://zapem.fr/
-- https://www.sospunaises.com
-- https://www.domehygiene.fr/
-    

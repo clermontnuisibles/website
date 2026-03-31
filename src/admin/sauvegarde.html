@@ -111,6 +111,7 @@
     <div class="modules" id="modules-list"></div>
     <div class="btn-row">
       <button class="btn btn-primary" onclick="exportJSON()">⬇ Exporter (fichier JSON)</button>
+      <button class="btn btn-blue" onclick="shareBackup()">↗ Partager (envoyer le fichier)</button>
       <label class="btn btn-outline" style="cursor:pointer;">
         ⬆ Importer un fichier
         <input type="file" id="import-file" accept=".json,application/json" style="display:none;" onchange="importJSON(this)">
@@ -119,54 +120,9 @@
     <div id="last-export" class="last-backup"></div>
   </div>
 
-  <!-- ── Google Drive ── -->
-  <div class="card">
-    <div class="card-title">Synchronisation Google Drive</div>
-    <div class="card-desc">Sauvegardez automatiquement sur votre Google Drive et restaurez en un clic. Nécessite un <strong>Client ID Google Cloud</strong> (configuration unique, gratuite).</div>
-
-    <div id="drive-config-missing" class="setup-box" style="display:none;">
-      <strong>⚙️ Configuration requise</strong>
-      <ol>
-        <li>Allez sur <a href="https://console.cloud.google.com/" target="_blank" rel="noopener">console.cloud.google.com</a></li>
-        <li>Créez un projet → activez l'<strong>API Google Drive</strong></li>
-        <li>Identifiants → Créer → <strong>ID client OAuth 2.0</strong> (type : Application Web)</li>
-        <li>Origines JS autorisées : <code id="origin-hint"></code></li>
-        <li>Copiez l'<strong>ID client</strong> (se termine par <code>.apps.googleusercontent.com</code>)</li>
-        <li>Collez-le dans <code>config.js</code> → champ <code>googleDriveClientId</code></li>
-      </ol>
-    </div>
-
-    <div id="drive-ready" style="display:none;">
-      <div id="drive-status" class="drive-status disconnected">
-        <span class="drive-dot dot-grey" id="drive-dot"></span>
-        <span id="drive-status-text">Non connecté à Google Drive</span>
-      </div>
-
-      <div class="btn-row" id="drive-actions">
-        <button class="btn btn-blue" id="btn-gdrive-connect" onclick="driveConnect()">🔗 Connecter Google Drive</button>
-        <button class="btn btn-primary" id="btn-gdrive-save" onclick="driveBackup()" disabled>☁ Sauvegarder sur Drive</button>
-        <button class="btn btn-outline"  id="btn-gdrive-restore" onclick="driveLoadList()" disabled>↩ Restaurer depuis Drive</button>
-        <button class="btn btn-danger"   id="btn-gdrive-disconnect" onclick="driveDisconnect()" style="display:none;">Déconnecter</button>
-      </div>
-
-      <div id="drive-files-section" style="display:none;margin-top:1rem;">
-        <div style="font-size:.81rem;font-weight:700;color:#555;margin-bottom:.5rem;">Choisir un fichier de sauvegarde :</div>
-        <div class="drive-files" id="drive-files"></div>
-        <div class="restore-warn" id="restore-warn">⚠️ Cette action <strong>remplace toutes vos données locales</strong> par celles du fichier sélectionné. Impossible d'annuler.</div>
-        <div class="btn-row" style="margin-top:.65rem;">
-          <button class="btn btn-danger" id="btn-confirm-restore" onclick="driveRestore()" disabled>Restaurer ce fichier</button>
-          <button class="btn btn-outline" onclick="closeDriveList()">Annuler</button>
-        </div>
-      </div>
-
-      <div class="progress" id="drive-progress"><div class="progress-bar" id="drive-progress-bar"></div></div>
-      <div id="last-drive-backup" class="last-backup" style="margin-top:.65rem;"></div>
-    </div>
-  </div>
-
 </div>
 
-<div class="storage-note">🔒 Toutes les données restent dans votre navigateur (localStorage). L'export Google Drive utilise OAuth2 — seul votre compte Drive peut lire ces fichiers (scope <code>drive.file</code>).</div>
+<div class="storage-note">🔒 Toutes les données restent dans votre navigateur (localStorage). Utilisez l'export JSON pour sauvegarder et l'import pour restaurer.</div>
 
 <div class="toast" id="toast"></div>
 
@@ -180,7 +136,6 @@ var STORE_KEYS = [
   { key: 'cn_certifs',     label: '🔔 Alertes certifications',   page: 'alertes-certifications.html' }
 ];
 var BACKUP_FILE_PREFIX = 'cn-backup-';
-var DRIVE_KEY = 'cn_drive_last';
 
 function loadLS(key){ try{ return JSON.parse(localStorage.getItem(key)||'null'); }catch(e){ return null; } }
 function countItems(key){ var d=loadLS(key); return Array.isArray(d)?d.length:(d?'?':0); }
@@ -211,11 +166,20 @@ function collectBackup(){
   STORE_KEYS.forEach(function(m){ data.modules[m.key] = loadLS(m.key); });
   return data;
 }
-function exportJSON(){
+
+function buildBackupFile(){
   var data  = collectBackup();
   var date  = new Date().toISOString().replace(/[:.]/g,'-').slice(0,16);
   var fname = BACKUP_FILE_PREFIX + date + '.json';
-  var blob  = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
+  var content = JSON.stringify(data, null, 2);
+  var blob  = new Blob([content], { type: 'application/json' });
+  return { fname: fname, blob: blob };
+}
+
+function exportJSON(){
+  var pack  = buildBackupFile();
+  var fname = pack.fname;
+  var blob  = pack.blob;
   var url   = URL.createObjectURL(blob);
   var a     = document.createElement('a');
   a.href    = url; a.download = fname;
@@ -225,6 +189,31 @@ function exportJSON(){
   localStorage.setItem('cn_last_export', now);
   document.getElementById('last-export').innerHTML = 'Dernier export : <strong>' + formatDatetime(now) + '</strong>';
   toast('✅ Fichier exporté : ' + fname);
+}
+
+async function shareBackup(){
+  try {
+    var pack = buildBackupFile();
+    var file = new File([pack.blob], pack.fname, { type: 'application/json' });
+
+    if (navigator.share && navigator.canShare && navigator.canShare({ files: [file] })) {
+      await navigator.share({
+        title: 'Sauvegarde Clermont Nuisibles (admin)',
+        text: 'Fichier de sauvegarde admin (JSON).',
+        files: [file]
+      });
+      toast('✅ Partage ouvert');
+      return;
+    }
+
+    // Fallback : téléchargement classique si le partage n’est pas supporté
+    exportJSON();
+    toast('ℹ️ Partage non supporté ici — fichier téléchargé');
+  } catch (err) {
+    // L’utilisateur peut annuler le partage : on ne considère pas ça comme une erreur bloquante
+    if (err && (err.name === 'AbortError' || err.name === 'NotAllowedError')) return;
+    toast('❌ Impossible de partager le fichier', true);
+  }
 }
 
 /* ===== Import JSON ===== */
@@ -255,203 +244,10 @@ function importJSON(input){
   reader.readAsText(file);
 }
 
-/* ===== Google Drive ===== */
-var CLIENT_ID   = (window.SiteConfig && window.SiteConfig.googleDriveClientId) || '';
-var DRIVE_SCOPE = 'https://www.googleapis.com/auth/drive.file';
-var accessToken = '';
-var selectedDriveFileId = null;
-
-function initDriveSection(){
-  document.getElementById('origin-hint').textContent = window.location.origin;
-  if (!CLIENT_ID) {
-    document.getElementById('drive-config-missing').style.display = '';
-    document.getElementById('drive-ready').style.display = 'none';
-  } else {
-    document.getElementById('drive-config-missing').style.display = 'none';
-    document.getElementById('drive-ready').style.display = '';
-    // Load GIS
-    var s = document.createElement('script');
-    s.src = 'https://accounts.google.com/gsi/client';
-    s.async = true; s.defer = true;
-    document.head.appendChild(s);
-    // Restore last backup info
-    var last = localStorage.getItem(DRIVE_KEY);
-    if (last) document.getElementById('last-drive-backup').innerHTML = 'Dernière sauvegarde Drive : <strong>' + formatDatetime(last) + '</strong>';
-  }
-}
-
-function setDriveConnected(email){
-  accessToken = accessToken; // already set
-  var dot  = document.getElementById('drive-dot');
-  var text = document.getElementById('drive-status-text');
-  var st   = document.getElementById('drive-status');
-  dot.className  = 'drive-dot dot-green';
-  st.className   = 'drive-status connected';
-  text.innerHTML = 'Connecté : <span class="drive-user">' + (email||'Google Drive') + '</span>';
-  document.getElementById('btn-gdrive-connect').style.display     = 'none';
-  document.getElementById('btn-gdrive-disconnect').style.display  = '';
-  document.getElementById('btn-gdrive-save').disabled    = false;
-  document.getElementById('btn-gdrive-restore').disabled = false;
-}
-
-function driveConnect(){
-  if (!window.google || !window.google.accounts) { toast('⏳ Chargement Google…, réessayez dans 2s', true); return; }
-  var tokenClient = google.accounts.oauth2.initTokenClient({
-    client_id: CLIENT_ID,
-    scope:     DRIVE_SCOPE,
-    callback:  function(resp){
-      if (resp.error){ toast('❌ Connexion refusée : ' + resp.error, true); return; }
-      accessToken = resp.access_token;
-      // Get user info to display email
-      fetch('https://www.googleapis.com/oauth2/v3/userinfo', {
-        headers: { Authorization: 'Bearer ' + accessToken }
-      }).then(function(r){ return r.json(); }).then(function(u){ setDriveConnected(u.email||''); })
-        .catch(function(){ setDriveConnected(''); });
-    }
-  });
-  tokenClient.requestAccessToken({ prompt: '' });
-}
-
-function driveDisconnect(){
-  if (accessToken && window.google) google.accounts.oauth2.revoke(accessToken, function(){});
-  accessToken = '';
-  selectedDriveFileId = null;
-  document.getElementById('drive-dot').className   = 'drive-dot dot-grey';
-  document.getElementById('drive-status').className = 'drive-status disconnected';
-  document.getElementById('drive-status-text').textContent = 'Non connecté à Google Drive';
-  document.getElementById('btn-gdrive-connect').style.display    = '';
-  document.getElementById('btn-gdrive-disconnect').style.display = 'none';
-  document.getElementById('btn-gdrive-save').disabled    = true;
-  document.getElementById('btn-gdrive-restore').disabled = true;
-  document.getElementById('drive-files-section').style.display = 'none';
-}
-
-/* Upload backup to Drive */
-function driveBackup(){
-  if (!accessToken){ toast('❌ Connectez-vous à Google Drive d\'abord', true); return; }
-  var data     = collectBackup();
-  var date     = new Date().toISOString().replace(/[:.]/g,'-').slice(0,16);
-  var filename = BACKUP_FILE_PREFIX + date + '.json';
-  var content  = JSON.stringify(data, null, 2);
-
-  showProgress(30);
-  var metadata = JSON.stringify({ name: filename, mimeType: 'application/json' });
-  var boundary = '-------cn_boundary';
-  var body = '--' + boundary + '\r\nContent-Type: application/json; charset=UTF-8\r\n\r\n' +
-             metadata + '\r\n--' + boundary + '\r\nContent-Type: application/json\r\n\r\n' +
-             content + '\r\n--' + boundary + '--';
-
-  fetch('https://www.googleapis.com/upload/drive/v3/files?uploadType=multipart', {
-    method:  'POST',
-    headers: {
-      'Authorization': 'Bearer ' + accessToken,
-      'Content-Type':  'multipart/related; boundary=' + boundary
-    },
-    body: body
-  }).then(function(r){
-    showProgress(100);
-    if (!r.ok) throw new Error('HTTP ' + r.status);
-    return r.json();
-  }).then(function(){
-    var now = new Date().toISOString();
-    localStorage.setItem(DRIVE_KEY, now);
-    document.getElementById('last-drive-backup').innerHTML = 'Dernière sauvegarde Drive : <strong>' + formatDatetime(now) + '</strong>';
-    toast('✅ Sauvegardé sur Google Drive : ' + filename);
-    setTimeout(hideProgress, 600);
-  }).catch(function(err){
-    hideProgress();
-    if (err.message && err.message.includes('401')) { driveDisconnect(); toast('❌ Session expirée. Reconnectez-vous.', true); }
-    else toast('❌ Erreur Google Drive : ' + err.message, true);
-  });
-}
-
-/* List backup files */
-function driveLoadList(){
-  if (!accessToken){ toast('❌ Connectez-vous à Google Drive d\'abord', true); return; }
-  showProgress(40);
-  var q = encodeURIComponent("name contains '" + BACKUP_FILE_PREFIX + "' and mimeType='application/json' and trashed=false");
-  fetch('https://www.googleapis.com/drive/v3/files?q=' + q + '&orderBy=createdTime+desc&pageSize=20&fields=files(id,name,createdTime)', {
-    headers: { Authorization: 'Bearer ' + accessToken }
-  }).then(function(r){ showProgress(90); if(!r.ok) throw new Error('HTTP '+r.status); return r.json(); })
-    .then(function(data){
-    hideProgress();
-    selectedDriveFileId = null;
-    document.getElementById('btn-confirm-restore').disabled = true;
-    document.getElementById('restore-warn').style.display = 'none';
-    var section = document.getElementById('drive-files-section');
-    var list    = document.getElementById('drive-files');
-    section.style.display = '';
-    if (!data.files || !data.files.length){
-      list.innerHTML = '<div class="no-files">Aucune sauvegarde trouvée sur ce compte Drive.</div>';
-      return;
-    }
-    list.innerHTML = data.files.map(function(f){
-      var d = f.createdTime ? new Date(f.createdTime).toLocaleString('fr-FR') : '';
-      return '<div class="drive-file" onclick="selectDriveFile(this,\'' + f.id + '\')" data-id="' + f.id + '">' +
-        '<span class="df-name">' + f.name + '</span>' +
-        '<span class="df-date">' + d + '</span>' +
-      '</div>';
-    }).join('');
-  }).catch(function(err){
-    hideProgress();
-    if (err.message.includes('401')){ driveDisconnect(); toast('❌ Session expirée. Reconnectez-vous.', true); }
-    else toast('❌ Impossible de lister les fichiers : ' + err.message, true);
-  });
-}
-
-function selectDriveFile(el, fileId){
-  document.querySelectorAll('.drive-file').forEach(function(f){ f.classList.remove('selected'); });
-  el.classList.add('selected');
-  selectedDriveFileId = fileId;
-  document.getElementById('btn-confirm-restore').disabled = false;
-  document.getElementById('restore-warn').style.display = '';
-}
-
-function closeDriveList(){
-  document.getElementById('drive-files-section').style.display = 'none';
-  selectedDriveFileId = null;
-}
-
-function driveRestore(){
-  if (!selectedDriveFileId){ toast('Sélectionnez un fichier', true); return; }
-  if (!confirm('⚠️ Toutes vos données locales vont être remplacées. Confirmer ?')) return;
-  showProgress(40);
-  fetch('https://www.googleapis.com/drive/v3/files/' + selectedDriveFileId + '?alt=media', {
-    headers: { Authorization: 'Bearer ' + accessToken }
-  }).then(function(r){ showProgress(80); if(!r.ok) throw new Error('HTTP '+r.status); return r.json(); })
-    .then(function(data){
-    if (!data.modules) throw new Error('Format invalide');
-    var count = 0;
-    STORE_KEYS.forEach(function(m){
-      if (data.modules[m.key] !== undefined && data.modules[m.key] !== null){
-        localStorage.setItem(m.key, JSON.stringify(data.modules[m.key]));
-        count++;
-      }
-    });
-    hideProgress();
-    renderModules();
-    closeDriveList();
-    toast('✅ Restauration effectuée (' + count + ' module(s))');
-  }).catch(function(err){
-    hideProgress();
-    if (err.message.includes('401')){ driveDisconnect(); toast('❌ Session expirée. Reconnectez-vous.', true); }
-    else toast('❌ Erreur de restauration : ' + err.message, true);
-  });
-}
-
-/* Progress */
-function showProgress(pct){
-  var p = document.getElementById('drive-progress');
-  p.style.display = '';
-  document.getElementById('drive-progress-bar').style.width = pct + '%';
-}
-function hideProgress(){ document.getElementById('drive-progress').style.display='none'; }
-
 /* ===== Init ===== */
 var lastExport = localStorage.getItem('cn_last_export');
 if (lastExport) document.getElementById('last-export').innerHTML = 'Dernier export : <strong>' + formatDatetime(lastExport) + '</strong>';
 renderModules();
-initDriveSection();
 </script>
 </body>
 </html>

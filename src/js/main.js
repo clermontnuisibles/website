@@ -209,6 +209,34 @@
     const cfg = window.SiteConfig;
     if (!cfg) return;
 
+    // ── Google Tag Manager (injecté via config) ──────────────────
+    if (cfg.gtmId && typeof cfg.gtmId === 'string') {
+      const gtmId = cfg.gtmId.trim();
+      if (gtmId && !document.getElementById('gtm-script')) {
+        window.dataLayer = window.dataLayer || [];
+        window.dataLayer.push({ 'gtm.start': new Date().getTime(), event: 'gtm.js' });
+
+        const s = document.createElement('script');
+        s.id = 'gtm-script';
+        s.async = true;
+        s.src = 'https://www.googletagmanager.com/gtm.js?id=' + encodeURIComponent(gtmId);
+
+        // Insérer le plus tôt possible dans le <head>
+        (document.head || document.documentElement).appendChild(s);
+
+        // Iframe noscript "équivalent" (utile notamment si un outil vérifie sa présence)
+        if (!document.getElementById('gtm-noscript')) {
+          const ns = document.createElement('noscript');
+          ns.id = 'gtm-noscript';
+          ns.innerHTML =
+            '<iframe src="https://www.googletagmanager.com/ns.html?id=' +
+            gtmId +
+            '" height="0" width="0" style="display:none;visibility:hidden"></iframe>';
+          document.body.insertBefore(ns, document.body.firstChild);
+        }
+      }
+    }
+
     // ── JSON-LD Schema.org (index.html) ──────────────────────────
     const jsonLdScript = document.getElementById('json-ld-business');
     if (jsonLdScript) {

@@ -32,6 +32,10 @@ window.SiteConfig = {
      Sans slash final. Utilisée dans le formulaire (_next redirect). */
   siteUrl: 'https://www.clermont-nuisibles.fr',
 
+  /* ── Google Tag Manager ─────────────────────────────────────────
+     Laissez vide ('') pour désactiver GTM. */
+  gtmId: 'GTM-5GP5MRJR',
+
   /* ── Note clients ────────────────────────────────────────────────
      Injectée dans le JSON-LD Schema.org (aggregateRating).
      Mettez à jour dès que vous avez de vrais avis consolidés.    */
@@ -60,12 +64,4 @@ window.SiteConfig = {
      Laisser vide (‘’) pour masquer le bouton de réservation.         */
   googleBookingUrl: 'https://calendar.app.google/W3hPKxHths3qbvYF6',
 
-  /* ── Google Drive — sauvegarde admin ───────────────────────────
-     Créez un projet sur https://console.cloud.google.com,
-     activez l'API Google Drive, puis créez un ID client OAuth 2.0
-     (type : Application Web) avec comme origine autorisée votre
-     domaine (ex. https://clermont-nuisibles.fr).
-     Collez ici l'ID se terminant par .apps.googleusercontent.com
-     Laisser vide ('') pour désactiver la sync Google Drive.       */
-  googleDriveClientId: '',
 };

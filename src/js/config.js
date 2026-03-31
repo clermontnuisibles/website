@@ -9,7 +9,7 @@ window.SiteConfig = {
   /* ── E-mail ─────────────────────────────────────────────────────
      Utilisé dans les liens href="mailto:…" et le texte affiché       */
   /*   email: 'contact@clermont-nuisibles.fr',   */
-  email: 'clermontnuisibles@gmaill.com',
+  email: 'clermontnuisibles@gmail.com',
 
   /* ── Identité légale ────────────────────────────────────────────
      siret        : numéro SIRET — pieds de page + mentions légales
@@ -18,6 +18,14 @@ window.SiteConfig = {
   siret:        '100 387 190 00018',
   ownerName:    'Evan PENARANDA',
   ownerAddress: '19 Chemin de Prat, Romagnat (63540)',
+
+  /* ── Carte de visite (admin vcard.html) ────────────────────────
+     companyName : raison sociale dans la vCard (ORG)
+     vcardTitle  : fonction / accroche sous le nom
+     vcardNote   : ligne libre (certifications, horaires…)          */
+  companyName: 'Clermont Nuisibles',
+  vcardTitle: 'Spécialiste nuisibles — Clermont-Ferrand',
+  vcardNote: 'Intervention 7j/7 — Certifié Certibiocide',
 
   /* ── Formulaire de contact ──────────────────────────────────────
      Créez un compte gratuit sur https://formspree.io,

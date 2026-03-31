@@ -108,18 +108,19 @@
   <div class="biz-card">
     <img src="../images/logo-icon.svg" alt="">
     <div class="biz-info">
-      <div class="name" id="vc-name">Evan PENARANDA</div>
-      <div class="title-job">Spécialiste nuisibles — Clermont-Ferrand</div>
-      <div class="contact-line" id="vc-phone">07 66 50 29 38</div>
-      <div class="contact-line" id="vc-email">clermontnuisibles@gmaill.com</div>
-      <div class="contact-line" id="vc-site">www.clermont-nuisibles.fr</div>
+      <div class="name" id="vc-name">…</div>
+      <div class="title-job" id="vc-title">…</div>
+      <div class="contact-line" id="vc-phone">…</div>
+      <div class="contact-line" id="vc-email">…</div>
+      <div class="contact-line" id="vc-site">…</div>
+      <div class="contact-line" id="vc-address" style="display:none;font-size:0.78rem;margin-top:0.35rem;opacity:0.85"></div>
     </div>
   </div>
 
   <div id="qrcode"></div>
 
   <div class="actions">
-    <a id="btn-download" href="#" class="btn btn-primary" download="clermont-nuisibles.vcf">
+    <a id="btn-download" href="#" class="btn btn-primary" download="">
       📥 Télécharger la vCard (.vcf)
     </a>
     <button id="btn-share" class="btn btn-outline" style="display:none">
@@ -135,55 +136,88 @@
 <script>
 (function () {
   var cfg = window.SiteConfig || {};
-  var name    = cfg.ownerName    || 'Clermont Nuisibles';
-  var phone   = cfg.phoneE164    || '';
-  var phoneDisplay = cfg.phone   || phone;
-  var email   = cfg.email        || '';
-  var site    = (cfg.siteUrl     || 'https://www.clermont-nuisibles.fr').replace(/^https?:\/\//, '');
-  var siteUrl =  cfg.siteUrl     || 'https://www.clermont-nuisibles.fr';
 
-  // Mise à jour de la carte visuelle
-  var el = function(id) { return document.getElementById(id); };
+  function escapeVcf(s) {
+    return String(s == null ? '' : s)
+      .replace(/\\/g, '\\\\')
+      .replace(/;/g, '\\;')
+      .replace(/\r?\n/g, '\\n');
+  }
+
+  function slugFile(s) {
+    return String(s || 'contact')
+      .normalize('NFD').replace(/[\u0300-\u036f]/g, '')
+      .replace(/[^\w\s-]+/g, '').trim()
+      .replace(/\s+/g, '-').toLowerCase() || 'contact';
+  }
+
+  var company = cfg.companyName || 'Clermont Nuisibles';
+  var name    = cfg.ownerName   || company;
+  var phone   = cfg.phoneE164   || '';
+  var phoneDisplay = cfg.phone || phone || '—';
+  var email   = cfg.email       || '';
+  var siteUrl = cfg.siteUrl     || '';
+  var site    = siteUrl.replace(/^https?:\/\//, '') || '—';
+  var title   = cfg.vcardTitle  || '';
+  var noteParts = [];
+  if (cfg.vcardNote) noteParts.push(cfg.vcardNote);
+  if (cfg.ownerAddress) noteParts.push('Adresse : ' + cfg.ownerAddress);
+  if (cfg.siret) noteParts.push('SIRET ' + cfg.siret);
+  var note = noteParts.join(' — ');
+
+  var el = function (id) { return document.getElementById(id); };
   el('vc-name').textContent  = name;
+  el('vc-title').textContent = title || '—';
   el('vc-phone').textContent = phoneDisplay;
-  el('vc-email').textContent = email;
+  el('vc-email').textContent = email || '—';
   el('vc-site').textContent  = site;
 
-  // Construction de la vCard 3.0
-  var nameParts = name.split(' ');
-  var lastName  = nameParts[nameParts.length - 1] || '';
-  var firstName = nameParts.slice(0, -1).join(' ') || '';
+  var addrEl = el('vc-address');
+  if (cfg.ownerAddress) {
+    addrEl.textContent = cfg.ownerAddress;
+    addrEl.style.display = '';
+  }
 
-  var vcf = [
+  var nameParts = name.trim().split(/\s+/).filter(Boolean);
+  var lastName  = nameParts.length ? nameParts[nameParts.length - 1] : '';
+  var firstName = nameParts.length > 1 ? nameParts.slice(0, -1).join(' ') : '';
+
+  var lines = [
     'BEGIN:VCARD',
     'VERSION:3.0',
-    'FN:' + name,
-    'N:' + lastName + ';' + firstName + ';;;',
-    'ORG:Clermont Nuisibles',
-    'TITLE:Spécialiste dératisation & désinsectisation',
-    phone  ? 'TEL;TYPE=CELL:' + phone   : '',
-    email  ? 'EMAIL:'         + email   : '',
-    siteUrl ? 'URL:'          + siteUrl : '',
-    'ADR;TYPE=WORK:;;63 Puy-de-Dôme;Clermont-Ferrand;;63000;France',
-    'NOTE:Intervention 7j/7 — Certifié Certibiocide',
-    'END:VCARD'
-  ].filter(Boolean).join('\r\n');
+    'FN:' + escapeVcf(name),
+    'N:' + escapeVcf(lastName) + ';' + escapeVcf(firstName) + ';;;',
+    'ORG:' + escapeVcf(company)
+  ];
+  if (title) lines.push('TITLE:' + escapeVcf(title));
+  if (phone) lines.push('TEL;TYPE=CELL:' + escapeVcf(phone.replace(/^tel:/i, '')));
+  if (email) lines.push('EMAIL;TYPE=INTERNET:' + escapeVcf(email));
+  if (siteUrl) lines.push('URL:' + escapeVcf(siteUrl));
+  if (cfg.ownerAddress) {
+    lines.push('ADR;TYPE=WORK:;;' + escapeVcf(cfg.ownerAddress) + ';;;;');
+  }
+  if (note) lines.push('NOTE:' + escapeVcf(note));
+  lines.push('END:VCARD');
+
+  var vcf = lines.join('\r\n');
 
   var blob = new Blob([vcf], { type: 'text/vcard;charset=utf-8' });
   var vcfUrl = URL.createObjectURL(blob);
 
-  // Bouton download
   var dlBtn = el('btn-download');
   dlBtn.href = vcfUrl;
+  dlBtn.setAttribute('download', slugFile(company) + '.vcf');
 
-  // QR code : vCard minimaliste (champs ASCII uniquement pour compatibilité max)
   var qrLines = [
     'BEGIN:VCARD',
     'VERSION:3.0',
     'FN:' + name,
-    phone   ? 'TEL;TYPE=CELL:' + phone   : null,
-    email   ? 'EMAIL:'         + email   : null,
-    siteUrl ? 'URL:'           + siteUrl : null,
+    'ORG:' + company,
+    title ? ('TITLE:' + title) : null,
+    phone ? ('TEL;TYPE=CELL:' + phone.replace(/^tel:/i, '')) : null,
+    email ? ('EMAIL:' + email) : null,
+    siteUrl ? ('URL:' + siteUrl) : null,
+    cfg.ownerAddress ? ('NOTE:' + cfg.ownerAddress.replace(/;/g, ',')) : null,
     'END:VCARD'
   ].filter(Boolean).join('\n');
 
@@ -208,11 +242,12 @@
     var shareBtn = el('btn-share');
     shareBtn.style.display = 'inline-flex';
     shareBtn.addEventListener('click', function () {
-      var file = new File([vcf], 'clermont-nuisibles.vcf', { type: 'text/vcard' });
+      var fname = slugFile(company) + '.vcf';
+      var file = new File([vcf], fname, { type: 'text/vcard' });
       if (navigator.canShare && navigator.canShare({ files: [file] })) {
-        navigator.share({ files: [file], title: 'Contact Clermont Nuisibles' });
+        navigator.share({ files: [file], title: 'Contact ' + company });
       } else {
-        navigator.share({ title: 'Clermont Nuisibles', url: siteUrl });
+        navigator.share({ title: company, text: name, url: siteUrl || undefined });
       }
     });
   }

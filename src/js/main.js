@@ -250,6 +250,29 @@
       } catch (_) { }
     }
 
+    // ── Open Graph (og:url, og:image) ────────────────────────────
+    if (cfg.siteUrl) {
+      const ogUrl = document.querySelector('meta[property="og:url"]');
+      if (ogUrl) {
+        try {
+          const canonicalPath = canonicalLink ? new URL(canonicalLink.href).pathname : window.location.pathname;
+          ogUrl.setAttribute('content', cfg.siteUrl + canonicalPath);
+        } catch (_) {
+          ogUrl.setAttribute('content', cfg.siteUrl + window.location.pathname);
+        }
+      }
+
+      const ogImage = document.querySelector('meta[property="og:image"]');
+      if (ogImage && !ogImage.getAttribute('content')) {
+        ogImage.setAttribute('content', cfg.siteUrl + '/images/og-image.svg');
+      }
+
+      const twitterImage = document.querySelector('meta[name="twitter:image"]');
+      if (twitterImage && !twitterImage.getAttribute('content')) {
+        twitterImage.setAttribute('content', cfg.siteUrl + '/images/og-image.svg');
+      }
+    }
+
     // ── Numéro de téléphone ─────────────────────────────────────
     // Met à jour le href de tous les liens tel:
     document.querySelectorAll('a[href^="tel:"]').forEach(a => {

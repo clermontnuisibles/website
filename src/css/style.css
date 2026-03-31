@@ -54,6 +54,7 @@
 html {
   scroll-behavior: smooth;
   font-size: 16px;
+  height: 100%;
 }
 
 body {
@@ -62,6 +63,8 @@ body {
   line-height: 1.6;
   background: var(--white);
   -webkit-font-smoothing: antialiased;
+  min-height: 100%;
+  padding-top: 0;
 }
 
 img { max-width: 100%; height: auto; display: block; }
@@ -104,6 +107,98 @@ p  { color: var(--gray-600); line-height: 1.8; }
 .text-center  { text-align: center; }
 .text-white   { color: var(--white) !important; }
 .text-primary { color: var(--primary); }
+
+/* ========================
+   3b. UTILITAIRES
+   (remplace les styles inline)
+   ======================== */
+.u-hidden { display: none !important; }
+.u-mx-auto { margin-left: auto !important; margin-right: auto !important; }
+.u-mb-0 { margin-bottom: 0 !important; }
+.u-mb-1 { margin-bottom: 1rem !important; }
+.u-mb-2 { margin-bottom: 2rem !important; }
+.u-mt-1-25 { margin-top: 1.25rem !important; }
+.u-mt-2-5 { margin-top: 2.5rem !important; }
+.u-mt-3 { margin-top: 3rem !important; }
+.u-maxw-800 { max-width: 800px !important; }
+.u-maxw-900 { max-width: 900px !important; }
+.u-maxw-700 { max-width: 700px !important; }
+.u-w-100 { width: 100% !important; }
+
+.u-text-sm { font-size: 0.9rem !important; }
+.u-text-xs { font-size: 0.82rem !important; }
+.u-text-xxs { font-size: 0.85rem !important; }
+.u-text-muted { color: var(--gray-400) !important; }
+.u-text-on-dark-muted { color: rgba(255,255,255,.75) !important; }
+.u-text-on-dark-muted-80 { color: rgba(255,255,255,.8) !important; }
+.u-text-primary-strong { color: var(--primary) !important; font-weight: 600 !important; }
+.u-text-strong { font-weight: 600 !important; }
+
+.grid-align-start { align-items: start; }
+.u-align-center { align-items: center !important; }
+.u-gap-3 { gap: 3rem !important; }
+.u-opacity-70 { opacity: 0.7 !important; }
+.u-mt-0-25 { margin-top: 0.25rem !important; }
+.u-mt-0-5 { margin-top: 0.5rem !important; }
+.u-mt-0-75 { margin-top: 0.75rem !important; }
+.u-mt-1 { margin-top: 1rem !important; }
+.u-mb-1-5 { margin-bottom: 1.5rem !important; }
+.u-mb-1-75 { margin-bottom: 1.75rem !important; }
+.u-mt-1-5 { margin-top: 1.5rem !important; }
+.u-mt-1-75 { margin-top: 1.75rem !important; }
+.u-mt-2 { margin-top: 2rem !important; }
+.u-my-1-5 { margin-top: 1.5rem !important; margin-bottom: 1.5rem !important; }
+.u-pt-1-5 { padding-top: 1.5rem !important; }
+.u-mt-1-5 { margin-top: 1.5rem !important; }
+
+.u-border-top-on-dark { border-top: 1px solid rgba(255,255,255,.15) !important; }
+
+.u-flex { display: flex !important; }
+.u-flex-col { flex-direction: column !important; }
+.u-gap-0-5 { gap: 0.5rem !important; }
+.u-gap-0-6 { gap: 0.6rem !important; }
+.u-gap-0-75 { gap: 0.75rem !important; }
+.u-gap-1-25 { gap: 1.25rem !important; }
+
+.u-fs-1 { font-size: 1rem !important; }
+.u-fs-1-1 { font-size: 1.1rem !important; }
+
+/* Barres de note (avis.html) */
+.rating-fill-92 { width: 92%; }
+.rating-fill-6 { width: 6%; }
+.rating-fill-2 { width: 2%; }
+.rating-fill-0 { width: 0%; }
+
+/* Contenu légal (tables et notes) */
+.legal-table-wrap { overflow-x: auto; }
+.legal-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.9rem;
+  margin: 1rem 0;
+}
+.legal-table thead tr { background: var(--green-tint); }
+.legal-table th {
+  padding: 0.75rem;
+  text-align: left;
+  border-bottom: 2px solid var(--gray-200);
+}
+.legal-table td { padding: 0.75rem; }
+.legal-table tbody tr { border-bottom: 1px solid var(--gray-200); }
+.legal-td-mono { font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace; }
+
+.notice-bar {
+  background: var(--green-tint);
+  padding: 1.25rem 0;
+}
+.notice-bar__text {
+  color: var(--primary);
+  font-weight: 600;
+  font-size: 1rem;
+  margin: 0;
+}
+.card--center { text-align: center; }
+.card-icon-wrap--compact { margin: 0 auto 0.75rem; }
 
 /* ========================
    3. LAYOUT
@@ -550,6 +645,12 @@ p  { color: var(--gray-600); line-height: 1.8; }
   position: relative;
   overflow: hidden;
 }
+.service-detail-img--rat { background: linear-gradient(135deg,#F0F7F4,#d1fae5); }
+.service-detail-img--bug { background: linear-gradient(135deg,#fef3c7,#fde68a); }
+.service-detail-img--bed { background: linear-gradient(135deg,#ffe4e6,#fecdd3); }
+.service-detail-img--ant { background: linear-gradient(135deg,#f0fdf4,#bbf7d0); }
+.service-detail-img--wasp { background: linear-gradient(135deg,#fffbeb,#fef3c7); }
+.service-detail-img--contract { background: linear-gradient(135deg,#F0F7F4,#a7f3d0); }
 .service-detail-emoji {
   position: relative;
   z-index: 1;

@@ -1,7 +1,7 @@
 {
-  "name": "Clermont Nuisibles – Admin",
-  "short_name": "Admin CN",
-  "description": "Espace administration – Clermont Nuisibles",
+  "name": "Clermont-nuisibles (admin)",
+  "short_name": "Clermont-nuisibles (admin)",
+  "description": "Espace administration — Clermont-nuisibles (admin)",
   "lang": "fr",
   "start_url": "/admin/",
   "scope": "/admin/",

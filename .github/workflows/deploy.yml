@@ -30,7 +30,9 @@ jobs:
       - name: Injection de l'URL dans le sitemap
         run: |
           SITE_URL=$(grep "siteUrl:" src/js/config.js | sed "s/.*siteUrl: *'\([^']*\)'.*/\1/")
+          LASTMOD=$(date -u +%Y-%m-%d)
           sed -i "s|SITE_URL|$SITE_URL|g" src/sitemap.xml
+          sed -i "s|<lastmod>[^<]*</lastmod>|<lastmod>$LASTMOD</lastmod>|g" src/sitemap.xml
 
       - name: Upload de l'artifact
         uses: actions/upload-pages-artifact@v4

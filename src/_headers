@@ -1,0 +1,26 @@
+# Netlify / Cloudflare Pages (ignoré par GitHub Pages en prod)
+# Règles plus spécifiques priment sur les génériques.
+
+/sw.js
+  Cache-Control: public, max-age=0, must-revalidate
+
+/js/config.js
+  Cache-Control: public, max-age=900, stale-while-revalidate=300
+
+/admin/sw.js
+  Cache-Control: public, max-age=0, must-revalidate
+
+/admin/pwa.js
+  Cache-Control: public, max-age=0, must-revalidate
+
+/css/*
+  Cache-Control: public, max-age=2592000, stale-while-revalidate=86400
+
+/js/*
+  Cache-Control: public, max-age=2592000, stale-while-revalidate=86400
+
+/**/*.svg
+  Cache-Control: public, max-age=2592000, stale-while-revalidate=86400
+
+/fonts/*.css
+  Cache-Control: public, max-age=2592000, stale-while-revalidate=86400

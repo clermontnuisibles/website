@@ -395,10 +395,22 @@
   }
 
   /* =====================
+     Service worker (cache prolongé CSS / JS / SVG — voir /sw.js)
+     ===================== */
+  function initPublicServiceWorker() {
+    if (!('serviceWorker' in navigator)) return;
+    if ((window.location.pathname || '').includes('/admin/')) return;
+    window.addEventListener('load', () => {
+      navigator.serviceWorker.register('sw.js').catch(() => {});
+    });
+  }
+
+  /* =====================
      Init
      ===================== */
   document.addEventListener('DOMContentLoaded', () => {
     applyConfig();
+    initPublicServiceWorker();
     initCookieBanner();
     initMobileMenu();
     initActiveNav();

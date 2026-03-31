@@ -36,6 +36,11 @@ window.SiteConfig = {
      Laissez vide ('') pour désactiver GTM. */
   gtmId: 'GTM-5GP5MRJR',
 
+  /* ── Google Analytics 4 (measurement ID) ───────────────────────
+     Ex. : 'G-XXXXXXXXXX'. Laissez vide ('') pour désactiver.
+     Si GA est déjà chargé via GTM uniquement, laissez vide pour éviter le double comptage. */
+  googleAnalyticsId: 'G-6P3P7FJNWT',
+
   /* ── Note clients ────────────────────────────────────────────────
      Injectée dans le JSON-LD Schema.org (aggregateRating).
      Mettez à jour dès que vous avez de vrais avis consolidés.    */

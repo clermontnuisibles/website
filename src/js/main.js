@@ -237,6 +237,25 @@
       }
     }
 
+    // ── Google Analytics 4 (gtag) ────────────────────────────────
+    if (cfg.googleAnalyticsId && typeof cfg.googleAnalyticsId === 'string') {
+      const gaId = cfg.googleAnalyticsId.trim();
+      if (gaId && !document.getElementById('ga4-gtag-script')) {
+        window.dataLayer = window.dataLayer || [];
+        if (typeof window.gtag !== 'function') {
+          window.gtag = function () { window.dataLayer.push(arguments); };
+        }
+        window.gtag('js', new Date());
+        window.gtag('config', gaId);
+
+        const g = document.createElement('script');
+        g.id = 'ga4-gtag-script';
+        g.async = true;
+        g.src = 'https://www.googletagmanager.com/gtag/js?id=' + encodeURIComponent(gaId);
+        (document.head || document.documentElement).appendChild(g);
+      }
+    }
+
     // ── JSON-LD Schema.org (index.html) ──────────────────────────
     const jsonLdScript = document.getElementById('json-ld-business');
     if (jsonLdScript) {

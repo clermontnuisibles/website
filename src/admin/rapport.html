@@ -45,6 +45,19 @@
     .btn-outline { background: #fff; color: #2d6a4f; border: 1.5px solid #2d6a4f; }
     .btn-ghost   { background: #f3f4f6; color: #555; }
 
+    .pdf-hint {
+      max-width: 760px;
+      width: 100%;
+      font-size: 0.78rem;
+      color: #64748b;
+      line-height: 1.45;
+      margin-bottom: 0.65rem;
+      padding: 0.5rem 0.65rem;
+      background: #f1f5f9;
+      border-radius: 10px;
+      border: 1px solid #e2e8f0;
+    }
+
     /* ── Fiche ── */
     .fiche {
       background: #fff;
@@ -52,17 +65,17 @@
       box-shadow: 0 8px 40px rgba(0,0,0,0.09);
       max-width: 760px;
       width: 100%;
-      padding: 2.5rem 2.25rem;
+      padding: 1.5rem 1.15rem;
     }
 
-    /* En-tête */
+    /* En-tête (écran / prévisualisation — masqué à l’impression PDF) */
     .fiche-header {
       display: flex;
       justify-content: space-between;
       align-items: flex-start;
       gap: 1rem;
-      margin-bottom: 2rem;
-      padding-bottom: 1.5rem;
+      margin-bottom: 1.35rem;
+      padding-bottom: 1.1rem;
       border-bottom: 2px solid #2d6a4f;
     }
     .fiche-brand { display: flex; align-items: center; gap: 0.85rem; }
@@ -161,16 +174,194 @@
       margin-top: 1.5rem; padding-top: 1.25rem; border-top: 1px solid #f0f0f0;
     }
 
-    /* ── Impression ── */
+    /* Bannière visible seulement à l’impression / PDF */
+    .rap-print-banner {
+      display: none;
+    }
+
+    /* ── Impression / PDF (A4 via boîte de dialogue « Enregistrer au format PDF ») ── */
     @media print {
-      body { background: #fff; padding: 0; }
-      .actions { display: none; }
-      .fiche { box-shadow: none; border-radius: 0; padding: 1.5rem; max-width: 100%; }
-      .field input, .field textarea, .field select, td input {
-        border-color: #ccc; background: #fff;
+      * {
+        -webkit-print-color-adjust: exact;
+        print-color-adjust: exact;
       }
-      .btn-add-row { display: none; }
-      @page { margin: 1.5cm; }
+
+      @page {
+        size: A4 portrait;
+        margin: 8mm 10mm;
+      }
+
+      html {
+        font-size: 10.5pt;
+      }
+
+      body {
+        background: #fff !important;
+        padding: 0 !important;
+        color: #1a1a1a;
+        line-height: 1.38;
+      }
+
+      .actions { display: none !important; }
+      .btn-add-row { display: none !important; }
+      .pdf-hint { display: none !important; }
+
+      .rap-print-banner {
+        display: block;
+        font-size: 8.5pt;
+        color: #333;
+        border-bottom: 1.5pt solid #2d6a4f;
+        background: transparent;
+        padding: 0 0 0.5rem 0;
+        margin: 0 0 0.65rem 0;
+        border-radius: 0;
+        break-inside: avoid;
+      }
+
+      .rap-print-banner strong {
+        color: #1a2e1a;
+      }
+
+      .rap-print-banner .rap-print-presta {
+        display: block;
+        font-size: 8pt;
+        color: #555;
+        font-weight: 500;
+        margin-top: 0.2rem;
+        line-height: 1.35;
+      }
+
+      .fiche {
+        box-shadow: none !important;
+        border-radius: 0;
+        padding: 0;
+        max-width: 100%;
+        width: 100%;
+      }
+
+      /* Bandeau graphique (logo + bloc titre) : pas dans le PDF */
+      .fiche-header {
+        display: none !important;
+      }
+
+      .section-title {
+        font-size: 7.5pt;
+        break-after: avoid;
+        break-inside: avoid;
+        margin-bottom: 0.55rem;
+      }
+
+      .section {
+        margin-bottom: 1.1rem;
+      }
+
+      /* Champs : rendu type texte pour un PDF plus lisible */
+      .field input,
+      .field textarea,
+      .field select,
+      td input {
+        border: none !important;
+        border-bottom: 1px solid #d1d5db !important;
+        background: transparent !important;
+        border-radius: 0 !important;
+        padding: 0.12rem 0 0.2rem 0 !important;
+        box-shadow: none !important;
+        font-size: inherit;
+      }
+
+      .field textarea {
+        border: 1px solid #ddd !important;
+        padding: 0.35rem 0.45rem !important;
+        min-height: auto !important;
+      }
+
+      .field select {
+        appearance: none;
+        -webkit-appearance: none;
+        background-image: none !important;
+      }
+
+      table {
+        font-size: 9pt;
+      }
+
+      th {
+        border: 1px solid #b8d4c4 !important;
+        padding: 0.35rem 0.45rem !important;
+      }
+
+      td {
+        border: 1px solid #ddd !important;
+        padding: 0.25rem 0.35rem !important;
+        vertical-align: top;
+      }
+
+      td input {
+        border-bottom: none !important;
+      }
+
+      thead {
+        display: table-header-group;
+      }
+
+      tr {
+        break-inside: avoid;
+      }
+
+      /* Zones : n’imprimer que les cases cochées */
+      .zone-chip:not(:has(input:checked)) {
+        display: none !important;
+      }
+
+      .zones {
+        gap: 0.35rem;
+      }
+
+      .zone-chip {
+        border: 1px solid #2d6a4f !important;
+        background: #ecfdf5 !important;
+        color: #14532d !important;
+        padding: 0.25rem 0.55rem;
+        font-size: 9pt;
+        break-inside: avoid;
+      }
+
+      .zone-chip input {
+        display: none;
+      }
+
+      .zone-chip::before {
+        content: '✓ ';
+        font-weight: 800;
+      }
+
+      .sig-grid {
+        break-inside: avoid;
+        page-break-inside: avoid;
+      }
+
+      .sig-box {
+        border: 1px solid #9ca3af !important;
+      }
+
+      .sig-zone {
+        border: 1px dashed #6b7280 !important;
+        background: #fafafa !important;
+        min-height: 72px;
+        color: #9ca3af;
+        font-size: 8.5pt;
+      }
+
+      .note-footer {
+        margin-top: 1rem;
+        padding-top: 0.85rem;
+        border-top: 1px solid #ccc;
+        font-size: 7.5pt;
+        color: #555;
+        text-align: justify;
+        hyphens: auto;
+        break-inside: avoid;
+      }
     }
 
     @media (max-width: 560px) {
@@ -182,6 +373,7 @@
 </head>
 <body>
 
+<p class="pdf-hint">Pour enregistrer un PDF : <strong>Imprimer / PDF</strong>, puis dans la fenêtre du navigateur choisissez <strong>Enregistrer au format PDF</strong> comme destination.</p>
 <div class="actions">
   <button class="btn btn-ghost" onclick="resetForm()">🗑 Effacer</button>
   <button class="btn btn-outline" onclick="window.print()">🖨 Imprimer / PDF</button>
@@ -203,6 +395,8 @@
       <div class="num" id="rapport-num">N° <span id="num-val">—</span></div>
     </div>
   </div>
+
+  <p class="rap-print-banner" id="rap-print-banner" aria-hidden="true"></p>
 
   <!-- 1. Informations client -->
   <div class="section">
@@ -342,12 +536,12 @@
       <div class="sig-box">
         <label>Technicien (Clermont Nuisibles)</label>
         <div class="sig-zone">Signature</div>
-        <div class="sig-date field"><input type="text" placeholder="Nom du technicien" style="margin-top:0.5rem;"></div>
+        <div class="sig-date field"><input type="text" id="sig-tech-nom" placeholder="Nom du technicien" style="margin-top:0.5rem;"></div>
       </div>
       <div class="sig-box">
         <label>Client / Représentant</label>
         <div class="sig-zone">Signature</div>
-        <div class="sig-date field"><input type="text" placeholder="Nom & qualité du signataire" style="margin-top:0.5rem;"></div>
+        <div class="sig-date field"><input type="text" id="sig-client-nom" placeholder="Nom & qualité du signataire" style="margin-top:0.5rem;"></div>
       </div>
     </div>
   </div>
@@ -364,29 +558,62 @@
 (function () {
   var cfg = window.SiteConfig || {};
 
-  // Infos prestataire dans l'en-tête
-  var details = [];
-  if (cfg.siret)        details.push('SIRET : ' + cfg.siret);
-  if (cfg.phone)        details.push(cfg.phone);
-  if (cfg.email)        details.push(cfg.email);
-  document.getElementById('brand-details').textContent = details.join(' · ');
-
-  if (cfg.email) {
-    document.getElementById('footer-contact').textContent = 'Contact : ' + cfg.email;
+  function esc(s) {
+    return String(s == null ? '' : s)
+      .replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
   }
 
-  // Numéro de rapport automatique (date + heure)
+  var details = [];
+  if (cfg.ownerName)    details.push(cfg.ownerName);
+  if (cfg.ownerAddress) details.push(cfg.ownerAddress);
+  if (cfg.siret)        details.push('SIRET ' + cfg.siret);
+  if (cfg.phone)        details.push('Tél. ' + cfg.phone);
+  if (cfg.email)        details.push(cfg.email);
+  document.getElementById('brand-details').textContent = details.length
+    ? details.join(' · ')
+    : 'Renseignez config.js (prestataire)';
+
+  var foot = [];
+  if (cfg.email) foot.push(cfg.email);
+  if (cfg.phone) foot.push(cfg.phone);
+  document.getElementById('footer-contact').textContent = foot.length
+    ? 'Contact : ' + foot.join(' · ')
+    : '';
+
   var now = new Date();
-  var pad = function(n){ return String(n).padStart(2,'0'); };
+  var pad = function (n) { return String(n).padStart(2, '0'); };
   var num = now.getFullYear()
-    + pad(now.getMonth()+1)
+    + pad(now.getMonth() + 1)
     + pad(now.getDate())
     + '-' + pad(now.getHours()) + pad(now.getMinutes());
   document.getElementById('num-val').textContent = num;
 
-  // Date du jour par défaut
+  var genStr = now.toLocaleString('fr-FR', {
+    dateStyle: 'long',
+    timeStyle: 'short'
+  });
+  var prestaLine = [];
+  prestaLine.push('Clermont Nuisibles');
+  if (cfg.ownerName) prestaLine.push(cfg.ownerName);
+  if (cfg.ownerAddress) prestaLine.push(cfg.ownerAddress);
+  if (cfg.siret) prestaLine.push('SIRET ' + cfg.siret);
+  if (cfg.phone) prestaLine.push(cfg.phone);
+  if (cfg.email) prestaLine.push(cfg.email);
+
+  document.getElementById('rap-print-banner').innerHTML =
+    '<strong>Rapport d’intervention</strong> n° ' + esc(num)
+    + ' — généré le ' + esc(genStr) + ' — conservation 5 ans.'
+    + '<span class="rap-print-presta">' + esc(prestaLine.join(' · ')) + '</span>';
+
+  document.title = 'Rapport-intervention-' + num + ' - Clermont Nuisibles';
+
   var today = now.toISOString().split('T')[0];
   document.getElementById('date-intervention').value = today;
+
+  if (cfg.ownerName) {
+    var tech = document.getElementById('sig-tech-nom');
+    if (tech && !tech.value) tech.placeholder = cfg.ownerName + ' (ou compléter)';
+  }
 })();
 
 function addRow() {

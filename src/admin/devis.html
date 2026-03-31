@@ -38,18 +38,35 @@
     .btn-outline { background: #fff; color: #2d6a4f; border: 1.5px solid #2d6a4f; }
     .btn-ghost   { background: #f3f4f6; color: #555; }
 
+    .pdf-hint {
+      max-width: 760px;
+      width: 100%;
+      font-size: 0.78rem;
+      color: #64748b;
+      line-height: 1.45;
+      margin-bottom: 0.65rem;
+      padding: 0.5rem 0.65rem;
+      background: #f1f5f9;
+      border-radius: 10px;
+      border: 1px solid #e2e8f0;
+    }
+
     /* ── Devis ── */
     .devis {
       background: #fff; border-radius: 20px;
       box-shadow: 0 8px 40px rgba(0,0,0,0.09);
       max-width: 760px; width: 100%;
-      padding: 2.5rem 2.25rem;
+      padding: 1.5rem 1.15rem;
     }
 
-    /* En-tête */
+    /* En-tête (écran — masqué à l’impression PDF) */
     .devis-header {
       display: flex; justify-content: space-between; align-items: flex-start; gap: 1rem;
-      margin-bottom: 2rem; padding-bottom: 1.5rem; border-bottom: 2px solid #2d6a4f;
+      margin-bottom: 1.35rem; padding-bottom: 1.1rem; border-bottom: 2px solid #2d6a4f;
+    }
+
+    .devis-print-banner {
+      display: none;
     }
     .brand { display: flex; align-items: center; gap: 0.85rem; }
     .brand img { width: 48px; height: 48px; }
@@ -138,14 +155,185 @@
 
     .mention { font-size: 0.72rem; color: #aaa; line-height: 1.6; margin-top: 1.5rem; padding-top: 1.25rem; border-top: 1px solid #f0f0f0; }
 
-    /* Impression */
+    /* Impression / PDF */
     @media print {
-      body { background: #fff; padding: 0; }
-      .actions { display: none; }
-      .devis { box-shadow: none; border-radius: 0; padding: 1.5rem; max-width: 100%; }
-      .field input, .field textarea, .field select, td input { border-color: #ccc; background: #fff; }
-      .btn-add-row, .btn-del { display: none; }
-      @page { margin: 1.5cm; }
+      * {
+        -webkit-print-color-adjust: exact;
+        print-color-adjust: exact;
+      }
+
+      @page {
+        size: A4 portrait;
+        margin: 8mm 10mm;
+      }
+
+      html {
+        font-size: 10.5pt;
+      }
+
+      body {
+        background: #fff !important;
+        padding: 0 !important;
+        color: #1a1a1a;
+        line-height: 1.38;
+      }
+
+      .actions { display: none !important; }
+      .pdf-hint { display: none !important; }
+      .btn-add-row, .btn-del { display: none !important; }
+      .print-hide { display: none !important; }
+
+      .devis-print-banner {
+        display: block;
+        font-size: 8.5pt;
+        color: #333;
+        border-bottom: 1.5pt solid #2d6a4f;
+        background: transparent;
+        padding: 0 0 0.5rem 0;
+        margin: 0 0 0.65rem 0;
+        border-radius: 0;
+        break-inside: avoid;
+      }
+
+      .devis-print-banner strong {
+        color: #1a2e1a;
+      }
+
+      .devis-print-banner .devis-print-presta {
+        display: block;
+        font-size: 8pt;
+        color: #555;
+        font-weight: 500;
+        margin-top: 0.2rem;
+        line-height: 1.35;
+      }
+
+      .devis-print-banner .devis-print-meta {
+        display: block;
+        font-size: 8pt;
+        color: #444;
+        margin-top: 0.15rem;
+      }
+
+      .devis {
+        box-shadow: none !important;
+        border-radius: 0;
+        padding: 0;
+        max-width: 100%;
+        width: 100%;
+      }
+
+      .devis-header {
+        display: none !important;
+      }
+
+      .section-title {
+        font-size: 7.5pt;
+        break-after: avoid;
+        break-inside: avoid;
+        margin-bottom: 0.55rem;
+      }
+
+      .section {
+        margin-bottom: 1.1rem;
+      }
+
+      .field input,
+      .field textarea,
+      .field select,
+      td input {
+        border: none !important;
+        border-bottom: 1px solid #d1d5db !important;
+        background: transparent !important;
+        border-radius: 0 !important;
+        padding: 0.12rem 0 0.2rem 0 !important;
+        box-shadow: none !important;
+        font-size: inherit;
+      }
+
+      .field textarea {
+        border: 1px solid #ddd !important;
+        padding: 0.35rem 0.45rem !important;
+        min-height: auto !important;
+      }
+
+      .field select {
+        appearance: none;
+        -webkit-appearance: none;
+        background-image: none !important;
+      }
+
+      .devis-meta input {
+        border: none !important;
+        border-bottom: 1px solid #d1d5db !important;
+        background: transparent !important;
+        display: inline !important;
+        width: auto !important;
+        min-width: 7em;
+        padding: 0.1rem 0 !important;
+        font-size: inherit !important;
+      }
+
+      table {
+        font-size: 9pt;
+      }
+
+      th {
+        border: 1px solid #b8d4c4 !important;
+        padding: 0.35rem 0.45rem !important;
+      }
+
+      td {
+        border: 1px solid #ddd !important;
+        padding: 0.25rem 0.35rem !important;
+        vertical-align: top;
+      }
+
+      td input {
+        border-bottom: none !important;
+      }
+
+      td.total-cell {
+        background: #f9fafb !important;
+        font-weight: 700;
+      }
+
+      thead {
+        display: table-header-group;
+      }
+
+      tr {
+        break-inside: avoid;
+      }
+
+      .totaux-table .total-ttc {
+        border-top-color: #2d6a4f !important;
+      }
+
+      .sig-grid {
+        break-inside: avoid;
+        page-break-inside: avoid;
+      }
+
+      .sig-box {
+        border: 1px solid #9ca3af !important;
+      }
+
+      .sig-zone {
+        border: 1px dashed #6b7280 !important;
+        background: #fafafa !important;
+        min-height: 64px;
+        color: #9ca3af;
+        font-size: 8.5pt;
+      }
+
+      .mention {
+        font-size: 7.5pt;
+        color: #555;
+        border-top-color: #ccc;
+        break-inside: avoid;
+        text-align: justify;
+      }
     }
 
     @media (max-width: 560px) {
@@ -158,6 +346,7 @@
 </head>
 <body>
 
+<p class="pdf-hint">Pour enregistrer un PDF : <strong>Imprimer / PDF</strong>, puis choisissez <strong>Enregistrer au format PDF</strong> comme destination.</p>
 <div class="actions">
   <button class="btn btn-ghost" onclick="resetDevis()">🗑 Effacer</button>
   <button class="btn btn-outline" onclick="window.print()">🖨 Imprimer / PDF</button>
@@ -183,6 +372,8 @@
       </div>
     </div>
   </div>
+
+  <p class="devis-print-banner" id="devis-print-banner" aria-hidden="true"></p>
 
   <!-- 1. Client -->
   <div class="section">
@@ -233,7 +424,7 @@
             <th class="right" style="width:15%">P.U. HT (€)</th>
             <th class="right" style="width:15%">TVA (%)</th>
             <th class="right" style="width:14%">Total HT (€)</th>
-            <th style="width:6%"></th>
+            <th class="print-hide" style="width:6%" aria-hidden="true"></th>
           </tr>
         </thead>
         <tbody id="tbody-lignes">
@@ -289,37 +480,81 @@
 
 <script src="../js/config.js"></script>
 <script>
+function escHtml(s) {
+  return String(s == null ? '' : s)
+    .replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
+}
+
+function fmtIsoFr(iso) {
+  if (!iso) return '—';
+  try {
+    var d = new Date(iso + 'T12:00:00');
+    if (isNaN(d.getTime())) return iso;
+    return d.toLocaleDateString('fr-FR');
+  } catch (e) {
+    return iso;
+  }
+}
+
+function refreshDevisPrintBanner() {
+  var cfg = window.SiteConfig || {};
+  var numEl = document.getElementById('devis-num');
+  var num = ((numEl && (numEl.value || numEl.placeholder)) || '').trim() || '—';
+  var dStr = fmtIsoFr(document.getElementById('devis-date').value);
+  var vStr = fmtIsoFr(document.getElementById('devis-validite').value);
+  var genStr = new Date().toLocaleString('fr-FR', { dateStyle: 'long', timeStyle: 'short' });
+
+  var prestaLine = [];
+  prestaLine.push('Clermont Nuisibles');
+  if (cfg.ownerName) prestaLine.push(cfg.ownerName);
+  if (cfg.ownerAddress) prestaLine.push(cfg.ownerAddress);
+  if (cfg.siret) prestaLine.push('SIRET ' + cfg.siret);
+  if (cfg.phone) prestaLine.push(cfg.phone);
+  if (cfg.email) prestaLine.push(cfg.email);
+
+  document.getElementById('devis-print-banner').innerHTML =
+    '<strong>Devis</strong> n° ' + escHtml(num)
+    + '<span class="devis-print-meta">Date du devis : ' + escHtml(dStr) + ' — Valable jusqu’au : ' + escHtml(vStr) + '</span>'
+    + '<span class="devis-print-meta">Document généré le ' + escHtml(genStr) + '</span>'
+    + '<span class="devis-print-presta">' + escHtml(prestaLine.join(' · ')) + '</span>';
+
+  var safeTitle = String(num).replace(/[^\w.+-]+/g, '-').replace(/^-|-$/g, '') || 'brouillon';
+  document.title = 'Devis-' + safeTitle + ' - Clermont Nuisibles';
+}
+
 (function () {
   var cfg = window.SiteConfig || {};
 
-  // En-tête
   var details = [];
-  if (cfg.phone) details.push(cfg.phone);
+  if (cfg.ownerName) details.push(cfg.ownerName);
+  if (cfg.ownerAddress) details.push(cfg.ownerAddress);
+  if (cfg.siret) details.push('SIRET ' + cfg.siret);
+  if (cfg.phone) details.push('Tél. ' + cfg.phone);
   if (cfg.email) details.push(cfg.email);
-  if (cfg.siteUrl) details.push(cfg.siteUrl.replace('https://', ''));
-  document.getElementById('brand-details').textContent = details.join(' · ');
+  if (cfg.siteUrl) details.push(cfg.siteUrl.replace(/^https?:\/\//, ''));
+  document.getElementById('brand-details').textContent = details.length
+    ? details.join(' · ')
+    : 'Renseignez config.js (prestataire)';
 
-  // Pied de page
-  if (cfg.siret)        document.getElementById('foot-siret').textContent   = cfg.siret;
+  if (cfg.siret) document.getElementById('foot-siret').textContent = cfg.siret;
   if (cfg.ownerAddress) document.getElementById('foot-adresse').textContent = cfg.ownerAddress;
 
-  // Dates par défaut
   var today = new Date();
-  var pad = function(n){ return String(n).padStart(2,'0'); };
-  var iso  = today.getFullYear() + '-' + pad(today.getMonth()+1) + '-' + pad(today.getDate());
+  var pad = function (n) { return String(n).padStart(2, '0'); };
+  var iso = today.getFullYear() + '-' + pad(today.getMonth() + 1) + '-' + pad(today.getDate());
   document.getElementById('devis-date').value = iso;
 
   var validity = new Date(today);
   validity.setDate(validity.getDate() + 30);
-  var isoV = validity.getFullYear() + '-' + pad(validity.getMonth()+1) + '-' + pad(validity.getDate());
+  var isoV = validity.getFullYear() + '-' + pad(validity.getMonth() + 1) + '-' + pad(validity.getDate());
   document.getElementById('devis-validite').value = isoV;
 
-  // Numéro auto
-  var num = today.getFullYear() + '-' + pad(today.getMonth()+1) + pad(today.getDate());
+  var num = today.getFullYear() + '-' + pad(today.getMonth() + 1) + pad(today.getDate());
   document.getElementById('devis-num').placeholder = num;
 
-  // Première ligne
   addLigne();
+  refreshDevisPrintBanner();
+  window.addEventListener('beforeprint', refreshDevisPrintBanner);
 })();
 
 var rowId = 0;
@@ -336,7 +571,7 @@ function addLigne() {
     '<td><input type="number" class="right" value="" min="0" step="0.01" placeholder="0.00" oninput="updateTotaux()" data-role="pu"></td>' +
     '<td><input type="number" class="right" value="0" min="0" max="100" step="0.1" oninput="updateTotaux()" data-role="tva"></td>' +
     '<td class="total-cell" id="tot-row-' + id + '">0,00</td>' +
-    '<td class="del-cell"><button class="btn-del" onclick="delLigne(' + id + ')" title="Supprimer">✕</button></td>';
+    '<td class="del-cell print-hide"><button type="button" class="btn-del" onclick="delLigne(' + id + ')" title="Supprimer">✕</button></td>';
   tbody.appendChild(tr);
 }
 
@@ -376,6 +611,7 @@ function resetDevis() {
   rowId = 0;
   addLigne();
   updateTotaux();
+  refreshDevisPrintBanner();
 }
 </script>
 </body>

@@ -31,7 +31,16 @@
     .btn-danger { background: #fee2e2; color: #b91c1c; }
     .btn-edit   { background: #f0fdf4; color: #2d6a4f; border: 1.5px solid #2d6a4f; }
 
-    .controls { max-width: 860px; width: 100%; background: #fff; border-radius: 18px; box-shadow: 0 4px 20px rgba(0,0,0,.08); padding: 1rem 1.25rem; margin-bottom: 1rem; display: flex; gap: .65rem; flex-wrap: wrap; align-items: center; }
+    .pdf-hint {
+      max-width: 860px; width: 100%;
+      font-size: .78rem; color: #64748b; line-height: 1.45;
+      margin-bottom: .65rem; padding: .5rem .65rem;
+      background: #f1f5f9; border-radius: 10px; border: 1px solid #e2e8f0;
+    }
+
+    .registre-print-banner { display: none; }
+
+    .controls { max-width: 860px; width: 100%; background: #fff; border-radius: 18px; box-shadow: 0 4px 20px rgba(0,0,0,.08); padding: .95rem 1.1rem; margin-bottom: 1rem; display: flex; gap: .65rem; flex-wrap: wrap; align-items: center; }
     .search-input { font-family: inherit; font-size: .85rem; border: 1.5px solid #e5e7eb; border-radius: 8px; padding: .45rem .85rem; background: #fafafa; flex: 1; min-width: 160px; }
     .search-input:focus { outline: none; border-color: #2d6a4f; }
     .date-input { font-family: inherit; font-size: .82rem; border: 1.5px solid #e5e7eb; border-radius: 8px; padding: .4rem .65rem; background: #fafafa; }
@@ -40,7 +49,7 @@
 
     /* Liste */
     .list-wrap { max-width: 860px; width: 100%; display: flex; flex-direction: column; gap: .75rem; }
-    .entry-card { background: #fff; border-radius: 14px; box-shadow: 0 3px 14px rgba(0,0,0,.07); padding: 1.1rem 1.25rem; }
+    .entry-card { background: #fff; border-radius: 14px; box-shadow: 0 3px 14px rgba(0,0,0,.07); padding: 1rem 1.1rem; }
     .entry-head { display: flex; align-items: flex-start; justify-content: space-between; gap: .75rem; flex-wrap: wrap; }
     .entry-date { font-size: .78rem; color: #888; }
     .entry-title { font-size: .97rem; font-weight: 700; color: #1a2e1a; }
@@ -75,14 +84,90 @@
     .storage-note { font-size: .72rem; color: #aaa; max-width: 860px; width: 100%; margin-top: 1.5rem; padding: .65rem .85rem; background: #f8fafc; border-radius: 8px; line-height: 1.55; }
 
     @media print {
-      body { background: #fff; } .controls, .entry-actions, .page-head .btn, .storage-note { display: none; } .page-head { margin-bottom: 1rem; }
-      .entry-card { box-shadow: none; border: 1px solid #e5e7eb; break-inside: avoid; }
-      @page { margin: 1.5cm; }
+      * {
+        -webkit-print-color-adjust: exact;
+        print-color-adjust: exact;
+      }
+
+      @page {
+        size: A4 portrait;
+        margin: 8mm 10mm;
+      }
+
+      html { font-size: 10.5pt; }
+
+      body {
+        background: #fff !important;
+        padding: 0 !important;
+        color: #1a1a1a;
+        line-height: 1.38;
+      }
+
+      .pdf-hint,
+      .controls,
+      .storage-note,
+      .page-head,
+      .overlay,
+      .print-hide {
+        display: none !important;
+      }
+
+      .registre-print-banner {
+        display: block;
+        font-size: 8.5pt;
+        color: #333;
+        border-bottom: 1.5pt solid #2d6a4f;
+        background: transparent;
+        padding: 0 0 .5rem 0;
+        margin: 0 0 .65rem 0;
+        break-inside: avoid;
+      }
+
+      .registre-print-banner strong { color: #1a2e1a; }
+
+      .registre-print-presta {
+        display: block;
+        font-size: 8pt;
+        color: #555;
+        font-weight: 500;
+        margin-top: .2rem;
+        line-height: 1.35;
+      }
+
+      .registre-print-meta {
+        display: block;
+        font-size: 8pt;
+        color: #444;
+        margin-top: .15rem;
+      }
+
+      .list-wrap {
+        max-width: 100%;
+        gap: .5rem;
+      }
+
+      .entry-card {
+        box-shadow: none !important;
+        border: 1px solid #ccc !important;
+        border-radius: 6px;
+        padding: .65rem .75rem;
+        break-inside: avoid;
+      }
+
+      .entry-date { font-size: 8.5pt; color: #555; }
+      .entry-title { font-size: 10.5pt; }
+      .entry-client { font-size: 9pt; }
+      .entry-body { font-size: 9pt; gap: .35rem .6rem; }
+      .entry-body .lbl { font-size: 7pt; }
+      .entry-notes { font-size: 8.5pt; color: #444; }
+      .tag { font-size: 6.5pt; padding: 1px 6px; border: 1px solid rgba(0,0,0,.08); }
     }
     @media (max-width: 580px) { .entry-body { grid-template-columns: 1fr; } .grid-2m { grid-template-columns: 1fr; } }
   </style>
 </head>
 <body>
+
+<p class="pdf-hint">Pour un PDF : <strong>Imprimer</strong>, puis <strong>Enregistrer au format PDF</strong>. Seules les entrées correspondant aux filtres actuels seront incluses.</p>
 
 <div class="page-head">
   <div>
@@ -94,6 +179,8 @@
     <button class="btn btn-primary" onclick="openModal()">+ Ajouter</button>
   </div>
 </div>
+
+<p class="registre-print-banner" id="registre-print-banner" aria-hidden="true"></p>
 
 <div class="controls">
   <input class="search-input" type="search" id="search" placeholder="🔍 Client, type, produit…" oninput="render()">
@@ -163,6 +250,7 @@
   </div>
 </div>
 
+<script src="../js/config.js"></script>
 <script>
 var STORE_KEY = 'cn_traitements';
 function esc(s){ return String(s??'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/'/g,'&#x27;'); }
@@ -171,15 +259,21 @@ function save(d){ localStorage.setItem(STORE_KEY, JSON.stringify(d)); }
 function uid(){ return Date.now().toString(36)+Math.random().toString(36).slice(2); }
 function formatDate(str){ if(!str) return '—'; var p=str.split('-'); return p[2]+'/'+p[1]+'/'+p[0]; }
 
-function render() {
+function fmtIsoFr(iso) {
+  if (!iso) return '—';
+  try {
+    var d = new Date(iso + 'T12:00:00');
+    if (isNaN(d.getTime())) return iso;
+    return d.toLocaleDateString('fr-FR');
+  } catch (e) { return iso; }
+}
+
+function getFilteredEntries() {
   var data = load();
   var q      = document.getElementById('search').value.trim().toLowerCase();
   var dfrom  = document.getElementById('date-from').value;
   var dto    = document.getElementById('date-to').value;
-  var wrap   = document.getElementById('list-wrap');
-  wrap.innerHTML = '';
-
-  var filtered = data.filter(function(item) {
+  return data.filter(function(item) {
     if (dfrom && item.date < dfrom) return false;
     if (dto   && item.date > dto)   return false;
     if (q && !((item.clientNom||'').toLowerCase().includes(q) ||
@@ -188,6 +282,46 @@ function render() {
                (item.nuisible||'').toLowerCase().includes(q))) return false;
     return true;
   });
+}
+
+function refreshRegistrePrintBanner() {
+  var cfg = window.SiteConfig || {};
+  var all = load();
+  var filtered = getFilteredEntries();
+  var qRaw = document.getElementById('search').value.trim();
+  var dfrom = document.getElementById('date-from').value;
+  var dto   = document.getElementById('date-to').value;
+  var genStr = new Date().toLocaleString('fr-FR', { dateStyle: 'long', timeStyle: 'short' });
+
+  var filterBits = [];
+  if (dfrom) filterBits.push('du ' + fmtIsoFr(dfrom));
+  if (dto)   filterBits.push('au ' + fmtIsoFr(dto));
+  if (qRaw)  filterBits.push('recherche « ' + qRaw + ' »');
+  var filterLine = filterBits.length
+    ? filterBits.join(' — ')
+    : 'aucun filtre (toutes les entrées)';
+
+  var presta = ['Clermont Nuisibles'];
+  if (cfg.ownerName) presta.push(cfg.ownerName);
+  if (cfg.ownerAddress) presta.push(cfg.ownerAddress);
+  if (cfg.siret) presta.push('SIRET ' + cfg.siret);
+  if (cfg.phone) presta.push(cfg.phone);
+  if (cfg.email) presta.push(cfg.email);
+
+  document.getElementById('registre-print-banner').innerHTML =
+    '<strong>Registre des traitements</strong> — UE 528/2012, conservation 5 ans'
+    + '<span class="registre-print-meta">' + filtered.length + ' entrée(s) dans ce document sur ' + all.length + ' au total · ' + esc(filterLine) + '</span>'
+    + '<span class="registre-print-meta">Extrait généré le ' + esc(genStr) + '</span>'
+    + '<span class="registre-print-presta">' + esc(presta.join(' · ')) + '</span>';
+
+  document.title = 'Registre-traitements (' + filtered.length + ' entrées) - Clermont Nuisibles';
+}
+
+function render() {
+  var wrap   = document.getElementById('list-wrap');
+  wrap.innerHTML = '';
+
+  var filtered = getFilteredEntries();
 
   document.getElementById('count').textContent = filtered.length + ' entrée(s)';
 
@@ -219,15 +353,16 @@ function render() {
             (item.nuisible? '<span class="tag tag-nuisible">' + esc(item.nuisible)+ '</span>' : '') +
           '</div>' +
         '</div>' +
-        '<div style="display:flex;gap:.4rem;">' +
-          '<button class="btn btn-small btn-edit" onclick="openModal(\'' + esc(item.id) + '\')">✏️</button>' +
-          '<button class="btn btn-small btn-danger" onclick="deleteItem(\'' + esc(item.id) + '\')">🗑</button>' +
+        '<div class="print-hide" style="display:flex;gap:.4rem;">' +
+          '<button type="button" class="btn btn-small btn-edit" onclick="openModal(\'' + esc(item.id) + '\')">✏️</button>' +
+          '<button type="button" class="btn btn-small btn-danger" onclick="deleteItem(\'' + esc(item.id) + '\')">🗑</button>' +
         '</div>' +
       '</div>' +
       (bodyRows ? '<div class="entry-body">' + bodyRows + '</div>' : '') +
       (item.notes ? '<div class="entry-notes">' + esc(item.notes) + '</div>' : '');
     wrap.appendChild(card);
   });
+  refreshRegistrePrintBanner();
 }
 
 function openModal(id) {
@@ -300,6 +435,7 @@ function deleteItem(id) {
 }
 
 document.getElementById('modal').addEventListener('click', function(e){ if(e.target===this) closeModal(); });
+window.addEventListener('beforeprint', refreshRegistrePrintBanner);
 render();
 </script>
 </body>

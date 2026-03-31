@@ -22,7 +22,7 @@ window.SiteConfig = {
   /* ── Formulaire de contact ──────────────────────────────────────
      Créez un compte gratuit sur https://formspree.io,
      récupérez votre Form ID (ex. 'xabc1234') et collez-le ici.   */
-  formspreeId: 'YOUR_FORM_ID',
+  formspreeId: 'mzdkgqrg',
 
   /* ── Année copyright ───────────────────────────────────────────
      Mise à jour annuelle du © dans le pied de page.              */

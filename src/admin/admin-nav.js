@@ -42,10 +42,30 @@
     }
   ];
 
+  var PAGE_TITLES = {
+    'index.html': 'Accueil',
+    'avis-google.html': 'Avis Google',
+    'vcard.html': 'Carte de visite',
+    'agenda.html': 'Agenda',
+    'modeles-messages.html': 'Modèles de messages',
+    'rapport.html': 'Rapport d’intervention',
+    'devis.html': 'Devis',
+    'calculateur-dosage.html': 'Calculateur de dosage',
+    'suivi-clients.html': 'Carnet clients',
+    'stock-biocides.html': 'Stock biocides',
+    'registre-traitements.html': 'Registre des traitements',
+    'alertes-certifications.html': 'Alertes certifications',
+    'sauvegarde.html': 'Sauvegarde'
+  };
+
   function currentFile() {
     var seg = (location.pathname || '').replace(/\/$/, '').split('/').pop();
     if (!seg || seg === 'admin') return 'index.html';
     return seg;
+  }
+
+  function topbarPageLabel(active) {
+    return PAGE_TITLES[active] || 'Page';
   }
 
   function buildNavHtml(active) {
@@ -96,6 +116,7 @@
 
     var topbar = document.createElement('header');
     topbar.className = 'admin-topbar';
+    var pageLbl = topbarPageLabel(active);
     topbar.innerHTML = ''
       + '<button type="button" class="admin-nav-toggle" aria-expanded="false" '
       + 'aria-controls="admin-sidebar" aria-label="Ouvrir ou fermer le menu">'
@@ -103,8 +124,13 @@
       + '<span class="admin-nav-toggle-bar"></span>'
       + '<span class="admin-nav-toggle-bar"></span>'
       + '</button>'
-      + '<a class="admin-topbar-title" href="index.html">Espace admin</a>'
-      + '<a class="admin-topbar-public" href="../index.html">Site public</a>';
+      + '<nav class="admin-topbar-crumb" aria-label="Fil d\'Ariane">'
+      + '<a class="admin-crumb-root" href="index.html">Admin</a>'
+      + '<span class="admin-crumb-sep" aria-hidden="true">/</span>'
+      + '<span class="admin-crumb-current">' + pageLbl + '</span>'
+      + '</nav>'
+      + '<a class="admin-topbar-public" href="../index.html">'
+      + '<span class="admin-topbar-public-icon" aria-hidden="true">↗</span> Site public</a>';
 
     document.body.insertBefore(overlay, document.body.firstChild);
     document.body.insertBefore(sidebar, document.body.firstChild);

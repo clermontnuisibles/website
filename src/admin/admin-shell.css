@@ -4,19 +4,30 @@
   --admin-green: #2d6a4f;
   --admin-green-soft: #d8f3e8;
   --admin-border: #e5e7eb;
-  --admin-topbar-h: 52px;
+  --admin-topbar-h: 48px;
   --admin-sidebar-w: 264px;
+  --admin-content-pad-x: 1rem;
 }
 
 body.admin-nav-ready {
   font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
-  padding-top: var(--admin-topbar-h);
+  padding-bottom: 2.5rem;
+  padding-right: var(--admin-content-pad-x);
 }
 
 @media (min-width: 900px) {
   body.admin-nav-ready {
     padding-left: var(--admin-sidebar-w);
   }
+}
+
+/* Sous les pages outil : un peu moins d’air en tête que l’ancien 2rem */
+body.admin-nav-ready:not(.admin-page-home) {
+  padding-top: calc(var(--admin-topbar-h) + 0.5rem);
+}
+
+body.admin-page-home {
+  padding-top: calc(var(--admin-topbar-h) + 0.75rem);
 }
 
 /* —— Barre supérieure —— */
@@ -28,13 +39,13 @@ body.admin-nav-ready {
   height: var(--admin-topbar-h);
   display: flex;
   align-items: center;
-  gap: 0.65rem;
-  padding: 0 0.85rem;
-  background: rgba(255, 255, 255, 0.92);
-  backdrop-filter: blur(10px);
-  -webkit-backdrop-filter: blur(10px);
+  gap: 0.45rem;
+  padding: 0 var(--admin-content-pad-x);
+  background: rgba(255, 255, 255, 0.97);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
   border-bottom: 1px solid var(--admin-border);
-  box-shadow: 0 1px 0 rgba(0, 0, 0, 0.04);
+  box-shadow: 0 1px 0 rgba(0, 0, 0, 0.03);
 }
 
 @media (max-width: 899px) {
@@ -54,16 +65,17 @@ body.admin-nav-ready {
   display: flex;
   flex-direction: column;
   justify-content: center;
-  gap: 5px;
-  width: 44px;
-  height: 44px;
-  padding: 0 10px;
+  gap: 4px;
+  width: 40px;
+  height: 40px;
+  padding: 0 8px;
   border: none;
-  border-radius: 12px;
+  border-radius: 10px;
   background: transparent;
   cursor: pointer;
   color: #1a2e1a;
   transition: background 0.15s;
+  flex-shrink: 0;
 }
 
 .admin-nav-toggle:hover {
@@ -84,35 +96,72 @@ body.admin-nav-ready {
   border-radius: 1px;
 }
 
-.admin-topbar-title {
+.admin-topbar-crumb {
   flex: 1;
   min-width: 0;
-  font-size: 0.95rem;
-  font-weight: 700;
-  color: var(--admin-green);
-  text-decoration: none;
-  letter-spacing: -0.02em;
+  display: flex;
+  align-items: center;
+  gap: 0.35rem;
+  font-size: 0.8125rem;
+  line-height: 1.2;
 }
 
-.admin-topbar-title:hover {
-  text-decoration: underline;
+.admin-crumb-root {
+  color: #64748b;
+  text-decoration: none;
+  font-weight: 600;
+  flex-shrink: 0;
+  transition: color 0.15s;
+}
+
+.admin-crumb-root:hover {
+  color: var(--admin-green);
+}
+
+.admin-crumb-sep {
+  color: #cbd5e1;
+  font-weight: 500;
+  user-select: none;
+  flex-shrink: 0;
+}
+
+.admin-crumb-current {
+  color: #1a2e1a;
+  font-weight: 700;
+  letter-spacing: -0.02em;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 .admin-topbar-public {
   font-size: 0.78rem;
-  font-weight: 600;
-  color: #64748b;
+  font-weight: 700;
+  color: var(--admin-green);
   text-decoration: none;
-  padding: 0.4rem 0.7rem;
+  padding: 0.35rem 0.8rem;
   border-radius: 999px;
-  background: #f1f5f9;
-  transition: background 0.15s, color 0.15s;
+  background: #fff;
+  border: 1.5px solid var(--admin-green);
+  transition: background 0.15s, color 0.15s, box-shadow 0.15s;
   white-space: nowrap;
+  flex-shrink: 0;
+  line-height: 1.2;
 }
 
 .admin-topbar-public:hover {
   background: var(--admin-green-soft);
-  color: var(--admin-green);
+  box-shadow: 0 1px 0 rgba(45, 106, 79, 0.12);
+}
+
+.admin-topbar-public:focus-visible {
+  outline: 2px solid var(--admin-green);
+  outline-offset: 2px;
+}
+
+.admin-topbar-public-icon {
+  margin-right: 0.2rem;
+  opacity: 0.85;
 }
 
 /* —— Fond drawer mobile —— */

@@ -26,12 +26,10 @@
 
     .wrap { max-width: 680px; width: 100%; display: flex; flex-direction: column; gap: 1.25rem; }
 
-    /* Cards */
     .card { background: #fff; border-radius: 18px; box-shadow: 0 4px 20px rgba(0,0,0,.08); padding: 1.5rem 1.6rem; }
     .card-title { font-size: .78rem; font-weight: 800; text-transform: uppercase; letter-spacing: .09em; color: #2d6a4f; background: #f0fdf4; border-left: 3px solid #2d6a4f; padding: .3rem .6rem; border-radius: 0 6px 6px 0; margin-bottom: 1.1rem; }
     .card-desc { font-size: .83rem; color: #666; line-height: 1.6; margin-bottom: 1.1rem; }
 
-    /* Buttons */
     .btn { display: inline-flex; align-items: center; gap: .4rem; font-family: inherit; font-size: .88rem; font-weight: 700; padding: .65rem 1.35rem; border-radius: 50px; cursor: pointer; border: none; transition: opacity .15s, transform .15s; }
     .btn:hover:not(:disabled) { opacity: .85; transform: translateY(-1px); }
     .btn:disabled { opacity: .45; cursor: not-allowed; transform: none; }
@@ -41,55 +39,33 @@
     .btn-danger   { background: #fee2e2; color: #b91c1c; border: none; }
     .btn-row      { display: flex; gap: .65rem; flex-wrap: wrap; align-items: center; }
 
-    /* Modules list */
     .modules { display: flex; flex-direction: column; gap: .4rem; margin-bottom: 1.1rem; }
-    .mod-row { display: flex; align-items: center; justify-content: space-between; font-size: .82rem; padding: .4rem .65rem; background: #f9fafb; border-radius: 8px; }
+    .mod-row { display: flex; align-items: center; justify-content: space-between; font-size: .82rem; padding: .4rem .65rem; background: #f9fafb; border-radius: 8px; gap: .5rem; }
     .mod-name { font-weight: 600; color: #1a2e1a; }
-    .mod-count { font-size: .75rem; color: #888; background: #e5e7eb; padding: 1px 8px; border-radius: 20px; }
+    .mod-key { font-size: .68rem; color: #9ca3af; font-family: ui-monospace, monospace; }
+    .mod-count { font-size: .75rem; color: #888; background: #e5e7eb; padding: 1px 8px; border-radius: 20px; flex-shrink: 0; }
     .mod-count.has-data { background: #d1fae5; color: #065f46; }
 
-    /* Drive section */
-    .drive-status { display: flex; align-items: center; gap: .7rem; padding: .75rem 1rem; border-radius: 10px; font-size: .84rem; margin-bottom: 1rem; }
-    .drive-status.disconnected { background: #f3f4f6; color: #6b7280; }
-    .drive-status.connected    { background: #d1fae5; color: #065f46; }
-    .drive-status.error        { background: #fee2e2; color: #b91c1c; }
-    .drive-dot { width: 9px; height: 9px; border-radius: 50%; flex-shrink: 0; }
-    .dot-grey  { background: #9ca3af; }
-    .dot-green { background: #16a34a; }
-    .dot-red   { background: #dc2626; }
-    .drive-user { font-weight: 700; }
-
-    /* Drive files list */
-    .drive-files { display: flex; flex-direction: column; gap: .35rem; max-height: 200px; overflow-y: auto; margin: .85rem 0; }
-    .drive-file { display: flex; align-items: center; justify-content: space-between; gap: .5rem; padding: .45rem .75rem; background: #f9fafb; border: 1.5px solid #e5e7eb; border-radius: 8px; font-size: .81rem; cursor: pointer; transition: border-color .15s; }
-    .drive-file:hover { border-color: #2d6a4f; background: #f0fdf4; }
-    .drive-file.selected { border-color: #2d6a4f; background: #f0fdf4; }
-    .df-name { font-weight: 600; color: #1a2e1a; }
-    .df-date { color: #aaa; font-size: .74rem; }
-    .no-files { font-size: .82rem; color: #aaa; padding: .65rem; text-align: center; }
-
-    /* Setup instructions */
-    .setup-box { background: #fffbeb; border: 1.5px solid #fcd34d; border-radius: 12px; padding: 1rem 1.1rem; font-size: .81rem; line-height: 1.65; color: #78350f; }
-    .setup-box ol { padding-left: 1.25rem; margin-top: .5rem; }
-    .setup-box li { margin-bottom: .3rem; }
-    .setup-box code { background: #fef3c7; padding: 1px 5px; border-radius: 4px; font-size: .78rem; font-family: monospace; }
-    .setup-box a { color: #b45309; }
-
-    /* Last backup info */
     .last-backup { font-size: .78rem; color: #aaa; margin-top: .65rem; }
     .last-backup strong { color: #4b5563; }
 
-    /* Progress bar */
-    .progress { height: 4px; background: #e5e7eb; border-radius: 99px; overflow: hidden; margin-top: .85rem; display: none; }
-    .progress-bar { height: 100%; background: #2d6a4f; border-radius: 99px; width: 0; transition: width .3s; }
-
-    /* Toast */
-    .toast { position: fixed; bottom: 1.5rem; left: 50%; transform: translateX(-50%); background: #1a2e1a; color: #fff; font-size: .84rem; font-weight: 600; padding: .65rem 1.35rem; border-radius: 50px; box-shadow: 0 8px 30px rgba(0,0,0,.25); z-index: 200; opacity: 0; transition: opacity .25s; pointer-events: none; white-space: nowrap; }
+    .toast { position: fixed; bottom: 1.5rem; left: 50%; transform: translateX(-50%); background: #1a2e1a; color: #fff; font-size: .84rem; font-weight: 600; padding: .65rem 1.35rem; border-radius: 50px; box-shadow: 0 8px 30px rgba(0,0,0,.25); z-index: 400; opacity: 0; transition: opacity .25s; pointer-events: none; max-width: 92vw; text-align: center; white-space: normal; }
     .toast.show { opacity: 1; }
     .toast.error { background: #b91c1c; }
 
-    /* Restore confirm */
-    .restore-warn { background: #fff7ed; border: 1.5px solid #fb923c; border-radius: 10px; padding: .75rem 1rem; font-size: .81rem; color: #9a3412; margin-bottom: .85rem; display: none; }
+    .import-preview { display: none; border: 1.5px solid #e5e7eb; border-radius: 14px; padding: 1rem 1.1rem; margin-top: 1rem; background: #fafafa; }
+    .import-preview.visible { display: block; }
+    .import-preview h3 { font-size: .88rem; color: #1a2e1a; margin-bottom: .5rem; }
+    .import-meta { font-size: .78rem; color: #64748b; margin-bottom: .75rem; line-height: 1.5; }
+    .import-rows { font-size: .78rem; max-height: 180px; overflow-y: auto; margin-bottom: 1rem; }
+    .import-row { display: flex; justify-content: space-between; padding: .28rem 0; border-bottom: 1px solid #eee; gap: .5rem; }
+    .import-row:last-child { border-bottom: none; }
+
+    .mode-group { margin: .75rem 0 1rem; display: flex; flex-direction: column; gap: .45rem; font-size: .82rem; color: #374151; }
+    .mode-group label { display: flex; align-items: flex-start; gap: .45rem; cursor: pointer; line-height: 1.4; }
+    .mode-group input { margin-top: .2rem; flex-shrink: 0; }
+
+    .hint-api { font-size: .72rem; color: #64748b; margin-top: .65rem; line-height: 1.45; padding: .55rem .65rem; background: #f1f5f9; border-radius: 8px; }
 
     .storage-note { font-size: .72rem; color: #aaa; max-width: 680px; width: 100%; margin-top: 1rem; padding: .65rem .85rem; background: #f8fafc; border-radius: 8px; line-height: 1.55; }
   </style>
@@ -97,155 +73,394 @@
 <body>
 
 <div class="page-head">
-  <h1>💾 Sauvegarde & Restauration</h1>
-  <div class="subtitle">Exportez vos données admin (clients, stock, traitements…) et restaurez-les si besoin.</div>
+  <h1>💾 Sauvegarde &amp; restauration</h1>
+  <div class="subtitle">Copie locale de vos données (navigateur). Export JSON, reprise guidée avec aperçu et option de fusion.</div>
 </div>
 
 <div class="wrap">
 
-  <!-- ── Module summary ── -->
   <div class="card">
-    <div class="card-title">Données stockées localement</div>
+    <div class="card-title">État actuel (localStorage)</div>
+    <p class="card-desc">Toutes les clés <code style="background:#f3f4f6;padding:2px 6px;border-radius:4px;font-size:.8rem;">cn_*</code> sont incluses automatiquement dans la sauvegarde (outils présents et futurs), sauf métadonnées internes.</p>
     <div class="modules" id="modules-list"></div>
     <div class="btn-row">
-      <button class="btn btn-primary" onclick="exportJSON()">⬇ Exporter (fichier JSON)</button>
-      <button class="btn btn-blue" onclick="shareBackup()">↗ Partager (envoyer le fichier)</button>
+      <button type="button" class="btn btn-primary" id="btn-export">⬇ Enregistrer la sauvegarde</button>
+      <button type="button" class="btn btn-blue" id="btn-share">↗ Partager le fichier</button>
+    </div>
+    <p class="hint-api" id="hint-fsapi"></p>
+    <div id="last-export" class="last-backup"></div>
+  </div>
+
+  <div class="card">
+    <div class="card-title">Restaurer depuis un fichier</div>
+    <p class="card-desc">Choisissez un fichier JSON exporté depuis cette page (ou un autre appareil). Un <strong>aperçu</strong> s’affiche avant d’écraser ou fusionner les données.</p>
+    <div class="btn-row">
+      <button type="button" class="btn btn-outline" id="btn-pick-import">📂 Choisir un fichier JSON</button>
       <label class="btn btn-outline" style="cursor:pointer;">
-        ⬆ Importer un fichier
-        <input type="file" id="import-file" accept=".json,application/json" style="display:none;" onchange="importJSON(this)">
+        Parcourir…
+        <input type="file" id="import-file" accept=".json,application/json" style="display:none;">
       </label>
     </div>
-    <div id="last-export" class="last-backup"></div>
+
+    <div class="import-preview" id="import-preview">
+      <h3>Aperçu du fichier</h3>
+      <div class="import-meta" id="import-meta"></div>
+      <div class="import-rows" id="import-rows"></div>
+      <div class="mode-group">
+        <label>
+          <input type="radio" name="restore-mode" value="replace" checked>
+          <span><strong>Remplacer</strong> — les modules présents dans le fichier écrasent vos données locales actuelles pour ces clés.</span>
+        </label>
+        <label>
+          <input type="radio" name="restore-mode" value="merge">
+          <span><strong>Fusionner les listes</strong> — pour les modules en tableau (clients, stock, traitements, alertes), ajoute les entrées du fichier à la suite, puis enlève les doublons par <code style="font-size:.75rem;">id</code> quand il existe.</span>
+        </label>
+      </div>
+      <div class="btn-row">
+        <button type="button" class="btn btn-danger" id="btn-import-confirm">✓ Appliquer cette restauration</button>
+        <button type="button" class="btn btn-outline" id="btn-import-cancel">Annuler</button>
+      </div>
+    </div>
   </div>
 
 </div>
 
-<div class="storage-note">🔒 Toutes les données restent dans votre navigateur (localStorage). Utilisez l'export JSON pour sauvegarder et l'import pour restaurer.</div>
+<div class="storage-note">🔒 Aucune donnée n’est envoyée sur un serveur. Pensez à exporter après des saisies importantes ; en cas de perte du navigateur, seul un fichier JSON (ou une autre copie) permet de reprendre vos listes.</div>
 
 <div class="toast" id="toast"></div>
 
 <script src="../js/config.js"></script>
 <script>
-/* ===== Constantes & helpers ===== */
-var STORE_KEYS = [
-  { key: 'cn_clients',     label: '👥 Carnet clients',           page: 'suivi-clients.html' },
-  { key: 'cn_stock',       label: '🧪 Stock biocides',           page: 'stock-biocides.html' },
-  { key: 'cn_traitements', label: '📖 Registre des traitements', page: 'registre-traitements.html' },
-  { key: 'cn_certifs',     label: '🔔 Alertes certifications',   page: 'alertes-certifications.html' }
-];
-var BACKUP_FILE_PREFIX = 'cn-backup-';
+(function () {
+  'use strict';
 
-function loadLS(key){ try{ return JSON.parse(localStorage.getItem(key)||'null'); }catch(e){ return null; } }
-function countItems(key){ var d=loadLS(key); return Array.isArray(d)?d.length:(d?'?':0); }
-function toast(msg, isError){
-  var el = document.getElementById('toast');
-  el.textContent = msg;
-  el.className = 'toast show' + (isError?' error':'');
-  clearTimeout(el._t);
-  el._t = setTimeout(function(){ el.className='toast'; }, 3200);
-}
-function formatDatetime(iso){ if(!iso) return ''; var d=new Date(iso); return d.toLocaleDateString('fr-FR')+' à '+d.toLocaleTimeString('fr-FR',{hour:'2-digit',minute:'2-digit'}); }
+  var META_EXCLUDE = { cn_last_export: true, cn_consent: true };
 
-/* ===== Module summary ===== */
-function renderModules(){
-  var html = STORE_KEYS.map(function(m){
-    var n = countItems(m.key);
-    return '<div class="mod-row">' +
-      '<span class="mod-name">' + m.label + '</span>' +
-      '<span class="mod-count' + (n>0?' has-data':'') + '">' + n + ' entrée(s)</span>' +
-    '</div>';
-  }).join('');
-  document.getElementById('modules-list').innerHTML = html;
-}
+  var MODULE_LABELS = {
+    cn_clients: '👥 Carnet clients',
+    cn_stock: '🧪 Stock biocides',
+    cn_traitements: '📖 Registre des traitements',
+    cn_certifs: '🔔 Alertes certifications'
+  };
 
-/* ===== Export JSON ===== */
-function collectBackup(){
-  var data = { version: 1, exportedAt: new Date().toISOString(), modules: {} };
-  STORE_KEYS.forEach(function(m){ data.modules[m.key] = loadLS(m.key); });
-  return data;
-}
+  var ARRAY_MERGE_KEYS = ['cn_clients', 'cn_stock', 'cn_traitements', 'cn_certifs'];
 
-function buildBackupFile(){
-  var data  = collectBackup();
-  var date  = new Date().toISOString().replace(/[:.]/g,'-').slice(0,16);
-  var fname = BACKUP_FILE_PREFIX + date + '.json';
-  var content = JSON.stringify(data, null, 2);
-  var blob  = new Blob([content], { type: 'application/json' });
-  return { fname: fname, blob: blob };
-}
+  var BACKUP_FILE_PREFIX = 'cn-backup-';
+  var APP_ID = 'clermont-nuisibles-admin';
 
-function exportJSON(){
-  var pack  = buildBackupFile();
-  var fname = pack.fname;
-  var blob  = pack.blob;
-  var url   = URL.createObjectURL(blob);
-  var a     = document.createElement('a');
-  a.href    = url; a.download = fname;
-  document.body.appendChild(a); a.click();
-  setTimeout(function(){ URL.revokeObjectURL(url); a.remove(); }, 500);
-  var now = new Date().toISOString();
-  localStorage.setItem('cn_last_export', now);
-  document.getElementById('last-export').innerHTML = 'Dernier export : <strong>' + formatDatetime(now) + '</strong>';
-  toast('✅ Fichier exporté : ' + fname);
-}
+  var pendingParsed = null;
+  var pendingFileName = '';
 
-async function shareBackup(){
-  try {
-    var pack = buildBackupFile();
-    var file = new File([pack.blob], pack.fname, { type: 'application/json' });
+  function labelForKey(k) {
+    return MODULE_LABELS[k] || ('📦 ' + k);
+  }
 
-    if (navigator.share && navigator.canShare && navigator.canShare({ files: [file] })) {
-      await navigator.share({
-        title: 'Sauvegarde Clermont Nuisibles (admin)',
-        text: 'Fichier de sauvegarde admin (JSON).',
-        files: [file]
-      });
-      toast('✅ Partage ouvert');
+  function loadLS(key) {
+    try { return JSON.parse(localStorage.getItem(key) || 'null'); }
+    catch (e) { return null; }
+  }
+
+  function countPreview(val) {
+    if (val == null) return '0';
+    if (Array.isArray(val)) return String(val.length);
+    if (typeof val === 'object') return Object.keys(val).length + ' clé(s)';
+    return '1';
+  }
+
+  function allStorageKeys() {
+    var out = [];
+    for (var i = 0; i < localStorage.length; i++) {
+      var k = localStorage.key(i);
+      if (!k || k.indexOf('cn_') !== 0 || META_EXCLUDE[k]) continue;
+      out.push(k);
+    }
+    out.sort();
+    return out;
+  }
+
+  function collectBackup() {
+    var modules = {};
+    allStorageKeys().forEach(function (k) {
+      var raw = localStorage.getItem(k);
+      if (raw === null) return;
+      try {
+        modules[k] = JSON.parse(raw);
+      } catch (e) {
+        modules[k] = raw;
+      }
+    });
+    return {
+      version: 2,
+      app: APP_ID,
+      exportedAt: new Date().toISOString(),
+      modules: modules
+    };
+  }
+
+  function normalizeImportedPayload(data) {
+    if (!data || typeof data !== 'object') {
+      throw new Error('Format invalide : objet JSON attendu.');
+    }
+    if (data.version !== 2 || data.app !== APP_ID) {
+      throw new Error('Format invalide : sauvegarde v2 attendue (exportez à nouveau depuis cette page).');
+    }
+    if (typeof data.modules !== 'object' || data.modules === null) {
+      throw new Error('Format invalide : propriété « modules » attendue.');
+    }
+    var out = { version: 2, exportedAt: data.exportedAt, modules: {} };
+    Object.keys(data.modules).forEach(function (k) {
+      if (k.indexOf('cn_') !== 0) return;
+      out.modules[k] = data.modules[k];
+    });
+    if (!Object.keys(out.modules).length) throw new Error('Aucune clé cn_* dans ce fichier.');
+    return out;
+  }
+
+  function dedupeById(arr) {
+    var seen = {};
+    var res = [];
+    (arr || []).forEach(function (item) {
+      var id = item && item.id;
+      if (id != null && id !== '') {
+        if (seen[id]) return;
+        seen[id] = true;
+      }
+      res.push(item);
+    });
+    return res;
+  }
+
+  function mergeValue(key, importedVal) {
+    if (ARRAY_MERGE_KEYS.indexOf(key) < 0) {
+      return typeof importedVal === 'string' ? importedVal : JSON.stringify(importedVal);
+    }
+    var cur = loadLS(key);
+    var a = Array.isArray(cur) ? cur : [];
+    var b = Array.isArray(importedVal) ? importedVal : [];
+    return JSON.stringify(dedupeById(a.concat(b)));
+  }
+
+  function replaceValue(key, val) {
+    if (typeof val === 'string') return localStorage.setItem(key, val);
+    return localStorage.setItem(key, JSON.stringify(val));
+  }
+
+  function applyRestore(parsed, mode) {
+    var n = 0;
+    Object.keys(parsed.modules).forEach(function (k) {
+      if (META_EXCLUDE[k]) return;
+      var val = parsed.modules[k];
+      if (mode === 'merge') {
+        var merged = mergeValue(k, val);
+        localStorage.setItem(k, merged);
+      } else {
+        replaceValue(k, val);
+      }
+      n++;
+    });
+    return n;
+  }
+
+  function renderModules() {
+    var keys = allStorageKeys();
+    if (!keys.length) {
+      document.getElementById('modules-list').innerHTML =
+        '<div class="mod-row"><span class="mod-name">Aucune donnée métier pour l’instant.</span></div>';
       return;
     }
-
-    // Fallback : téléchargement classique si le partage n’est pas supporté
-    exportJSON();
-    toast('ℹ️ Partage non supporté ici — fichier téléchargé');
-  } catch (err) {
-    // L’utilisateur peut annuler le partage : on ne considère pas ça comme une erreur bloquante
-    if (err && (err.name === 'AbortError' || err.name === 'NotAllowedError')) return;
-    toast('❌ Impossible de partager le fichier', true);
+    document.getElementById('modules-list').innerHTML = keys.map(function (k) {
+      var n = countPreview(loadLS(k));
+      var has = n !== '0' && n !== '';
+      return '<div class="mod-row">' +
+        '<div><span class="mod-name">' + labelForKey(k) + '</span><br><span class="mod-key">' + k + '</span></div>' +
+        '<span class="mod-count' + (has ? ' has-data' : '') + '">' + n + '</span>' +
+        '</div>';
+    }).join('');
   }
-}
 
-/* ===== Import JSON ===== */
-function importJSON(input){
-  var file = input.files[0];
-  if (!file) return;
-  if (!confirm('⚠️ Cette action remplace TOUTES les données locales par celles du fichier. Confirmer ?')){ input.value=''; return; }
-  var reader = new FileReader();
-  reader.onload = function(e){
-    try{
-      var data = JSON.parse(e.target.result);
-      if (!data.modules) throw new Error('Format invalide');
-      var count = 0;
-      STORE_KEYS.forEach(function(m){
-        if (data.modules[m.key] !== undefined && data.modules[m.key] !== null){
-          localStorage.setItem(m.key, JSON.stringify(data.modules[m.key]));
-          count++;
-        }
-      });
-      renderModules();
-      toast('✅ Restauration effectuée (' + count + ' module(s)) depuis ' + file.name);
-    } catch(err){
-      toast('❌ Fichier invalide ou corrompu', true);
+  function toast(msg, isError) {
+    var el = document.getElementById('toast');
+    el.textContent = msg;
+    el.className = 'toast show' + (isError ? ' error' : '');
+    clearTimeout(el._t);
+    el._t = setTimeout(function () { el.className = 'toast'; }, 3400);
+  }
+
+  function formatDatetime(iso) {
+    if (!iso) return '';
+    var d = new Date(iso);
+    return d.toLocaleDateString('fr-FR') + ' · ' + d.toLocaleTimeString('fr-FR', { hour: '2-digit', minute: '2-digit' });
+  }
+
+  function buildBlob() {
+    var data = collectBackup();
+    var date = new Date().toISOString().replace(/[:.]/g, '-').slice(0, 16);
+    var fname = BACKUP_FILE_PREFIX + date + '.json';
+    var content = JSON.stringify(data, null, 2);
+    return { fname: fname, blob: new Blob([content], { type: 'application/json' }) };
+  }
+
+  function recordExportSuccess(fname) {
+    var now = new Date().toISOString();
+    localStorage.setItem('cn_last_export', now);
+    document.getElementById('last-export').innerHTML =
+      'Dernière sauvegarde enregistrée : <strong>' + formatDatetime(now) + '</strong>' +
+      (fname ? ' — <span style="color:#64748b">' + fname + '</span>' : '');
+  }
+
+  async function exportJSON() {
+    var pack = buildBlob();
+    if (window.showSaveFilePicker) {
+      try {
+        var handle = await showSaveFilePicker({
+          suggestedName: pack.fname,
+          types: [{
+            description: 'Fichier JSON',
+            accept: { 'application/json': ['.json'] }
+          }]
+        });
+        var w = await handle.createWritable();
+        await w.write(pack.blob);
+        await w.close();
+        recordExportSuccess(handle.name || pack.fname);
+        toast('✅ Fichier enregistré');
+        return;
+      } catch (e) {
+        if (e && e.name === 'AbortError') return;
+      }
     }
-    input.value = '';
-  };
-  reader.onerror = function(){ toast('❌ Erreur de lecture du fichier', true); input.value=''; };
-  reader.readAsText(file);
-}
+    var url = URL.createObjectURL(pack.blob);
+    var a = document.createElement('a');
+    a.href = url;
+    a.download = pack.fname;
+    document.body.appendChild(a);
+    a.click();
+    setTimeout(function () { URL.revokeObjectURL(url); a.remove(); }, 400);
+    recordExportSuccess(pack.fname);
+    toast('✅ Téléchargement : ' + pack.fname);
+  }
 
-/* ===== Init ===== */
-var lastExport = localStorage.getItem('cn_last_export');
-if (lastExport) document.getElementById('last-export').innerHTML = 'Dernier export : <strong>' + formatDatetime(lastExport) + '</strong>';
-renderModules();
+  async function shareBackup() {
+    try {
+      var pack = buildBlob();
+      var file = new File([pack.blob], pack.fname, { type: 'application/json' });
+      if (navigator.share && navigator.canShare && navigator.canShare({ files: [file] })) {
+        await navigator.share({
+          title: 'Sauvegarde Clermont Nuisibles (admin)',
+          text: 'Fichier JSON de sauvegarde locale.',
+          files: [file]
+        });
+        recordExportSuccess(pack.fname);
+        toast('✅ Partage envoyé');
+        return;
+      }
+      await exportJSON();
+      toast('ℹ️ Partage indisponible — fichier enregistré / téléchargé');
+    } catch (err) {
+      if (err && (err.name === 'AbortError' || err.name === 'NotAllowedError')) return;
+      toast('❌ Partage impossible', true);
+    }
+  }
+
+  function showPreview(parsed, fileName) {
+    pendingParsed = parsed;
+    pendingFileName = fileName || 'fichier';
+    var el = document.getElementById('import-preview');
+    var keys = Object.keys(parsed.modules).filter(function (k) { return !META_EXCLUDE[k]; });
+    var when = parsed.exportedAt ? formatDatetime(parsed.exportedAt) : 'date inconnue';
+    document.getElementById('import-meta').innerHTML =
+      '<strong>' + pendingFileName + '</strong><br>Export : ' + when +
+      ' · Format v2 · ' + keys.length + ' module(s)';
+    document.getElementById('import-rows').innerHTML = keys.map(function (k) {
+      var imp = parsed.modules[k];
+      var loc = loadLS(k);
+      return '<div class="import-row">' +
+        '<span>' + labelForKey(k) + '</span>' +
+        '<span>Fichier : ' + countPreview(imp) + ' · Local : ' + countPreview(loc) + '</span>' +
+        '</div>';
+    }).join('');
+    el.classList.add('visible');
+    document.getElementById('btn-import-confirm').focus();
+  }
+
+  function hidePreview() {
+    pendingParsed = null;
+    pendingFileName = '';
+    document.getElementById('import-preview').classList.remove('visible');
+    document.getElementById('import-file').value = '';
+  }
+
+  function processFileText(text, fileName) {
+    try {
+      var data = JSON.parse(text);
+      var parsed = normalizeImportedPayload(data);
+      showPreview(parsed, fileName);
+    } catch (e) {
+      toast('❌ ' + (e.message || 'Fichier JSON invalide'), true);
+    }
+  }
+
+  async function pickImportWithApi() {
+    if (!window.showOpenFilePicker) return false;
+    try {
+      var handles = await showOpenFilePicker({
+        types: [{ accept: { 'application/json': ['.json'] }, description: 'JSON' }],
+        multiple: false
+      });
+      if (!handles || !handles[0]) return true;
+      var file = await handles[0].getFile();
+      var text = await file.text();
+      processFileText(text, file.name);
+      return true;
+    } catch (e) {
+      if (e && e.name === 'AbortError') return true;
+      toast('❌ Impossible d’ouvrir le fichier', true);
+      return true;
+    }
+  }
+
+  document.getElementById('btn-export').addEventListener('click', function () { exportJSON(); });
+  document.getElementById('btn-share').addEventListener('click', function () { shareBackup(); });
+  document.getElementById('btn-pick-import').addEventListener('click', async function () {
+    var ok = await pickImportWithApi();
+    if (!ok) document.getElementById('import-file').click();
+  });
+
+  document.getElementById('import-file').addEventListener('change', function () {
+    var file = this.files[0];
+    if (!file) return;
+    var reader = new FileReader();
+    reader.onload = function (e) { processFileText(e.target.result, file.name); };
+    reader.onerror = function () { toast('❌ Erreur de lecture', true); };
+    reader.readAsText(file);
+  });
+
+  document.getElementById('btn-import-cancel').addEventListener('click', hidePreview);
+
+  document.getElementById('btn-import-confirm').addEventListener('click', function () {
+    if (!pendingParsed) return;
+    var mode = document.querySelector('input[name="restore-mode"]:checked');
+    mode = mode ? mode.value : 'replace';
+    var n = applyRestore(pendingParsed, mode);
+    renderModules();
+    hidePreview();
+    toast('✅ Restauration appliquée (' + n + ' module(s), mode « ' + (mode === 'merge' ? 'fusion' : 'remplacement') + ' »)');
+  });
+
+  var hintFs = document.getElementById('hint-fsapi');
+  if (window.showSaveFilePicker) {
+    hintFs.textContent = '💡 Ce navigateur permet d’enregistrer directement le fichier à l’emplacement de votre choix (comme une application). Sinon, un téléchargement classique est proposé.';
+  } else {
+    hintFs.textContent = 'Le fichier est téléchargé dans le dossier habituel de votre navigateur. Renommez-le ou déplacez-le vers un lieu sûr (clé USB, cloud personnel…).';
+  }
+
+  var lastExport = localStorage.getItem('cn_last_export');
+  if (lastExport) {
+    document.getElementById('last-export').innerHTML =
+      'Dernière sauvegarde enregistrée : <strong>' + formatDatetime(lastExport) + '</strong>';
+  }
+  renderModules();
+})();
 </script>
 </body>
 </html>

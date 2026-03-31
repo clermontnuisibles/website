@@ -14,7 +14,9 @@
   <link rel="apple-touch-icon" href="icons/apple-touch-icon.png">
   <link rel="icon" type="image/svg+xml" href="../images/logo-icon.svg">
   <link rel="stylesheet" href="../fonts/inter.css">
+  <link rel="stylesheet" href="admin-shell.css">
   <script src="pwa.js"></script>
+  <script src="admin-nav.js" defer></script>
   <style>
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
     body {
@@ -26,9 +28,6 @@
       align-items: center;
       padding: 2rem 1rem 3rem;
     }
-    .back { font-size: 0.82rem; color: #2d6a4f; text-decoration: none; margin-bottom: 1.5rem; align-self: flex-start; max-width: 560px; width: 100%; }
-    .back:hover { text-decoration: underline; }
-
     .card {
       background: #fff;
       border-radius: 20px;
@@ -104,8 +103,6 @@
   </style>
 </head>
 <body>
-
-<a class="back" href="index.html">← Retour à l'administration</a>
 
 <div class="card">
   <div class="icon-wrap">📅</div>

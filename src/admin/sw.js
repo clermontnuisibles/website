@@ -1,6 +1,6 @@
 // Service Worker – Clermont Nuisibles Admin
 // Stratégie : Cache-first pour les assets statiques, Network-only pour les APIs externes.
-var CACHE_NAME = 'cn-admin-v1';
+var CACHE_NAME = 'cn-admin-v2';
 
 var PRECACHE_URLS = [
   // Pages admin
@@ -25,7 +25,10 @@ var PRECACHE_URLS = [
   '/images/logo-icon.svg',
   '/admin/icons/icon-192.png',
   '/admin/icons/icon-512.png',
-  '/admin/manifest.json'
+  '/admin/manifest.json',
+  '/admin/admin-shell.css',
+  '/admin/admin-nav.js',
+  '/admin/pwa.js'
 ];
 
 // Domaines externes — jamais mis en cache (OAuth, Google APIs…)

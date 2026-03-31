@@ -14,7 +14,9 @@
   <link rel="apple-touch-icon" href="icons/apple-touch-icon.png">
   <link rel="icon" type="image/svg+xml" href="../images/logo-icon.svg">
   <link rel="stylesheet" href="../fonts/inter.css">
+  <link rel="stylesheet" href="admin-shell.css">
   <script src="pwa.js"></script>
+  <script src="admin-nav.js" defer></script>
   <style>
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
@@ -27,12 +29,6 @@
       flex-direction: column;
       align-items: center;
     }
-
-    .back {
-      font-size: 0.82rem; color: #2d6a4f; text-decoration: none;
-      margin-bottom: 1.5rem; align-self: flex-start; max-width: 760px; width: 100%;
-    }
-    .back:hover { text-decoration: underline; }
 
     .actions {
       display: flex; gap: 0.75rem; justify-content: flex-end;
@@ -168,7 +164,7 @@
     /* ── Impression ── */
     @media print {
       body { background: #fff; padding: 0; }
-      .back, .actions { display: none; }
+      .actions { display: none; }
       .fiche { box-shadow: none; border-radius: 0; padding: 1.5rem; max-width: 100%; }
       .field input, .field textarea, .field select, td input {
         border-color: #ccc; background: #fff;
@@ -185,8 +181,6 @@
   </style>
 </head>
 <body>
-
-<a class="back" href="index.html">← Retour à l'administration</a>
 
 <div class="actions">
   <button class="btn btn-ghost" onclick="resetForm()">🗑 Effacer</button>

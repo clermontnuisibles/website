@@ -14,7 +14,9 @@
   <link rel="apple-touch-icon" href="icons/apple-touch-icon.png">
   <link rel="icon" type="image/svg+xml" href="../images/logo-icon.svg">
   <link rel="stylesheet" href="../fonts/inter.css">
+  <link rel="stylesheet" href="admin-shell.css">
   <script src="pwa.js"></script>
+  <script src="admin-nav.js" defer></script>
   <style>
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
     body {
@@ -24,9 +26,6 @@
       padding: 2rem 1rem 3rem;
       display: flex; flex-direction: column; align-items: center;
     }
-    .back { font-size: 0.82rem; color: #2d6a4f; text-decoration: none; margin-bottom: 1.5rem; align-self: flex-start; max-width: 680px; width: 100%; }
-    .back:hover { text-decoration: underline; }
-
     h1 { font-size: 1.35rem; font-weight: 800; color: #1a2e1a; margin-bottom: 0.3rem; max-width: 680px; width: 100%; }
     .subtitle { font-size: 0.88rem; color: #666; margin-bottom: 1.75rem; max-width: 680px; width: 100%; }
 
@@ -94,8 +93,6 @@
   </style>
 </head>
 <body>
-
-<a class="back" href="index.html">← Retour à l'administration</a>
 
 <h1>🧮 Calculateur de dosage</h1>
 <p class="subtitle">Calculez rapidement les quantités de produits nécessaires selon la surface, le volume ou le nombre de points d'appâtage.</p>

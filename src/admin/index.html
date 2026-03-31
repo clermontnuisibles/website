@@ -14,7 +14,9 @@
   <link rel="apple-touch-icon" href="icons/apple-touch-icon.png">
   <link rel="icon" type="image/svg+xml" href="../images/logo-icon.svg">
   <link rel="stylesheet" href="../fonts/inter.css">
+  <link rel="stylesheet" href="admin-shell.css">
   <script src="pwa.js"></script>
+  <script src="admin-nav.js" defer></script>
   <style>
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
     body {
@@ -26,36 +28,6 @@
       align-items: center;
       padding: 2.5rem 1rem 3rem;
     }
-    header {
-      display: flex;
-      align-items: center;
-      gap: 0.75rem;
-      margin-bottom: 2.25rem;
-    }
-    header img { width: 44px; height: 44px; border-radius: 10px; }
-    .logo-text { line-height: 1.1; }
-    .logo-text span { display: block; font-size: 0.85rem; color: #666; }
-    .logo-text strong { font-size: 1.2rem; color: #2d6a4f; }
-
-    h1 {
-      font-size: 1.05rem;
-      font-weight: 600;
-      color: #1a2e1a;
-      margin-bottom: 0.25rem;
-    }
-    .badge-admin {
-      display: inline-block;
-      background: #2d6a4f;
-      color: #fff;
-      font-size: 0.7rem;
-      font-weight: 700;
-      letter-spacing: .08em;
-      text-transform: uppercase;
-      padding: 2px 8px;
-      border-radius: 50px;
-      margin-bottom: 2rem;
-    }
-
     .grid {
       display: grid;
       grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
@@ -176,15 +148,8 @@
 </head>
 <body>
 
-<header>
-  <img src="../images/logo-icon.svg" alt="Logo">
-  <div class="logo-text">
-    <strong>Clermont Nuisibles</strong>
-    <span>Espace administration</span>
-  </div>
-</header>
-
-<span class="badge-admin">Admin</span>
+<h1 class="admin-home-heading">Outils d’administration</h1>
+<p class="admin-home-lead">Choisissez un outil ci-dessous ou via le menu — sur mobile, ouvrez le menu avec l’icône en haut à gauche.</p>
 
 <div class="grid">
 

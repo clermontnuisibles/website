@@ -62,7 +62,7 @@ window.SiteConfig = {
   /* ── Lien Google Business — page QR code (avis-google.html) ────
      Récupérez l'URL courte depuis votre fiche Google Business,
      ex. : 'https://g.page/r/XXXXXXXXXXXX/review'                */
-  googleReviewUrl: 'https://g.page/r/2884236348772897971/review',
+  googleReviewUrl: 'https://g.page/r/CUXREcLU_cTBEBM/review',
 
   /* ── Google Agenda — vue intégrée (page admin) ──────────────────────────────
      Récupérez l'ID depuis Google Agenda :

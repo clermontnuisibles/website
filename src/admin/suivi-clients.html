@@ -104,7 +104,10 @@
     <h1>👥 Suivi clients</h1>
     <div class="subtitle">Fiches clients et historique d'interventions.</div>
   </div>
-  <button class="btn btn-primary" onclick="openClientModal()">+ Nouveau client</button>
+  <div style="display:flex;gap:.5rem;flex-wrap:wrap;justify-content:flex-end">
+    <button class="btn btn-ghost" onclick="exportAllClientsVcard()">📇 Exporter tous</button>
+    <button class="btn btn-primary" onclick="openClientModal()">+ Nouveau client</button>
+  </div>
 </div>
 
 <div class="layout">
@@ -203,6 +206,109 @@ function save(d){ localStorage.setItem(STORE_KEY, JSON.stringify(d)); }
 function uid(){ return Date.now().toString(36)+Math.random().toString(36).slice(2); }
 function formatDate(str){ if(!str) return '—'; var p=str.split('-'); return p[2]+'/'+p[1]+'/'+p[0]; }
 function initials(nom){ return (nom||'?').trim().split(/\s+/).map(function(w){return w[0];}).join('').toUpperCase().slice(0,2); }
+function slugFile(s){
+  var str = String(s || '').trim().toLowerCase();
+  try { str = str.normalize('NFD').replace(/[\u0300-\u036f]/g,''); } catch(e) {}
+  str = str.replace(/&/g,' et ');
+  str = str.replace(/[^a-z0-9]+/g,'-').replace(/^-+|-+$/g,'');
+  return str || 'contact';
+}
+function escapeVcf(s){
+  return String(s ?? '')
+    .replace(/\\/g,'\\\\')
+    .replace(/\r\n/g,'\\n')
+    .replace(/\n/g,'\\n')
+    .replace(/\r/g,'\\n')
+    .replace(/;/g,'\\;')
+    .replace(/,/g,'\\,');
+}
+function splitName(displayName){
+  var n = String(displayName || '').trim();
+  if (!n) return { last: '', first: '' };
+  var parts = n.split(/\s+/);
+  if (parts.length === 1) return { last: parts[0], first: '' };
+  return { last: parts.slice(-1).join(' '), first: parts.slice(0, -1).join(' ') };
+}
+function vcardForClient(c){
+  var display = (c && c.nom) ? String(c.nom).trim() : '';
+  var n = splitName(display);
+  var lines = [
+    'BEGIN:VCARD',
+    'VERSION:3.0',
+    'FN:' + escapeVcf(display || 'Client'),
+    'N:' + escapeVcf(n.last) + ';' + escapeVcf(n.first) + ';;;'
+  ];
+
+  // Heuristique simple: si "pro" (ou ressemble à une raison sociale) → ORG, sinon garde FN.
+  var looksLikeOrg = !!(c && c.type && c.type !== 'particulier');
+  if (looksLikeOrg) lines.push('ORG:' + escapeVcf(display));
+
+  if (c && c.tel) {
+    lines.push('TEL;TYPE=CELL:' + escapeVcf(String(c.tel).trim()));
+  }
+  if (c && c.email) {
+    lines.push('EMAIL;TYPE=INTERNET:' + escapeVcf(String(c.email).trim()));
+  }
+  if (c && c.adresse) {
+    // Adresse en champ structuré, en mettant tout dans "street"
+    var adr = String(c.adresse).trim();
+    lines.push('ADR;TYPE=WORK:;;' + escapeVcf(adr) + ';;;;');
+  }
+  if (c && c.notes) {
+    lines.push('NOTE:' + escapeVcf(String(c.notes).trim()));
+  }
+  lines.push('END:VCARD');
+  return lines.join('\r\n') + '\r\n';
+}
+function downloadVcardText(vcfText, filename){
+  var blob = new Blob([vcfText], { type: 'text/vcard;charset=utf-8' });
+  var url = URL.createObjectURL(blob);
+  var a = document.createElement('a');
+  a.href = url;
+  a.download = filename;
+  document.body.appendChild(a);
+  a.click();
+  a.remove();
+  setTimeout(function(){ URL.revokeObjectURL(url); }, 1000);
+  return blob;
+}
+async function shareVcard(vcfText, filename, title){
+  var blob = new Blob([vcfText], { type: 'text/vcard;charset=utf-8' });
+  var file;
+  try { file = new File([blob], filename, { type: blob.type }); } catch(e) { file = null; }
+  if (navigator.share && file && navigator.canShare && navigator.canShare({ files: [file] })) {
+    await navigator.share({ title: title || filename, files: [file] });
+    return true;
+  }
+  // Fallback: téléchargement (l’utilisateur pourra ensuite “Importer”/ouvrir dans Contacts)
+  downloadVcardText(vcfText, filename);
+  return false;
+}
+async function exportSelectedClientVcard(){
+  if (!selectedId) return;
+  var c = load().find(function(x){ return x.id === selectedId; });
+  if (!c) return;
+  var name = (c.nom || 'Client').trim();
+  var filename = slugFile(name) + '.vcf';
+  var vcf = vcardForClient(c);
+  try {
+    await shareVcard(vcf, filename, 'Contact: ' + name);
+  } catch(e) {
+    downloadVcardText(vcf, filename);
+  }
+}
+async function exportAllClientsVcard(){
+  var data = load().slice();
+  if (!data.length) { alert('Aucun client à exporter.'); return; }
+  data.sort(function(a,b){ return (a.nom||'').localeCompare(b.nom||''); });
+  var vcf = data.map(vcardForClient).join('');
+  var filename = 'carnet-clients.vcf';
+  try {
+    await shareVcard(vcf, filename, 'Carnet clients');
+  } catch(e) {
+    downloadVcardText(vcf, filename);
+  }
+}
 
 /* ── liste ── */
 function renderList() {
@@ -268,6 +374,7 @@ function renderDetail() {
         '<span class="client-card-type">' + esc(c.type||'particulier') + '</span>' +
       '</div>' +
       '<div style="display:flex;gap:.4rem;flex-wrap:wrap;">' +
+        '<button class="btn btn-small btn-ghost" onclick="exportSelectedClientVcard()">📇 Exporter</button>' +
         '<button class="btn btn-small btn-edit" onclick="openClientModal(\'' + esc(c.id) + '\')">✏️ Modifier</button>' +
         '<button class="btn btn-small btn-danger" onclick="deleteClient(\'' + esc(c.id) + '\')">🗑 Supprimer</button>' +
       '</div>' +

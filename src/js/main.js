@@ -229,6 +229,27 @@
     return s[0].toUpperCase();
   }
 
+  function isUsablePlaceSnapshot(d) {
+    if (!d || typeof d !== 'object') return false;
+    if (d.rating != null && !Number.isNaN(Number(d.rating))) return true;
+    if (d.userRatingCount != null && Number(d.userRatingCount) > 0) return true;
+    if (Array.isArray(d.reviews) && d.reviews.length > 0) return true;
+    return false;
+  }
+
+  async function tryLoadPlaceSnapshot(snapshotUrl) {
+    const u = (snapshotUrl && String(snapshotUrl).trim()) || '';
+    if (!u) return null;
+    try {
+      const res = await fetch(u, { credentials: 'omit', cache: 'default' });
+      if (!res.ok) return null;
+      const data = await res.json();
+      return isUsablePlaceSnapshot(data) ? data : null;
+    } catch (_) {
+      return null;
+    }
+  }
+
   async function fetchGooglePlaceDetails(placeId, apiKey, proxyBaseUrl) {
     const proxy = (proxyBaseUrl && String(proxyBaseUrl).trim()) || '';
     if (proxy) {
@@ -403,7 +424,11 @@
     const placeId = (cfg.googlePlaceId && String(cfg.googlePlaceId).trim()) || '';
     const proxyUrl = (cfg.googlePlacesProxyUrl && String(cfg.googlePlacesProxyUrl).trim()) || '';
     const apiKey = (cfg.googlePlacesApiKey && String(cfg.googlePlacesApiKey).trim()) || '';
-    if (!placeId || (!proxyUrl && !apiKey)) return;
+    const snapshotUrl = (cfg.googlePlacesSnapshotUrl && String(cfg.googlePlacesSnapshotUrl).trim()) || '';
+    const canFetchApi = Boolean(placeId && (proxyUrl || apiKey));
+    const canTrySnapshot = Boolean(snapshotUrl);
+
+    if (!canTrySnapshot && !canFetchApi) return;
 
     const sectionAvis = document.getElementById('avis');
     if (sectionAvis && sectionAvis.hidden) return;
@@ -425,17 +450,31 @@
       scoreBox.setAttribute('aria-busy', 'true');
     }
 
-    let data;
-    try {
-      data = await fetchGooglePlaceDetails(placeId, apiKey, proxyUrl);
-    } catch (_) {
+    let data = null;
+    if (canTrySnapshot) {
+      data = await tryLoadPlaceSnapshot(snapshotUrl);
+    }
+    if (!data && canFetchApi) {
+      try {
+        data = await fetchGooglePlaceDetails(placeId, apiKey, proxyUrl);
+      } catch (_) {
+        if (homeEl) homeEl.innerHTML = homeFallback;
+        if (gridEl) gridEl.innerHTML = gridFallback;
+        document.documentElement.classList.remove('gr-places-pending');
+        if (scoreBox) scoreBox.setAttribute('aria-busy', 'false');
+        return;
+      }
+    }
+    if (!data) {
       if (homeEl) homeEl.innerHTML = homeFallback;
       if (gridEl) gridEl.innerHTML = gridFallback;
-      return;
-    } finally {
       document.documentElement.classList.remove('gr-places-pending');
       if (scoreBox) scoreBox.setAttribute('aria-busy', 'false');
+      return;
     }
+
+    document.documentElement.classList.remove('gr-places-pending');
+    if (scoreBox) scoreBox.setAttribute('aria-busy', 'false');
 
     const reviews = Array.isArray(data.reviews) ? data.reviews : [];
     const rating = data.rating != null ? Number(data.rating) : null;

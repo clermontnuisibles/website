@@ -79,6 +79,13 @@ window.SiteConfig = {
   /** Clé API — uniquement si vous n’utilisez pas de proxy (moins sûr en public) */
   googlePlacesApiKey: 'AIzaSyD7gyfBuKi1E6Tc9-zm-FCX3v0gGU1BzUA',
 
+  /**
+   * Snapshot Places généré par le CI (scripts/fetch-google-place.mjs) → src/data/google-place-snapshot.json
+   * Si le fichier est à jour, les visiteurs n’ont pas besoin d’appeler l’API (clé / proxy optionnels côté navigateur).
+   * Laisser '' pour n’utiliser que le proxy ou la clé navigateur.
+   */
+  googlePlacesSnapshotUrl: '/data/google-place-snapshot.json',
+
   /* ── Google Agenda — vue intégrée (page admin) ──────────────────────────────
      Récupérez l'ID depuis Google Agenda :
      Paramètres de l'agenda → « Intégrer l'agenda » → copier l'adresse

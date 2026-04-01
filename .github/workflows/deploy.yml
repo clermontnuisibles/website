@@ -3,6 +3,9 @@ name: Déploiement GitHub Pages
 on:
   push:
     branches: ["main"]
+  # Tous les lundis 05:15 UTC (~06:15 hiver Paris) : snapshot Google Places + redéploiement
+  schedule:
+    - cron: "15 5 * * 1"
   workflow_dispatch:
 
 permissions:
@@ -23,6 +26,17 @@ jobs:
     steps:
       - name: Récupération du code
         uses: actions/checkout@v6
+
+      - name: Node.js (snapshot Places)
+        uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+
+      - name: Snapshot Google Places (planifié ou manuel)
+        if: github.event_name == 'schedule' || github.event_name == 'workflow_dispatch'
+        env:
+          GOOGLE_PLACES_API_KEY: ${{ secrets.GOOGLE_PLACES_API_KEY }}
+        run: node scripts/fetch-google-place.mjs
 
       - name: Configuration de GitHub Pages
         uses: actions/configure-pages@v6

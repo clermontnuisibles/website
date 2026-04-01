@@ -67,6 +67,18 @@ Les valeurs sont propagées automatiquement sur toutes les pages au chargement, 
 
 Le déploiement s'effectue automatiquement à chaque push sur `main` via `.github/workflows/deploy.yml`.
 
+### Planification hebdomadaire (avis Google + snapshot)
+
+Le même workflow est aussi déclenché **tous les lundis vers 06 h 15 (heure de Paris en hiver)** (`cron: 15 5 * * 1` UTC) et peut être lancé **à la main** (onglet *Actions* → *Déploiement GitHub Pages* → *Run workflow*).
+
+À ces moments, si le secret **`GOOGLE_PLACES_API_KEY`** est défini dans le dépôt (*Settings → Secrets and variables → Actions*), le job exécute `scripts/fetch-google-place.mjs`, met à jour `src/data/google-place-snapshot.json`, puis publie le site. Les visiteurs chargent ce fichier en priorité (`googlePlacesSnapshotUrl` dans `config.js`), ce qui évite d’exposer la clé API dans le navigateur lorsque le snapshot est à jour.
+
+**Limite Google Places :** une requête ne renvoie qu’un **échantillon d’avis récents** (souvent jusqu’à cinq), pas l’intégralité des avis de la fiche. Les champs `rating` et `userRatingCount` reflètent toutefois la fiche complète.
+
+**Push sur `main` sans secret :** le déploiement utilise le fichier `google-place-snapshot.json` **déjà présent dans le dépôt** (aucun nouvel appel API). Pour aligner le dépôt après un déploiement planifié, vous pouvez lancer en local `GOOGLE_PLACES_API_KEY=… node scripts/fetch-google-place.mjs` puis commiter le JSON, ou configurer un PAT et une étape de commit séparée si vous le souhaitez.
+
+Sans `GOOGLE_PLACES_API_KEY`, l’étape snapshot est ignorée silencieusement ; le site continue d’utiliser le proxy ou la clé navigateur définis dans `config.js`.
+
 ---
 
 ### Configuration initiale (première fois)

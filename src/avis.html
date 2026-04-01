@@ -45,7 +45,8 @@
       if (p.indexOf('avis.html') === -1) return;
       var pid = String(c.googlePlaceId || '').trim();
       if (!pid) return;
-      if (!String(c.googlePlacesApiKey || '').trim() && !String(c.googlePlacesProxyUrl || '').trim()) return;
+      var snap = String(c.googlePlacesSnapshotUrl || '').trim();
+      if (!String(c.googlePlacesApiKey || '').trim() && !String(c.googlePlacesProxyUrl || '').trim() && !snap) return;
       document.documentElement.classList.add('gr-places-pending');
     } catch (e) {}
   })();

@@ -36,6 +36,8 @@ jobs:
         if: github.event_name == 'schedule' || github.event_name == 'workflow_dispatch'
         env:
           GOOGLE_PLACES_API_KEY: ${{ secrets.GOOGLE_PLACES_API_KEY }}
+          # Si la clé GCP est restreinte par référent HTTP, surchargez (doit matcher la console Google)
+          GOOGLE_PLACES_HTTP_REFERER: ${{ vars.GOOGLE_PLACES_HTTP_REFERER }}
         run: node scripts/fetch-google-place.mjs
 
       - name: Configuration de GitHub Pages

@@ -79,6 +79,8 @@ Le même workflow est aussi déclenché **tous les lundis vers 06 h 15 (heure de
 
 Sans `GOOGLE_PLACES_API_KEY`, l’étape snapshot est ignorée silencieusement ; le site continue d’utiliser le proxy ou la clé navigateur définis dans `config.js`.
 
+**Erreur CI `403` / `API_KEY_HTTP_REFERRER_BLOCKED` / referer `<empty>` :** la clé est limitée aux **référents HTTP** dans la Google Cloud Console. Sur GitHub Actions il n’y a pas de navigateur, donc Google voyait un referer vide. Le script envoie désormais un en-tête **`Referer`** égal à `siteUrl` de `config.js` (ex. `https://www.clermont-nuisibles.fr/`). Vérifiez que cette URL (avec ou sans `www`, avec le bon chemin) est bien autorisée pour la clé. Sinon, ajoutez une variable dépôt **`GOOGLE_PLACES_HTTP_REFERER`** (*Settings → Secrets and variables → Actions → Variables*) avec exactement la valeur attendue par la console. **Alternative propre :** créer une **deuxième clé** réservée au CI, sans restriction de référent, avec restriction d’API uniquement sur *Places API (New)*.
+
 ---
 
 ### Configuration initiale (première fois)

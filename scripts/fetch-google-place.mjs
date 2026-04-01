@@ -5,6 +5,9 @@
  *
  * Variables d'environnement :
  *   GOOGLE_PLACES_API_KEY (obligatoire pour exécuter l'appel)
+ *   GOOGLE_PLACES_HTTP_REFERER (optionnel) — si la clé est restreinte par référent HTTP,
+ *     les appels CI n’ont pas de Referer : définir ex. https://www.votredomaine.fr/
+ *     Sinon le script utilise siteUrl de config.js + "/" comme Referer par défaut.
  *
  * Le placeId est lu dans src/js/config.js (googlePlaceId).
  *
@@ -42,13 +45,22 @@ if (!placeId) {
   process.exit(1);
 }
 
+const siteUrlMatch = configText.match(/siteUrl:\s*['"]([^'"]+)['"]/);
+const refererFromConfig = siteUrlMatch
+  ? siteUrlMatch[1].replace(/\/+$/, '') + '/'
+  : '';
+const referer = (process.env.GOOGLE_PLACES_HTTP_REFERER || '').trim() || refererFromConfig;
+
 const url = `https://places.googleapis.com/v1/places/${encodeURIComponent(placeId)}`;
-const res = await fetch(url, {
-  headers: {
-    'X-Goog-Api-Key': key,
-    'X-Goog-FieldMask': 'rating,userRatingCount,reviews'
-  }
-});
+const headers = {
+  'X-Goog-Api-Key': key,
+  'X-Goog-FieldMask': 'rating,userRatingCount,reviews'
+};
+if (referer) {
+  headers.Referer = referer;
+}
+
+const res = await fetch(url, { headers });
 
 const bodyText = await res.text();
 if (!res.ok) {

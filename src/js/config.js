@@ -89,7 +89,8 @@ window.SiteConfig = {
   /* ── Lien de réservation Google ────────────────────────────────────
      Google Agenda → + Créer → Créneaux de réservation → Voir la page
      Copier l'URL de partage (ex. https://calendar.app.google/XXXX)
-     Laisser vide (‘’) pour masquer le bouton de réservation.         */
+     Laisser vide (‘’) : les liens <a class="cfg-booking"> du site
+     public deviennent du texte simple (plus de clic). Admin : bouton masqué. */
   googleBookingUrl: 'https://calendar.app.google/W3hPKxHths3qbvYF6',
 
 };

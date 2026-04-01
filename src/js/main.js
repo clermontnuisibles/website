@@ -306,6 +306,48 @@
     return article;
   }
 
+  /**
+   * Répartition par étoiles à partir des avis renvoyés par Places (≤ 5).
+   * L’API ne fournit pas l’histogramme global : les % sont relatifs à cet échantillon.
+   */
+  function updateRatingDistributionBars(reviews, userRatingCount) {
+    const stars = [5, 4, 3, 2, 1];
+    const counts = { 1: 0, 2: 0, 3: 0, 4: 0, 5: 0 };
+    (reviews || []).forEach(r => {
+      const x = Number(r.rating);
+      if (Number.isNaN(x)) return;
+      const b = Math.min(5, Math.max(1, Math.round(x)));
+      counts[b]++;
+    });
+    const n = (reviews || []).length;
+    stars.forEach(star => {
+      const pct = n ? Math.round((100 * counts[star]) / n) : 0;
+      const fill = document.getElementById('gr-dist-fill-' + star);
+      const lab = document.getElementById('gr-dist-pct-' + star);
+      if (fill) fill.style.width = pct + '%';
+      if (lab) lab.textContent = pct + '%';
+    });
+    const hint = document.getElementById('gr-dist-hint');
+    if (hint) {
+      hint.hidden = false;
+      if (n > 0) {
+        const total =
+          userRatingCount != null && userRatingCount > n
+            ? ` Les ${userRatingCount} avis au total ne sont pas tous listés ici.`
+            : '';
+        hint.textContent =
+          'Pourcentages calculés sur les ' +
+          n +
+          ' avis récents renvoyés par Google (maximum 5 par requête), et non sur la répartition complète de la fiche.' +
+          total +
+          ' Détail sur Google Maps.';
+      } else {
+        hint.textContent =
+          'Aucun avis avec note dans l’échantillon renvoyé par Google. Ouvrez la fiche Google pour la répartition complète.';
+      }
+    }
+  }
+
   function updateJsonLdAggregateRating(ratingValue, reviewCount) {
     const el = document.getElementById('json-ld-business');
     if (!el || ratingValue == null) return;
@@ -378,6 +420,11 @@
     if (homeEl) homeEl.innerHTML = loadingHtml;
     if (gridEl) gridEl.innerHTML = loadingHtml;
 
+    const scoreBox = document.getElementById('gr-score-box');
+    if (scoreBox && document.documentElement.classList.contains('gr-places-pending')) {
+      scoreBox.setAttribute('aria-busy', 'true');
+    }
+
     let data;
     try {
       data = await fetchGooglePlaceDetails(placeId, apiKey, proxyUrl);
@@ -385,6 +432,9 @@
       if (homeEl) homeEl.innerHTML = homeFallback;
       if (gridEl) gridEl.innerHTML = gridFallback;
       return;
+    } finally {
+      document.documentElement.classList.remove('gr-places-pending');
+      if (scoreBox) scoreBox.setAttribute('aria-busy', 'false');
     }
 
     const reviews = Array.isArray(data.reviews) ? data.reviews : [];
@@ -413,7 +463,10 @@
     if (grSubtitle && count != null) {
       grSubtitle.textContent = `Basée sur ${count} avis Google`;
     }
-    if (grDist) grDist.hidden = true;
+    if (grDist) {
+      grDist.hidden = false;
+      updateRatingDistributionBars(reviews, count);
+    }
     if (grStaticNote) grStaticNote.hidden = true;
     if (grGoogleNote && grGoogleLink && cfg.googleReviewUrl) {
       grGoogleLink.href = cfg.googleReviewUrl;
@@ -554,6 +607,22 @@
     // Remplace le texte affiché dans les spans .cfg-phone
     document.querySelectorAll('.cfg-phone').forEach(el => {
       el.textContent = cfg.phone;
+    });
+
+    // ── Réservation Google (prise de RDV) ─────────────────────────
+    const bookingUrl = (cfg.googleBookingUrl && String(cfg.googleBookingUrl).trim()) || '';
+    document.querySelectorAll('a.cfg-booking').forEach(a => {
+      if (bookingUrl) {
+        a.href = bookingUrl;
+        a.target = '_blank';
+        a.rel = 'noopener noreferrer';
+      } else {
+        const span = document.createElement('span');
+        const cls = (a.getAttribute('class') || '').replace(/\bcfg-booking\b/g, '').replace(/\s+/g, ' ').trim();
+        if (cls) span.setAttribute('class', cls);
+        while (a.firstChild) span.appendChild(a.firstChild);
+        a.parentNode.replaceChild(span, a);
+      }
     });
 
     // ── Adresse e-mail ────────────────────────────────────────────

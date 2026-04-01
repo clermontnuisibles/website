@@ -64,6 +64,21 @@ window.SiteConfig = {
      ex. : 'https://g.page/r/XXXXXXXXXXXX/review'                */
   googleReviewUrl: 'https://g.page/r/CUXREcLU_cTBEBM/review',
 
+  /* ── Avis Google (affichage dynamique sur index + avis.html) ───
+     Place ID : https://developers.google.com/maps/documentation/javascript/examples/places-placeid-finder
+     Laisser googlePlaceId vide → témoignages statiques du HTML.
+
+     Sécurité (dépôt public GitHub) :
+     • Recommandé : googlePlacesProxyUrl = URL d’un proxy (ex. Cloudflare Worker)
+       qui appelle Places côté serveur ; NE PAS committer la clé API.
+     • Alternative : googlePlacesApiKey dans le navigateur — la clé reste
+       visible ; limitez-la (référents HTTP + API Places uniquement).      */
+  googlePlaceId: 'ChIJzTdRX11V34wRRdERwtT9xME',
+  /** URL absolue du proxy (GET ?placeId=…), ex. https://xx.workers.dev/places */
+  googlePlacesProxyUrl: '',
+  /** Clé API — uniquement si vous n’utilisez pas de proxy (moins sûr en public) */
+  googlePlacesApiKey: 'AIzaSyD7gyfBuKi1E6Tc9-zm-FCX3v0gGU1BzUA',
+
   /* ── Google Agenda — vue intégrée (page admin) ──────────────────────────────
      Récupérez l'ID depuis Google Agenda :
      Paramètres de l'agenda → « Intégrer l'agenda » → copier l'adresse

@@ -80,13 +80,14 @@
 <section class="section bg-light" aria-labelledby="score-heading">
   <div class="container">
     <div class="grid grid-2 u-maxw-900 u-mx-auto u-align-center u-gap-3">
-      <div class="review-score-box" role="region" aria-label="Note globale">
-        <div class="score" aria-label="4,9 sur 5">4,9</div>
-        <div class="stars" aria-label="5 étoiles">★★★★★</div>
-        <p class="u-text-on-dark-muted-80 u-mt-0-5">Note moyenne sur plus de 200 avis</p>
+      <div class="review-score-box" role="region" aria-label="Note globale" aria-live="polite">
+        <div class="score" id="gr-score" aria-label="4,9 sur 5">4,9</div>
+        <div class="stars" id="gr-stars" aria-hidden="true">★★★★★</div>
+        <p class="u-text-on-dark-muted-80 u-mt-0-5" id="gr-subtitle">Note moyenne sur plus de 200 avis</p>
       </div>
       <div>
         <h2 id="score-heading" class="u-mb-1-5">Notre note globale</h2>
+        <div id="gr-distribution">
         <div class="rating-bar-wrap">
           <span class="rating-bar-label">5 ★</span>
           <div class="rating-bar-track"><div class="rating-bar-fill rating-fill-92"></div></div>
@@ -112,7 +113,9 @@
           <div class="rating-bar-track"><div class="rating-bar-fill rating-fill-0"></div></div>
           <span class="rating-bar-count">0%</span>
         </div>
-        <p class="u-text-xxs u-text-muted u-mt-1"><svg class="icon icon-sm" aria-hidden="true"><use href="images/icons.svg#icon-alert"/></svg> Les avis présentés ci-dessous sont des témoignages fournis directement par les clients. Remplacez-les par vos vrais avis Google / vos clients réels.</p>
+        </div>
+        <p class="u-text-xxs u-text-muted u-mt-1" id="gr-static-note"><svg class="icon icon-sm" aria-hidden="true"><use href="images/icons.svg#icon-alert"/></svg> Les avis ci-dessous sont des exemples. Activez l’API Google Places dans <code>config.js</code> pour afficher vos avis Google.</p>
+        <p class="u-text-xxs u-text-muted u-mt-1" id="gr-google-note" hidden><svg class="icon icon-sm" aria-hidden="true"><use href="images/icons.svg#icon-alert"/></svg> Avis récents issus de Google&nbsp;: <a id="gr-google-link" href="#" target="_blank" rel="noopener">voir tous les avis sur Google</a>.</p>
       </div>
     </div>
   </div>
@@ -125,7 +128,7 @@
       <span class="badge">Témoignages</span>
       <h2 id="avis-heading">Ce que disent nos clients</h2>
     </div>
-    <div class="grid grid-3">
+    <div class="grid grid-3" id="google-reviews-grid">
 
       <article class="review-card">
         <div class="review-stars" aria-label="5 étoiles">★★★★★</div>

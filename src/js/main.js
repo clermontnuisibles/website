@@ -203,6 +203,232 @@
   }
 
   /* =====================
+     Avis Google (API Places — données dynamiques)
+     ===================== */
+  function escapeHtml(str) {
+    return String(str ?? '')
+      .replace(/&/g, '&amp;')
+      .replace(/</g, '&lt;')
+      .replace(/>/g, '&gt;')
+      .replace(/"/g, '&quot;');
+  }
+
+  function starsFromRating(rating) {
+    const r = Math.round(Number(rating) || 0);
+    const n = Math.max(0, Math.min(5, r));
+    return `${'★'.repeat(n)}${'☆'.repeat(5 - n)}`;
+  }
+
+  function initialsFromName(name) {
+    const s = String(name || '?').trim();
+    if (!s) return '?';
+    const parts = s.split(/\s+/);
+    if (parts.length >= 2) {
+      return (parts[0][0] + parts[parts.length - 1][0]).toUpperCase();
+    }
+    return s[0].toUpperCase();
+  }
+
+  async function fetchGooglePlaceDetails(placeId, apiKey, proxyBaseUrl) {
+    const proxy = (proxyBaseUrl && String(proxyBaseUrl).trim()) || '';
+    if (proxy) {
+      const u = new URL(proxy, window.location.href);
+      u.searchParams.set('placeId', placeId);
+      const res = await fetch(u.toString(), { credentials: 'omit' });
+      if (!res.ok) {
+        const errBody = await res.text();
+        throw new Error(errBody || res.statusText);
+      }
+      return res.json();
+    }
+    const key = (apiKey && String(apiKey).trim()) || '';
+    if (!key) throw new Error('Missing API key or proxy URL');
+    const url = `https://places.googleapis.com/v1/places/${encodeURIComponent(placeId)}`;
+    const res = await fetch(url, {
+      headers: {
+        'X-Goog-Api-Key': key,
+        'X-Goog-FieldMask': 'rating,userRatingCount,reviews'
+      }
+    });
+    if (!res.ok) {
+      const errBody = await res.text();
+      throw new Error(errBody || res.statusText);
+    }
+    return res.json();
+  }
+
+  function truncateExcerpt(text, maxLen) {
+    const t = String(text || '').trim();
+    if (!maxLen || maxLen <= 0 || t.length <= maxLen) return t;
+    return t.slice(0, maxLen).trim().replace(/\s+\S*$/, '') + '…';
+  }
+
+  function shuffleArray(arr) {
+    const a = arr.slice();
+    for (let i = a.length - 1; i > 0; i--) {
+      const j = Math.floor(Math.random() * (i + 1));
+      const t = a[i];
+      a[i] = a[j];
+      a[j] = t;
+    }
+    return a;
+  }
+
+  /** Avis avec note supérieure ou égale à 4 étoiles (4 ★, 4,5 ★, 5 ★…). */
+  function filterReviewsAtLeastFourStars(reviews) {
+    return (reviews || []).filter(r => {
+      const x = Number(r.rating);
+      return !Number.isNaN(x) && x >= 4;
+    });
+  }
+
+  function buildReviewCardEl(review, excerptMaxLen) {
+    const rating = review.rating != null ? Number(review.rating) : 0;
+    let text = review.text && review.text.text ? review.text.text : '';
+    if (excerptMaxLen) text = truncateExcerpt(text, excerptMaxLen);
+    const author =
+      review.authorAttribution && review.authorAttribution.displayName
+        ? review.authorAttribution.displayName
+        : 'Client Google';
+    const when = review.relativePublishTimeDescription || '';
+    const article = document.createElement('article');
+    article.className = 'review-card';
+    article.innerHTML = `
+      <div class="review-stars" aria-label="${rating} étoiles sur 5">${starsFromRating(rating)}</div>
+      <p class="review-text">« ${escapeHtml(text)} »</p>
+      <div class="review-author">
+        <div class="review-avatar" aria-hidden="true">${escapeHtml(initialsFromName(author))}</div>
+        <div>
+          <div class="review-name">${escapeHtml(author)}</div>
+          <div class="review-date">${escapeHtml(when)}</div>
+        </div>
+      </div>`;
+    return article;
+  }
+
+  function updateJsonLdAggregateRating(ratingValue, reviewCount) {
+    const el = document.getElementById('json-ld-business');
+    if (!el || ratingValue == null) return;
+    try {
+      const data = JSON.parse(el.textContent);
+      data.aggregateRating = {
+        '@type': 'AggregateRating',
+        ratingValue: Number(ratingValue),
+        reviewCount: Number(reviewCount) || 0,
+        bestRating: 5,
+        worstRating: 1
+      };
+      el.textContent = JSON.stringify(data, null, 4);
+    } catch (_) { /* ignore */ }
+  }
+
+  const HOME_REVIEWS_COUNT = 5;
+  const HOME_REVIEW_EXCERPT_MAX = 220;
+
+  function renderReviewsInto(container, reviews, max, excerptMaxLen) {
+    container.innerHTML = '';
+    const list = (reviews || []).slice(0, max);
+    if (!list.length) {
+      const p = document.createElement('p');
+      p.className = 'u-text-muted u-text-sm';
+      p.style.cssText = 'grid-column:1/-1;text-align:center;padding:2rem;';
+      p.textContent =
+        'Aucun avis récent avec texte disponible via Google pour le moment.';
+      container.appendChild(p);
+      return;
+    }
+    list.forEach(r => container.appendChild(buildReviewCardEl(r, excerptMaxLen)));
+  }
+
+  /** Accueil : 5 extraits aléatoires parmi les avis ≥ 4 ★. */
+  function renderHomeGoogleReviews(container, allReviews) {
+    const pool = filterReviewsAtLeastFourStars(allReviews);
+    if (!pool.length) {
+      container.innerHTML =
+        '<p class="u-text-muted u-text-sm" style="grid-column:1/-1;text-align:center;padding:2rem;">' +
+        'Aucun avis avec une note d’au moins 4 étoiles parmi les avis récents renvoyés par Google.' +
+        '</p>';
+      return;
+    }
+    const picked = shuffleArray(pool).slice(0, HOME_REVIEWS_COUNT);
+    renderReviewsInto(container, picked, HOME_REVIEWS_COUNT, HOME_REVIEW_EXCERPT_MAX);
+  }
+
+  async function initGoogleReviews() {
+    const cfg = window.SiteConfig;
+    if (!cfg || !cfg.showReviews) return;
+
+    const placeId = (cfg.googlePlaceId && String(cfg.googlePlaceId).trim()) || '';
+    const proxyUrl = (cfg.googlePlacesProxyUrl && String(cfg.googlePlacesProxyUrl).trim()) || '';
+    const apiKey = (cfg.googlePlacesApiKey && String(cfg.googlePlacesApiKey).trim()) || '';
+    if (!placeId || (!proxyUrl && !apiKey)) return;
+
+    const sectionAvis = document.getElementById('avis');
+    if (sectionAvis && sectionAvis.hidden) return;
+
+    const homeEl = document.getElementById('google-reviews-home');
+    const gridEl = document.getElementById('google-reviews-grid');
+    if (!homeEl && !gridEl) return;
+
+    const homeFallback = homeEl ? homeEl.innerHTML : '';
+    const gridFallback = gridEl ? gridEl.innerHTML : '';
+
+    const loadingHtml =
+      '<p class="u-text-muted u-text-sm google-reviews-loading" style="grid-column:1/-1;text-align:center;padding:2rem;">Chargement des avis Google…</p>';
+    if (homeEl) homeEl.innerHTML = loadingHtml;
+    if (gridEl) gridEl.innerHTML = loadingHtml;
+
+    let data;
+    try {
+      data = await fetchGooglePlaceDetails(placeId, apiKey, proxyUrl);
+    } catch (_) {
+      if (homeEl) homeEl.innerHTML = homeFallback;
+      if (gridEl) gridEl.innerHTML = gridFallback;
+      return;
+    }
+
+    const reviews = Array.isArray(data.reviews) ? data.reviews : [];
+    const rating = data.rating != null ? Number(data.rating) : null;
+    const count = data.userRatingCount != null ? Number(data.userRatingCount) : null;
+
+    const grScore = document.getElementById('gr-score');
+    const grStars = document.getElementById('gr-stars');
+    const grSubtitle = document.getElementById('gr-subtitle');
+    const grDist = document.getElementById('gr-distribution');
+    const grStaticNote = document.getElementById('gr-static-note');
+    const grGoogleNote = document.getElementById('gr-google-note');
+    const grGoogleLink = document.getElementById('gr-google-link');
+
+    if (grScore && rating != null) {
+      const label = rating.toLocaleString('fr-FR', {
+        minimumFractionDigits: 1,
+        maximumFractionDigits: 1
+      });
+      grScore.textContent = label;
+      grScore.setAttribute('aria-label', `${label} sur 5`);
+    }
+    if (grStars && rating != null) {
+      grStars.textContent = starsFromRating(Math.round(rating));
+    }
+    if (grSubtitle && count != null) {
+      grSubtitle.textContent = `Basée sur ${count} avis Google`;
+    }
+    if (grDist) grDist.hidden = true;
+    if (grStaticNote) grStaticNote.hidden = true;
+    if (grGoogleNote && grGoogleLink && cfg.googleReviewUrl) {
+      grGoogleLink.href = cfg.googleReviewUrl;
+      grGoogleNote.hidden = false;
+    }
+
+    if (homeEl) renderHomeGoogleReviews(homeEl, reviews);
+    if (gridEl) renderReviewsInto(gridEl, reviews, reviews.length, null);
+
+    if (rating != null && count != null) {
+      updateJsonLdAggregateRating(rating, count);
+    }
+  }
+
+  /* =====================
      Config (config.js)
      ===================== */
   function applyConfig() {
@@ -410,6 +636,7 @@
      ===================== */
   document.addEventListener('DOMContentLoaded', () => {
     applyConfig();
+    void initGoogleReviews();
     initPublicServiceWorker();
     initCookieBanner();
     initMobileMenu();

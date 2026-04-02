@@ -12,6 +12,7 @@ var PRECACHE_URLS = [
   '/admin/calculateur-dosage.html',
   '/admin/devis.html',
   '/admin/modeles-messages.html',
+  '/admin/rappel-plages.html',
   '/admin/rapport.html',
   '/admin/registre-traitements.html',
   '/admin/sauvegarde.html',

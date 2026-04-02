@@ -36,8 +36,12 @@ jobs:
         if: github.event_name == 'schedule' || github.event_name == 'workflow_dispatch'
         env:
           GOOGLE_PLACES_API_KEY: ${{ secrets.GOOGLE_PLACES_API_KEY }}
-          # Si la clé GCP est restreinte par référent HTTP, surchargez (doit matcher la console Google)
           GOOGLE_PLACES_HTTP_REFERER: ${{ vars.GOOGLE_PLACES_HTTP_REFERER }}
+          # Optionnel — liste exhaustive des avis (OAuth, compte propriétaire) ; prioritaire sur Places
+          GOOGLE_GBP_CLIENT_ID: ${{ secrets.GOOGLE_GBP_CLIENT_ID }}
+          GOOGLE_GBP_CLIENT_SECRET: ${{ secrets.GOOGLE_GBP_CLIENT_SECRET }}
+          GOOGLE_GBP_REFRESH_TOKEN: ${{ secrets.GOOGLE_GBP_REFRESH_TOKEN }}
+          GOOGLE_GBP_REVIEWS_PARENT: ${{ secrets.GOOGLE_GBP_REVIEWS_PARENT }}
         run: node scripts/fetch-google-place.mjs
 
       - name: Configuration de GitHub Pages

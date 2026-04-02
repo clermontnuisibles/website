@@ -71,13 +71,21 @@ Le déploiement s'effectue automatiquement à chaque push sur `main` via `.githu
 
 Le même workflow est aussi déclenché **tous les lundis vers 06 h 15 (heure de Paris en hiver)** (`cron: 15 5 * * 1` UTC) et peut être lancé **à la main** (onglet *Actions* → *Déploiement GitHub Pages* → *Run workflow*).
 
-À ces moments, si le secret **`GOOGLE_PLACES_API_KEY`** est défini dans le dépôt (*Settings → Secrets and variables → Actions*), le job exécute `scripts/fetch-google-place.mjs`, met à jour `src/data/google-place-snapshot.json`, puis publie le site. Les visiteurs chargent ce fichier en priorité (`googlePlacesSnapshotUrl` dans `config.js`), ce qui évite d’exposer la clé API dans le navigateur lorsque le snapshot est à jour.
+Le job exécute `scripts/fetch-google-place.mjs`, met à jour `src/data/google-place-snapshot.json`, puis publie le site. Les visiteurs chargent ce fichier en priorité (`googlePlacesSnapshotUrl` dans `config.js`).
 
-**Limite Google Places :** une requête ne renvoie qu’un **échantillon d’avis récents** (souvent jusqu’à cinq), pas l’intégralité des avis de la fiche. Les champs `rating` et `userRatingCount` reflètent toutefois la fiche complète.
+**Deux modes (par ordre de priorité dans le script) :**
+
+1. **Google Business Profile API** (liste **exhaustive** paginée, jusqu’à 50 avis par page) — réservé au **propriétaire** de la fiche. Définir les secrets GitHub : `GOOGLE_GBP_CLIENT_ID`, `GOOGLE_GBP_CLIENT_SECRET`, `GOOGLE_GBP_REFRESH_TOKEN`, `GOOGLE_GBP_REVIEWS_PARENT` (forme `accounts/{id}/locations/{id}`). Activer *Google My Business API* (ou équivalent Business Profile) dans Google Cloud. Scope OAuth : `https://www.googleapis.com/auth/business.manage`. Voir [Compte et emplacements](https://developers.google.com/my-business/content/account-data) et [Lister les avis](https://developers.google.com/my-business/reference/rest/v4/accounts.locations.reviews/list). Le JSON inclut `reviewsSource: "google_business_profile"`.
+
+2. **Places API (New)** — si les secrets GBP ne sont **pas** tous définis : secret **`GOOGLE_PLACES_API_KEY`**. Une seule requête ne renvoie qu’un **échantillon** (souvent **~5** avis) ; `reviewsSource: "places_api"`.
+
+En cas d’échec GBP avec clé Places configurée, le script **se replie** sur Places.
+
+**Affichage :** sur l’**accueil**, plusieurs avis **≥ 4★** sont tirés **au hasard** dans `reviews`. Sur **`avis.html`**, **tout** le tableau `reviews` du snapshot est affiché (donc **tous** les avis synchronisés en mode Business Profile).
 
 **Push sur `main` sans secret :** le déploiement utilise le fichier `google-place-snapshot.json` **déjà présent dans le dépôt** (aucun nouvel appel API). Pour aligner le dépôt après un déploiement planifié, vous pouvez lancer en local `GOOGLE_PLACES_API_KEY=… node scripts/fetch-google-place.mjs` puis commiter le JSON, ou configurer un PAT et une étape de commit séparée si vous le souhaitez.
 
-Sans `GOOGLE_PLACES_API_KEY`, l’étape snapshot est ignorée silencieusement ; le site continue d’utiliser le proxy ou la clé navigateur définis dans `config.js`.
+Sans **aucune** des configurations ci-dessus (ni GBP complet, ni `GOOGLE_PLACES_API_KEY`), l’étape snapshot ne met pas à jour le fichier ; le site continue d’utiliser le JSON déjà en dépôt, ou le proxy / la clé navigateur dans `config.js`.
 
 **Erreur CI `403` / `API_KEY_HTTP_REFERRER_BLOCKED` / referer `<empty>` :** la clé est limitée aux **référents HTTP** dans la Google Cloud Console. Sur GitHub Actions il n’y a pas de navigateur, donc Google voyait un referer vide. Le script envoie désormais un en-tête **`Referer`** égal à `siteUrl` de `config.js` (ex. `https://www.clermont-nuisibles.fr/`). Vérifiez que cette URL (avec ou sans `www`, avec le bon chemin) est bien autorisée pour la clé. Sinon, ajoutez une variable dépôt **`GOOGLE_PLACES_HTTP_REFERER`** (*Settings → Secrets and variables → Actions → Variables*) avec exactement la valeur attendue par la console. **Alternative propre :** créer une **deuxième clé** réservée au CI, sans restriction de référent, avec restriction d’API uniquement sur *Places API (New)*.
 

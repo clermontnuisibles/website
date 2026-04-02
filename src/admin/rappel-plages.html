@@ -1,0 +1,351 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Demande de rappel (plages) – Clermont Nuisibles</title>
+  <meta name="robots" content="noindex, nofollow">
+  <link rel="manifest" href="manifest.json">
+  <meta name="theme-color" content="#2d6a4f">
+  <meta name="application-name" content="Clermont-nuisibles (admin)">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="apple-mobile-web-app-title" content="Clermont-nuisibles (admin)">
+  <link rel="apple-touch-icon" href="icons/apple-touch-icon.png">
+  <link rel="icon" type="image/svg+xml" href="../images/logo-icon.svg">
+  <link rel="stylesheet" href="../fonts/inter.css">
+  <link rel="stylesheet" href="admin-shell.css">
+  <script src="pwa.js"></script>
+  <script src="admin-nav.js" defer></script>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+      background: #f0f2ef;
+      min-height: 100dvh;
+      padding: 2rem 1rem 3rem;
+      display: flex; flex-direction: column; align-items: center;
+    }
+    h1 { font-size: 1.35rem; font-weight: 800; color: #1a2e1a; margin-bottom: 0.3rem; max-width: 700px; width: 100%; }
+    .subtitle { font-size: 0.88rem; color: #666; margin-bottom: 1.5rem; max-width: 700px; width: 100%; line-height: 1.5; }
+
+    .panel {
+      background: #fff;
+      border-radius: 16px;
+      box-shadow: 0 4px 18px rgba(0,0,0,0.07);
+      padding: 1.35rem 1.35rem 1.25rem;
+      max-width: 700px;
+      width: 100%;
+      margin-bottom: 1rem;
+    }
+    .panel h2 {
+      font-size: 0.78rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: .06em;
+      color: #64748b;
+      margin-bottom: 1rem;
+    }
+
+    .field { margin-bottom: 1rem; }
+    .field:last-child { margin-bottom: 0; }
+    label {
+      display: block;
+      font-size: 0.82rem;
+      font-weight: 600;
+      color: #334155;
+      margin-bottom: 0.35rem;
+    }
+    input[type="text"], input[type="tel"], select, textarea {
+      width: 100%;
+      font-family: inherit;
+      font-size: 0.9rem;
+      padding: 0.55rem 0.75rem;
+      border: 1.5px solid #e5e7eb;
+      border-radius: 10px;
+      background: #fafafa;
+    }
+    input:focus, select:focus, textarea:focus {
+      outline: none;
+      border-color: #2d6a4f;
+      background: #fff;
+    }
+    textarea { min-height: 4.5rem; resize: vertical; line-height: 1.5; }
+
+    .plages-list { display: flex; flex-direction: column; gap: 0.5rem; }
+    .plage-row {
+      display: flex;
+      gap: 0.5rem;
+      align-items: center;
+    }
+    .plage-row input { flex: 1; }
+    .btn-icon {
+      flex-shrink: 0;
+      width: 2.25rem;
+      height: 2.25rem;
+      border-radius: 10px;
+      border: 1.5px solid #e5e7eb;
+      background: #fff;
+      cursor: pointer;
+      font-size: 1rem;
+      line-height: 1;
+      transition: background 0.15s, border-color 0.15s;
+    }
+    .btn-icon:hover { background: #fee2e2; border-color: #fecaca; color: #b91c1c; }
+    .btn-add {
+      margin-top: 0.65rem;
+      font-family: inherit;
+      font-size: 0.82rem;
+      font-weight: 600;
+      padding: 0.45rem 1rem;
+      border-radius: 50px;
+      border: 1.5px dashed #2d6a4f;
+      background: #f0fdf4;
+      color: #2d6a4f;
+      cursor: pointer;
+    }
+    .btn-add:hover { background: #d8f3e8; }
+
+    .hint { font-size: 0.72rem; color: #94a3b8; margin-top: 0.35rem; }
+
+    .msg-box {
+      background: #f8fafc;
+      border: 1.5px solid #e5e7eb;
+      border-radius: 10px;
+      padding: 0.95rem 1rem;
+      font-size: 0.86rem;
+      line-height: 1.65;
+      color: #1a2e1a;
+      white-space: pre-wrap;
+      margin-bottom: 0.85rem;
+    }
+
+    .card-actions { display: flex; gap: 0.6rem; flex-wrap: wrap; align-items: center; }
+    .btn-copy {
+      font-family: inherit;
+      font-size: 0.82rem;
+      font-weight: 600;
+      padding: 0.5rem 1.1rem;
+      border-radius: 50px;
+      cursor: pointer;
+      border: 1.5px solid #2d6a4f;
+      background: #fff;
+      color: #2d6a4f;
+      transition: background 0.15s;
+    }
+    .btn-copy:hover, .btn-copy.copied { background: #2d6a4f; color: #fff; }
+    .btn-copy.copied { pointer-events: none; }
+
+    .btn-save {
+      font-family: inherit;
+      font-size: 0.78rem;
+      font-weight: 600;
+      padding: 0.45rem 0.9rem;
+      border-radius: 50px;
+      cursor: pointer;
+      border: 1.5px solid #e5e7eb;
+      background: #fff;
+      color: #64748b;
+    }
+    .btn-save:hover { border-color: #2d6a4f; color: #2d6a4f; }
+
+    .save-ok { font-size: 0.75rem; color: #2d6a4f; opacity: 0; transition: opacity 0.2s; }
+    .save-ok.visible { opacity: 1; }
+  </style>
+</head>
+<body>
+
+<h1>📞 Demande de rappel (plages)</h1>
+<p class="subtitle">Composez un SMS ou message court pour proposer plusieurs créneaux de rappel au client. Le texte se met à jour automatiquement ; enregistrez vos plages par défaut pour les prochaines fois.</p>
+
+<div class="panel">
+  <h2>Paramètres</h2>
+  <div class="field">
+    <label for="prenom">Prénom du client</label>
+    <input type="text" id="prenom" placeholder="ex. Marie" autocomplete="off">
+  </div>
+  <div class="field">
+    <label for="tel">Numéro à indiquer pour la réponse</label>
+    <input type="tel" id="tel" placeholder="07 66 50 29 38" autocomplete="tel">
+    <p class="hint">Affiché dans le message pour que le client vous rappelle ou réponde par SMS.</p>
+  </div>
+  <div class="field">
+    <label for="ton">Formulation</label>
+    <select id="ton">
+      <option value="propose">Nous vous rappelons — le client choisit un créneau</option>
+      <option value="joignable">Merci de nous rappeler — nos plages de disponibilité</option>
+    </select>
+  </div>
+</div>
+
+<div class="panel">
+  <h2>Plages horaires</h2>
+  <p class="hint" style="margin-bottom: 0.75rem;">Une ligne par créneau (jour et heures). Ex. : <em>lun. 9h–12h</em>, <em>mer. 14h–17h</em>.</p>
+  <div class="plages-list" id="plages-list"></div>
+  <button type="button" class="btn-add" id="btn-add-plage">+ Ajouter une plage</button>
+  <div style="margin-top: 1rem; display: flex; align-items: center; gap: 0.75rem; flex-wrap: wrap;">
+    <button type="button" class="btn-save" id="btn-save-defaults">Enregistrer comme modèle par défaut</button>
+    <span class="save-ok" id="save-feedback" role="status">Modèle enregistré.</span>
+  </div>
+</div>
+
+<div class="panel">
+  <h2>Message généré</h2>
+  <div class="msg-box" id="preview"></div>
+  <div class="card-actions">
+    <button type="button" class="btn-copy" id="btn-copy">📋 Copier</button>
+  </div>
+</div>
+
+<script>
+(function () {
+  'use strict';
+
+  var STORAGE_KEY = 'cn-admin-rappel-plages-v1';
+  var DEFAULT_SLOTS = ['lun. 9h–12h', 'mer. 14h–18h', 'ven. 10h–13h'];
+  var DEFAULT_TEL = '07 66 50 29 38';
+
+  var listEl = document.getElementById('plages-list');
+  var prenomEl = document.getElementById('prenom');
+  var telEl = document.getElementById('tel');
+  var tonEl = document.getElementById('ton');
+  var previewEl = document.getElementById('preview');
+  var btnCopy = document.getElementById('btn-copy');
+  var btnAdd = document.getElementById('btn-add-plage');
+  var btnSave = document.getElementById('btn-save-defaults');
+  var saveFeedback = document.getElementById('save-feedback');
+
+  function loadState() {
+    try {
+      var raw = localStorage.getItem(STORAGE_KEY);
+      if (!raw) return null;
+      return JSON.parse(raw);
+    } catch (e) {
+      return null;
+    }
+  }
+
+  function getSlotsFromDom() {
+    var inputs = listEl.querySelectorAll('input[data-plage]');
+    var out = [];
+    for (var i = 0; i < inputs.length; i++) {
+      var t = (inputs[i].value || '').trim();
+      if (t) out.push(t);
+    }
+    return out;
+  }
+
+  function buildMessage() {
+    var prenom = (prenomEl.value || '').trim();
+    var salut = prenom ? ('Bonjour ' + prenom + ',') : 'Bonjour,';
+    var tel = (telEl.value || '').trim() || DEFAULT_TEL;
+    var slots = getSlotsFromDom();
+    var ton = tonEl.value;
+
+    if (slots.length === 0) {
+      return salut + ' [Ajoutez au moins une plage ci-dessus.]';
+    }
+
+    var lines = slots.map(function (s, i) {
+      return '• ' + s;
+    });
+    var blocPlages = lines.join('\n');
+
+    if (ton === 'joignable') {
+      return salut + ' merci de nous rappeler au ' + tel + ' pour faire le point. Nous sommes joignables aux créneaux suivants :\n\n'
+        + blocPlages + '\n\nMerci, Evan – Clermont Nuisibles.';
+    }
+
+    return salut + ' je souhaite vous rappeler pour faire le point sur votre demande. Indiquez-moi le créneau qui vous convient le mieux parmi :\n\n'
+      + blocPlages + '\n\nRépondez par SMS au ' + tel + '. Merci, Evan – Clermont Nuisibles.';
+  }
+
+  function updatePreview() {
+    previewEl.textContent = buildMessage();
+  }
+
+  function createRow(value) {
+    var row = document.createElement('div');
+    row.className = 'plage-row';
+    var inp = document.createElement('input');
+    inp.type = 'text';
+    inp.setAttribute('data-plage', '1');
+    inp.placeholder = 'ex. mar. 14h–17h';
+    inp.value = value || '';
+    var rm = document.createElement('button');
+    rm.type = 'button';
+    rm.className = 'btn-icon';
+    rm.setAttribute('aria-label', 'Supprimer cette plage');
+    rm.textContent = '×';
+    rm.addEventListener('click', function () {
+      if (listEl.querySelectorAll('.plage-row').length <= 1) return;
+      row.remove();
+      updatePreview();
+    });
+    inp.addEventListener('input', updatePreview);
+    row.appendChild(inp);
+    row.appendChild(rm);
+    return row;
+  }
+
+  function setSlots(values) {
+    listEl.innerHTML = '';
+    var arr = values && values.length ? values : [''];
+    for (var i = 0; i < arr.length; i++) {
+      listEl.appendChild(createRow(arr[i]));
+    }
+  }
+
+  btnAdd.addEventListener('click', function () {
+    listEl.appendChild(createRow(''));
+    updatePreview();
+  });
+
+  prenomEl.addEventListener('input', updatePreview);
+  telEl.addEventListener('input', updatePreview);
+  tonEl.addEventListener('change', updatePreview);
+
+  btnCopy.addEventListener('click', function () {
+    var text = previewEl.textContent;
+    if (!text || text.indexOf('[Ajoutez') !== -1) return;
+    navigator.clipboard.writeText(text).then(function () {
+      var orig = btnCopy.textContent;
+      btnCopy.textContent = '✓ Copié !';
+      btnCopy.classList.add('copied');
+      setTimeout(function () {
+        btnCopy.textContent = orig;
+        btnCopy.classList.remove('copied');
+      }, 2000);
+    });
+  });
+
+  btnSave.addEventListener('click', function () {
+    var state = {
+      tel: telEl.value,
+      ton: tonEl.value,
+      slots: getSlotsFromDom()
+    };
+    try {
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
+      saveFeedback.classList.add('visible');
+      setTimeout(function () { saveFeedback.classList.remove('visible'); }, 2200);
+    } catch (e) {}
+  });
+
+  (function init() {
+    var saved = loadState();
+    if (saved && typeof saved === 'object') {
+      telEl.value = saved.tel || DEFAULT_TEL;
+      if (saved.ton === 'propose' || saved.ton === 'joignable') tonEl.value = saved.ton;
+      if (saved.slots && saved.slots.length) setSlots(saved.slots);
+      else setSlots(DEFAULT_SLOTS);
+    } else {
+      telEl.value = DEFAULT_TEL;
+      setSlots(DEFAULT_SLOTS);
+    }
+    updatePreview();
+  })();
+})();
+</script>
+</body>
+</html>

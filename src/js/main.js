@@ -328,10 +328,10 @@
   }
 
   /**
-   * Répartition par étoiles à partir des avis renvoyés par Places (≤ 5).
-   * L’API ne fournit pas l’histogramme global : les % sont relatifs à cet échantillon.
+   * Répartition par étoiles à partir du tableau `reviews` affiché.
+   * places_api : échantillon limité (~5). google_business_profile : liste synchronisée côté CI.
    */
-  function updateRatingDistributionBars(reviews, userRatingCount) {
+  function updateRatingDistributionBars(reviews, userRatingCount, reviewsSource) {
     const stars = [5, 4, 3, 2, 1];
     const counts = { 1: 0, 2: 0, 3: 0, 4: 0, 5: 0 };
     (reviews || []).forEach(r => {
@@ -352,19 +352,28 @@
     if (hint) {
       hint.hidden = false;
       if (n > 0) {
-        const total =
-          userRatingCount != null && userRatingCount > n
-            ? ` Les ${userRatingCount} avis au total ne sont pas tous listés ici.`
-            : '';
-        hint.textContent =
-          'Pourcentages calculés sur les ' +
-          n +
-          ' avis récents renvoyés par Google (maximum 5 par requête), et non sur la répartition complète de la fiche.' +
-          total +
-          ' Détail sur Google Maps.';
+        if (reviewsSource === 'google_business_profile') {
+          const extra =
+            userRatingCount != null && userRatingCount > n
+              ? ` (${userRatingCount} avis au total sur la fiche ; ${n} dans ce fichier).`
+              : '';
+          hint.textContent =
+            'Répartition calculée sur les ' + n + ' avis synchronisés (Google Business Profile).' + extra;
+        } else {
+          const total =
+            userRatingCount != null && userRatingCount > n
+              ? ` Les ${userRatingCount} avis au total ne sont pas tous listés ici.`
+              : '';
+          hint.textContent =
+            'Pourcentages calculés sur les ' +
+            n +
+            ' avis récents renvoyés par Google (maximum ~5 par requête Places), et non sur la répartition complète de la fiche.' +
+            total +
+            ' Détail sur Google Maps.';
+        }
       } else {
         hint.textContent =
-          'Aucun avis avec note dans l’échantillon renvoyé par Google. Ouvrez la fiche Google pour la répartition complète.';
+          'Aucun avis avec note dans les données chargées. Ouvrez la fiche Google pour la répartition complète.';
       }
     }
   }
@@ -385,7 +394,7 @@
     } catch (_) { /* ignore */ }
   }
 
-  const HOME_REVIEWS_COUNT = 5;
+  const HOME_REVIEWS_COUNT = 6;
   const HOME_REVIEW_EXCERPT_MAX = 220;
 
   function renderReviewsInto(container, reviews, max, excerptMaxLen) {
@@ -479,6 +488,8 @@
     const reviews = Array.isArray(data.reviews) ? data.reviews : [];
     const rating = data.rating != null ? Number(data.rating) : null;
     const count = data.userRatingCount != null ? Number(data.userRatingCount) : null;
+    const reviewsSource =
+      data.reviewsSource === 'google_business_profile' ? 'google_business_profile' : 'places_api';
 
     const grScore = document.getElementById('gr-score');
     const grStars = document.getElementById('gr-stars');
@@ -504,7 +515,7 @@
     }
     if (grDist) {
       grDist.hidden = false;
-      updateRatingDistributionBars(reviews, count);
+      updateRatingDistributionBars(reviews, count, reviewsSource);
     }
     if (grStaticNote) grStaticNote.hidden = true;
     if (grGoogleNote && grGoogleLink && cfg.googleReviewUrl) {

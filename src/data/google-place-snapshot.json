@@ -3,5 +3,6 @@
   "placeId": null,
   "rating": null,
   "userRatingCount": null,
-  "reviews": []
+  "reviews": [],
+  "reviewsSource": "places_api"
 }

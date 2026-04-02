@@ -14,7 +14,8 @@
         { href: 'avis-google.html', label: 'Avis Google', icon: '⭐' },
         { href: 'vcard.html', label: 'Carte de visite', icon: '📇' },
         { href: 'agenda.html', label: 'Agenda', icon: '📅' },
-        { href: 'modeles-messages.html', label: 'Modèles de messages', icon: '📨' }
+        { href: 'modeles-messages.html', label: 'Modèles de messages', icon: '📨' },
+        { href: 'rappel-plages.html', label: 'Rappel (plages)', icon: '📞' }
       ]
     },
     {
@@ -48,6 +49,7 @@
     'vcard.html': 'Carte de visite',
     'agenda.html': 'Agenda',
     'modeles-messages.html': 'Modèles de messages',
+    'rappel-plages.html': 'Rappel (plages)',
     'rapport.html': 'Rapport d’intervention',
     'devis.html': 'Devis',
     'calculateur-dosage.html': 'Calculateur de dosage',

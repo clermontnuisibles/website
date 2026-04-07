@@ -305,7 +305,9 @@
 
   function buildReviewCardEl(review, excerptMaxLen) {
     const rating = review.rating != null ? Number(review.rating) : 0;
-    let text = review.text && review.text.text ? review.text.text : '';
+    let text = (review.originalText && review.originalText.text)
+      ? review.originalText.text
+      : (review.text && review.text.text ? review.text.text : '');
     if (excerptMaxLen) text = truncateExcerpt(text, excerptMaxLen);
     const author =
       review.authorAttribution && review.authorAttribution.displayName

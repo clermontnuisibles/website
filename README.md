@@ -148,3 +148,4 @@ python3 -m http.server 8080
 - GitHub Actions pour le CI/CD
 - GitHub Pages pour l'hébergement
 - Formspree pour le formulaire de contact (service externe gratuit)
+.

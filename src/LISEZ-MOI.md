@@ -1,17 +1,30 @@
-# Mise en ligne (GitHub Pages)
+# Photos à ajouter
 
-Ton site est publié depuis le dossier `src` du dépôt `clermontnuisibles/website`. Il suffit d'y remplacer les fichiers.
+Les photos manquantes ne sont pas affichées : le site tient très bien sans. Envoie-moi tes nouvelles photos dans la conversation : je les recadre, les compresse et je régénère le site.
 
-1. Sur github.com, connecte-toi au compte du site (celui lié à clermontnuisibles@gmail.com).
-2. Ouvre le dépôt `website`, puis le dossier `src`.
-3. Dézippe ce dossier sur ton ordinateur : tu obtiens `index.html`, `style.css`, `images`, `punaises-de-lit`, etc.
-4. Dans `src`, clique sur « Add file » > « Upload files ». Glisse tout le contenu dézippé (fichiers ET dossiers), puis « Commit changes » (sur la branche main).
-5. Attends 1 à 2 minutes (onglet « Actions » : une coche verte). Recharge ensuite clermont-nuisibles.fr.
+Conseils : format .jpg, 1200 px de large maximum, moins de 300 Ko chacune (squoosh.app pour compresser), pas de plaque d'immatriculation ni d'adresse de client visibles.
 
-Les anciennes pages (services.html, tarifs.html, etc.) sont remplacées par des redirections vers les nouvelles adresses. Les anciens fichiers que je n'écrase pas (dossiers css et js) restent dans le dépôt sans gêner.
-
-# À vérifier
-- Envoie une demande de devis de test depuis la page Contact : tu dois la recevoir par e-mail (service Formspree déjà configuré dans ton dépôt).
-- Mentions légales : à relire.
-- Aucun avis n'est affiché : un lien « Avis Google » est dans le pied de page. Envoie-moi tes meilleurs avis pour les ajouter.
-- La garantie est annoncée « selon l'infestation » : précise-la sur tes devis.
+| Fichier | Où |
+|---|---|
+| hero.jpg | Accueil : photo principale (toi en intervention, de préférence en combinaison) |
+| evan.jpg | Accueil et À propos : portrait vertical de toi |
+| og.jpg | Aperçu au partage (WhatsApp, Facebook), 1200x630 |
+| pros.jpg / pros-rapport.jpg / pros-carte.jpg | Page Professionnels et carte d'accueil |
+| rats-carte.jpg | Rats : vignette sur l'accueil (4:3) |
+| rats-principale.jpg | Rats : grande photo en haut de la page (16:9) |
+| rats-1.jpg / rats-2.jpg / rats-3.jpg | Rats : galerie de 3 photos (4:3) |
+| souris-carte.jpg | Souris : vignette sur l'accueil (4:3) |
+| souris-principale.jpg | Souris : grande photo en haut de la page (16:9) |
+| souris-1.jpg / souris-2.jpg / souris-3.jpg | Souris : galerie de 3 photos (4:3) |
+| punaises-carte.jpg | Punaises de lit : vignette sur l'accueil (4:3) |
+| punaises-principale.jpg | Punaises de lit : grande photo en haut de la page (16:9) |
+| punaises-1.jpg / punaises-2.jpg / punaises-3.jpg | Punaises de lit : galerie de 3 photos (4:3) |
+| cafards-carte.jpg | Cafards : vignette sur l'accueil (4:3) |
+| cafards-principale.jpg | Cafards : grande photo en haut de la page (16:9) |
+| cafards-1.jpg / cafards-2.jpg / cafards-3.jpg | Cafards : galerie de 3 photos (4:3) |
+| frelons-carte.jpg | Guêpes et frelons : vignette sur l'accueil (4:3) |
+| frelons-principale.jpg | Guêpes et frelons : grande photo en haut de la page (16:9) |
+| frelons-1.jpg / frelons-2.jpg / frelons-3.jpg | Guêpes et frelons : galerie de 3 photos (4:3) |
+| fourmis-carte.jpg | Fourmis : vignette sur l'accueil (4:3) |
+| fourmis-principale.jpg | Fourmis : grande photo en haut de la page (16:9) |
+| fourmis-1.jpg / fourmis-2.jpg / fourmis-3.jpg | Fourmis : galerie de 3 photos (4:3) |

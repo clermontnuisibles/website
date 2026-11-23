@@ -38,7 +38,7 @@ window.SiteConfig = {
 
   /* ── URL du site ────────────────────────────────────────────────
      Sans slash final. Utilisée dans le formulaire (_next redirect). */
-  siteUrl: 'https://www.clermont-nuisibles.fr',
+  siteUrl: 'https://clermont-nuisibles.fr',
 
   /* ── Google Tag Manager ─────────────────────────────────────────
      Laissez vide ('') pour désactiver GTM. */

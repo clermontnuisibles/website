@@ -414,3 +414,4 @@ nav.main ul{gap:2px}
 .art .rev{margin:12px 0 24px}
 .revs{display:flex;overflow-x:auto;scroll-snap-type:x mandatory;gap:18px;padding-bottom:10px}
 .revs .rev{flex:0 0 min(330px,85%);scroll-snap-align:start}
+.dark .zones a{background:rgba(255,255,255,.06);border-color:rgba(255,255,255,.16);color:#fff}.dark .zones a:hover{background:rgba(255,255,255,.14)}.fzones a{color:inherit;text-decoration:none}.fzones a:hover{text-decoration:underline}
